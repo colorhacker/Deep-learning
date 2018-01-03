@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\cnn">
+      <UniqueIdentifier>{5e129028-f671-446e-80ca-bffe751e2cf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\cnn">
+      <UniqueIdentifier>{09786634-08f5-4083-bb46-b8ab8f1521b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\w2c">
+      <UniqueIdentifier>{925a54f2-59a3-49c5-a8e7-26c511eadff8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\w2c">
+      <UniqueIdentifier>{1ef32330-4b3c-4c8b-bb0c-d79fc1b9e2d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\rnn">
+      <UniqueIdentifier>{8dbf6213-5b4e-487d-b4ec-56fd1b1d5fac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\rnn">
+      <UniqueIdentifier>{9d691977-26ad-4a65-8fa3-9cd5802adb4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\matrix">
+      <UniqueIdentifier>{36ec0568-8f97-48fe-9ac3-71bc4a46e4a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\matrix">
+      <UniqueIdentifier>{ef134951-53d1-4c22-8513-cdcb8a96155e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\nn">
+      <UniqueIdentifier>{ff3a5958-8b6a-4170-9aef-bfb110b2738a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\nn">
+      <UniqueIdentifier>{78d85653-b09f-4728-b228-bb2388bbbb61}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="user_config.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="user_types.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="w2c\user_earth_movers_distance.h">
+      <Filter>头文件\w2c</Filter>
+    </ClInclude>
+    <ClInclude Include="w2c\user_words_vector_pro.h">
+      <Filter>头文件\w2c</Filter>
+    </ClInclude>
+    <ClInclude Include="cnn\user_cnn_bp.h">
+      <Filter>头文件\cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="cnn\user_cnn_ffp.h">
+      <Filter>头文件\cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="cnn\user_cnn_grads.h">
+      <Filter>头文件\cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="cnn\user_cnn_layers.h">
+      <Filter>头文件\cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="cnn\user_cnn_model.h">
+      <Filter>头文件\cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="cnn\user_cnn_rw_model.h">
+      <Filter>头文件\cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="w2c\user_k_means.h">
+      <Filter>头文件\w2c</Filter>
+    </ClInclude>
+    <ClInclude Include="w2c\user_pca.h">
+      <Filter>头文件\w2c</Filter>
+    </ClInclude>
+    <ClInclude Include="rnn\user_rnn_layers.h">
+      <Filter>头文件\rnn</Filter>
+    </ClInclude>
+    <ClInclude Include="rnn\user_rnn_ffp.h">
+      <Filter>头文件\rnn</Filter>
+    </ClInclude>
+    <ClInclude Include="rnn\user_rnn_bptt.h">
+      <Filter>头文件\rnn</Filter>
+    </ClInclude>
+    <ClInclude Include="rnn\user_rnn_grads.h">
+      <Filter>头文件\rnn</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix\user_nn_activate.h">
+      <Filter>头文件\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix\user_nn_matrix.h">
+      <Filter>头文件\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix\user_nn_matrix_cuda.h">
+      <Filter>头文件\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="rnn\user_rnn_model.h">
+      <Filter>头文件\rnn</Filter>
+    </ClInclude>
+    <ClInclude Include="rnn\user_rnn_rw_model.h">
+      <Filter>头文件\rnn</Filter>
+    </ClInclude>
+    <ClInclude Include="nn\user_nn_ffp.h">
+      <Filter>头文件\nn</Filter>
+    </ClInclude>
+    <ClInclude Include="nn\user_nn_grads.h">
+      <Filter>头文件\nn</Filter>
+    </ClInclude>
+    <ClInclude Include="nn\user_nn_layers.h">
+      <Filter>头文件\nn</Filter>
+    </ClInclude>
+    <ClInclude Include="nn\user_nn_model.h">
+      <Filter>头文件\nn</Filter>
+    </ClInclude>
+    <ClInclude Include="nn\user_nn_rw_model.h">
+      <Filter>头文件\nn</Filter>
+    </ClInclude>
+    <ClInclude Include="nn\user_nn_bp.h">
+      <Filter>头文件\nn</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix\user_nn_matrix_file.h">
+      <Filter>头文件\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="nn\user_nn_app.h">
+      <Filter>头文件\nn</Filter>
+    </ClInclude>
+    <ClInclude Include="cnn\user_cnn_app.h">
+      <Filter>头文件\cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="rnn\user_rnn_app.h">
+      <Filter>头文件\rnn</Filter>
+    </ClInclude>
+    <ClInclude Include="w2c\user_w2c_app.h">
+      <Filter>头文件\w2c</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main_app.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_bp.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_ffp.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_grads.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_layers.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_matrix_cuda.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_model.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_rw_model.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="w2c\user_earth_movers_distance.cpp">
+      <Filter>源文件\w2c</Filter>
+    </ClCompile>
+    <ClCompile Include="w2c\user_words_vector_pro.cpp">
+      <Filter>源文件\w2c</Filter>
+    </ClCompile>
+    <ClCompile Include="w2c\user_k_means.cpp">
+      <Filter>源文件\w2c</Filter>
+    </ClCompile>
+    <ClCompile Include="w2c\user_pca.cpp">
+      <Filter>源文件\w2c</Filter>
+    </ClCompile>
+    <ClCompile Include="rnn\user_rnn_layers.cpp">
+      <Filter>源文件\rnn</Filter>
+    </ClCompile>
+    <ClCompile Include="rnn\user_rnn_ffp.cpp">
+      <Filter>源文件\rnn</Filter>
+    </ClCompile>
+    <ClCompile Include="rnn\user_rnn_bptt.cpp">
+      <Filter>源文件\rnn</Filter>
+    </ClCompile>
+    <ClCompile Include="rnn\user_rnn_grads.cpp">
+      <Filter>源文件\rnn</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix\user_nn_activate.cpp">
+      <Filter>源文件\matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix\user_nn_matrix.cpp">
+      <Filter>源文件\matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="rnn\user_rnn_model.cpp">
+      <Filter>源文件\rnn</Filter>
+    </ClCompile>
+    <ClCompile Include="rnn\user_rnn_rw_model.cpp">
+      <Filter>源文件\rnn</Filter>
+    </ClCompile>
+    <ClCompile Include="nn\user_nn_rw_model.cpp">
+      <Filter>源文件\nn</Filter>
+    </ClCompile>
+    <ClCompile Include="nn\user_nn_model.cpp">
+      <Filter>源文件\nn</Filter>
+    </ClCompile>
+    <ClCompile Include="nn\user_nn_layers.cpp">
+      <Filter>源文件\nn</Filter>
+    </ClCompile>
+    <ClCompile Include="nn\user_nn_grads.cpp">
+      <Filter>源文件\nn</Filter>
+    </ClCompile>
+    <ClCompile Include="nn\user_nn_ffp.cpp">
+      <Filter>源文件\nn</Filter>
+    </ClCompile>
+    <ClCompile Include="nn\user_nn_bp.cpp">
+      <Filter>源文件\nn</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix\user_nn_matrix_file.cpp">
+      <Filter>源文件\matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="nn\user_nn_app.cpp">
+      <Filter>源文件\nn</Filter>
+    </ClCompile>
+    <ClCompile Include="cnn\user_cnn_app.cpp">
+      <Filter>源文件\cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="rnn\user_rnn_app.cpp">
+      <Filter>源文件\rnn</Filter>
+    </ClCompile>
+    <ClCompile Include="w2c\user_w2c_app.cpp">
+      <Filter>源文件\w2c</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
