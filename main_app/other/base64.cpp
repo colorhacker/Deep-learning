@@ -114,3 +114,23 @@ void decode_base64_map_xor(char *input, char *output) {
 		output[i] = char_exchange(output[i] ^ xor_code);
 	}
 }
+
+/*
+int main(int argc, char **argv) {
+char output[1024*10] = "";
+if (argc == 3) {
+
+if (strcmp("encode", argv[1]) == 0) {
+encode_xor_map_base64(argv[2], output);
+printf(output);
+}else if (strcmp("decode", argv[1]) == 0) {
+decode_base64_map_xor(argv[2], output);
+printf(output);
+}else {
+printf("format: xxx.exe [type] [value]");
+}
+}
+getchar();
+return 0;
+}
+*/
