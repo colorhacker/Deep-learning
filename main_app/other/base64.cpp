@@ -117,23 +117,45 @@ void decode_base64_map_xor(char *input, char *output) {
 		output[i] = char_exchange(output[i] ^ xor_code);
 	}
 }
-
 /*
-int main(int argc, char **argv) {
-char output[1024*10] = "";
+char output[1024 * 10] = "";
 if (argc == 3) {
-
-if (strcmp("encode", argv[1]) == 0) {
-encode_xor_map_base64(argv[2], output);
-printf(output);
-}else if (strcmp("decode", argv[1]) == 0) {
-decode_base64_map_xor(argv[2], output);
-printf(output);
-}else {
-printf("format: xxx.exe [type] [value]");
-}
+	if (strcmp("encode", argv[1]) == 0) {
+		encode_xor_map_base64(argv[2], output);
+		printf(output);
+	}
+	else if (strcmp("decode", argv[1]) == 0) {
+		decode_base64_map_xor(argv[2], output);
+		printf(output);
+	}
+	else {
+		printf("format: xxx.exe [type] [value]");
+	}
 }
 getchar();
-return 0;
-}
+*/
+/*char input[] = "zL2Xl5XU0cLf09GVl42XlY+Vm72Xl5XZ1cfU1ejZ1cPDlZeNl5XWh4GE1IOChIaC0YLWgo6E0o+Og9LRh4ODhtKO1dHTgdKOg4DTjoCG0o/UjtTVg9KOgo/RhNKOjoPU09GE1Y6PlZu9l5eV39ToxM3Z0ZWXjZeVjpWbvZeXlcHB39SVl42XlYWBh4PUhIfVh4+Eh4GAhISF0obVhtaC0tGPg4+Fh4aPlZu9l5eV2dXH1NXo2d7Yx9GVl42XlY+OgIGChoCHlZu9l5eV3NnBw97o39SVl42XlZWbvZeXlcPfx9Da0d3RzZWXjZeVhI7UgY+G1ICFgYeDhoWH0oDUgNWDhoPR1tHV1daHhYCVm72Xl5XC0cbD39jHlZeNl5WHmYOZgpWbvZeXldTc3dHNlZeNl5Xf7o/73Ibf/t+G2/vQgd/73O7N/t/+x9HfxNv8j9iE0YDu+OfQgdv739j49N+Bzeff2Pz434H8+t/+g/vQ2Pjnj/n75oKBx9GC/vvmgIaE5oLEgNGAxN/+j9j71d/E8P7c+euY44CG3OaPxOuY7YL5gOOPxMflgvnH1IDE/+aP1OfSlb3K";
+char output[1024 * 10] = "";
+decode_base64_map_xor(input, output);
+printf(output);
+getchar();
+*/
+/*
+< ? php
+
+	if (($_GET['type'] == "encode") || ($_GET['type'] == "decode") || $_GET['value']) {
+		//$input = "/home/code_base64/code.exe"." ".$_GET['type']." \"".$_GET['value']."\"";
+		$input = "/home/code_base64/code.exe"." ".$_GET['type']." ".str_replace(" ", "+", $_GET['value']);
+		echo passthru($input);
+	}
+	else if (($_POST['type'] == "encode") || ($_POST['type'] == "decode") || $_POST['value']) {
+		//$input = "/home/code_base64/code.exe"." ".$_POST['type']." \"".$_POST['value']."\"";
+		$input = "/home/code_base64/code.exe"." ".$_POST['type']." ".str_replace(" ", "+", $_POST['value']);
+		echo passthru($input);
+	}
+	else {
+		echo "https://xxx.xxx.xxx.xxx/exec.php?type=decode&value=xxx";
+	}
+
+	? >
 */
