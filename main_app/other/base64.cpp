@@ -90,7 +90,7 @@ int base64_decode(const char * base64, char * output){
 char char_exchange(char input) {
 	static char map_a_char[] = "acehjlnqsuwy12345";
 	static char map_b_char[] = "bdfikmprtvxz98760";
-	for (int i = 0; i < strlen(map_a_char); i++) {
+	for (size_t i = 0; i < strlen(map_a_char); i++) {
 		if (input == map_a_char[i]) {
 			return map_b_char[i];
 		}else if (input == map_b_char[i]) {
@@ -101,7 +101,7 @@ char char_exchange(char input) {
 }
 //加密
 void encode_xor_map_base64(char *input, char *output) {
-	for (int i = 0; i < strlen(input); i++) {
+	for (size_t i = 0; i < strlen(input); i++) {
 		input[i] = char_exchange(input[i]) ^ xor_code;
 	}
 	base64_encode(input, output);//生成base64码
@@ -110,7 +110,7 @@ void encode_xor_map_base64(char *input, char *output) {
 //解密
 void decode_base64_map_xor(char *input, char *output) {
 	base64_decode(input, output);//解密base64
-	for (int i = 0; i < strlen(output); i++) {
+	for (size_t i = 0; i < strlen(output); i++) {
 		output[i] = char_exchange(output[i] ^ xor_code);
 	}
 }
