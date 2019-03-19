@@ -249,6 +249,22 @@ void user_cnn_model_load_input_image(user_cnn_layers *layers, char *path, int in
 	user_nn_matrix_memcpy_uchar_mult_constant(save_matrix, (unsigned char *)load_image->imageData, (float)1 / 255);//拷贝矩阵数据并且归1化数据
 	cvReleaseImage(&load_image);//释放内存
 }
+//加载mnist数据至输入层返回类别数字
+//mnist 连续矩阵
+//target 目标矩阵
+//mnist_index 图像矩阵位置
+//layers 加载对象层
+//layers_index 加载到层的第几个矩阵中
+//返回 当前图像数字
+int user_cnn_model_load_input_mnist(user_nn_list_matrix *mnist, user_nn_list_matrix *target,int mnist_index, user_cnn_layers *layers, int layers_index) {
+	user_cnn_layers *cnn_input_layer = user_cnn_layers_get(layers, 1);//获取输入层
+	user_nn_matrix *save_matrix = user_nn_matrices_ext_matrix_index(((user_cnn_input_layers *)cnn_input_layer->content)->feature_matrices, layers_index - 1);//获取矩阵位置
+	user_nn_matrix *mnist_matrix = user_nn_matrices_ext_matrix_index(mnist, mnist_index);
+	user_nn_matrix_cpy_matrix(save_matrix, mnist_matrix);//拷贝矩阵
+	user_nn_matrix_divi_constant(save_matrix,255.0);//归一化
+	return *user_nn_matrices_ext_matrix_index(target, mnist_index)->data;
+}
+
 //正向执行一次迭代
 //layers 所创建的层
 //返回值 无

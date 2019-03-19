@@ -43,6 +43,12 @@
     <Filter Include="源文件\nn">
       <UniqueIdentifier>{78d85653-b09f-4728-b228-bb2388bbbb61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\mnist">
+      <UniqueIdentifier>{ea94d3bd-e621-47e4-aeae-dc3af0c084de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\mnist">
+      <UniqueIdentifier>{f8b50bec-5486-4297-b04d-9ee3ad15149e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user_config.h">
@@ -141,6 +147,9 @@
     <ClInclude Include="w2c\user_w2c_app.h">
       <Filter>头文件\w2c</Filter>
     </ClInclude>
+    <ClInclude Include="mnist\user_mnist.h">
+      <Filter>头文件\mnist</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -235,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="w2c\user_w2c_app.cpp">
       <Filter>源文件\w2c</Filter>
+    </ClCompile>
+    <ClCompile Include="mnist\user_mnist.cpp">
+      <Filter>源文件\mnist</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

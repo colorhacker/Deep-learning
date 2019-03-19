@@ -774,7 +774,7 @@ void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_
 		return;
 	}
 	while (count--){
-		*save_data++ = *sub_data++;
+		*save_data++ = *sub_data++;//memcpy
 	}
 }
 //拷贝sub_matrix矩阵值到src_matrix矩阵 并且在给定位置进行求和参数

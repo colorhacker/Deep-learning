@@ -14,6 +14,7 @@ void user_cnn_model_display_feature(user_cnn_layers *layers);//Ê¹ÓÃopencvÏÔÊ¾ÌØÕ
 user_cnn_layers *user_cnn_model_create(int *layer_infor);//´´½¨Ò»¸öÄ£ĞÍ
 void user_cnn_model_load_input_feature(user_cnn_layers *layers, user_nn_matrix *src_matrix, int index);//¼ÓÔØÊäÈëÌØÕ÷Êı¾İ
 void user_cnn_model_load_input_image(user_cnn_layers *layers, char *path, int index);//¼ÓÔØÍ¼ÏñÊı¾İ
+int user_cnn_model_load_input_mnist(user_nn_list_matrix *mnist, user_nn_list_matrix *target, int mnist_index, user_cnn_layers *layers, int layers_index);//¼ÓÔØmnistÊı¾İ
 void user_cnn_model_ffp(user_cnn_layers *layers);//ÕıÏò¼ÆËãÒ»´Î
 void user_cnn_model_bp(user_cnn_layers *layers, user_nn_matrix *target, float alpha);//·´Ïò¼ÆËãÒ»´Î
 
