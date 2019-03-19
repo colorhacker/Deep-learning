@@ -80,6 +80,7 @@ typedef struct _cnn_output_layers{
 	user_nn_matrix *kernel_matrix;//输出层矩阵乘积核
 	user_nn_matrix *biases_matrix;//输出层偏置参数
 	user_nn_matrix *feature_matrix;//输出层特征数据
+	user_nn_matrix *target_matrix;//目标矩阵特征数据
 	user_nn_matrix *error_matrix;//输出层错误值矩阵保存
 	user_nn_matrix *deltas_matrix;//输出层残差
 	user_nn_matrix *deltas_kernel_matrix;//本层残差对前一层feture maps的卷积结果也就是ΔW的值

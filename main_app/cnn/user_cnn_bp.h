@@ -5,7 +5,7 @@
 #include "../cnn/user_cnn_layers.h"
 
 
-void user_cnn_bp_output_back_prior(user_cnn_layers *prior_layer, user_cnn_layers *output_layer, user_nn_matrix *target);
+void user_cnn_bp_output_back_prior(user_cnn_layers *prior_layer, user_cnn_layers *output_layer);
 void user_cnn_bp_fullconnect_back_prior(user_cnn_layers *prior_layer, user_cnn_layers *full_layer);
 void user_cnn_bp_pooling_back_prior(user_cnn_layers *prior_layer, user_cnn_layers *pool_layer);
 void user_cnn_bp_convolution_back_prior(user_cnn_layers *prior_layer, user_cnn_layers *conv_layer);

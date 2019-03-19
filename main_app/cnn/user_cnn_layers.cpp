@@ -265,6 +265,7 @@ user_cnn_output_layers *user_cnn_layers_output_create(user_cnn_layers *cnn_layer
 	output_layers->feature_matrix		= user_nn_matrix_create(1, output_layers->class_number);//创建输出值 分类个数
 	output_layers->kernel_matrix		= user_nn_matrix_create(output_layers->feature_number, output_layers->class_number);//创建输出层的kenerl模板
 	output_layers->error_matrix			= user_nn_matrix_create(1, output_layers->class_number);//错误值保存矩阵
+	output_layers->target_matrix		= user_nn_matrix_create(1, output_layers->class_number);//错误值保存矩阵
 	output_layers->deltas_matrix		= user_nn_matrix_create(1, output_layers->class_number);//保存残差
 	output_layers->deltas_kernel_matrix = user_nn_matrix_create(output_layers->feature_number, output_layers->class_number);//本层残差对上层的卷积结果ΔW
 

@@ -19,7 +19,6 @@ void cnn_detect(int argc, const char** argv) {
 		'o', 10//输出层 特征（分类个数）
 	};
 
-	char *full_path = NULL;
 	bool model_is_exist = false;
 	float loss_function = 0;
 	//加载mnist数据
@@ -47,15 +46,16 @@ void cnn_detect(int argc, const char** argv) {
 		printf("\n是否继续训练：\n 键入 y 回车进行开启，直接回车默认关闭\n\n");
 		model_is_exist = (getchar() == 'y') ?  false : true;
 	}
-
+	model_is_exist = false;////*************
 	clock_t start_time = clock();
 	int loss_info = 0;
 	//进行训练
 	while (!model_is_exist) {
 		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
-			user_cnn_model_load_input_mnist(train_images, train_index, cnn_layers, 1);//加载图像
+			user_cnn_model_load_input_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index), 1);
+			user_cnn_model_load_target_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标矩阵
 			user_cnn_model_ffp(cnn_layers);//正向计算一次
-			user_cnn_model_bp(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index), 0.5f);//反向训练一次
+			user_cnn_model_bp(cnn_layers, 0.5f);//反向训练一次
 			loss_function = user_cnn_model_return_loss(cnn_layers);//获取损失函数
 			if (sw_display) {
 				user_cnn_model_display_feature(cnn_layers);//显示所有特征数据
@@ -64,13 +64,13 @@ void cnn_detect(int argc, const char** argv) {
 			if (loss_function < 0.001f) {
 				break;//跳出迭代
 			}
-			user_nn_matrix_printf(NULL, user_nn_matrices_ext_matrix_index(train_lables, train_index));
 			if (loss_info++ > 1000) {
 				loss_info = 0;
 				printf("train count:%d,loss:%f\n", train_index,loss_function);
 				user_cnn_model_save_model(user_nn_model_cnn_file_name, cnn_layers);//保存一次模型
 			}
 		}
+		printf("loss:%f\n", loss_function);
 		//如果损失函数小于期望值直接退出
 		if (loss_function < 0.001f) {
 			break;//跳出训练
@@ -85,7 +85,7 @@ void cnn_detect(int argc, const char** argv) {
 	//进行测试
 	int error_count = 0;
 	for (int test_index = 0; test_index < test_images->height * test_images->width; test_index++) {
-		user_cnn_model_load_input_mnist(test_images, test_index, cnn_layers, 1);//加载图像
+		user_cnn_model_load_input_feature(cnn_layers, user_nn_matrices_ext_matrix_index(test_images, test_index), 1);
 		user_cnn_model_ffp(cnn_layers);//正向计算一次
 		if (user_cnn_model_return_class(cnn_layers) != user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index))) {
 			error_count++;
@@ -146,7 +146,7 @@ bool cnn_test(int argc, const char** argv) {
 }
 
 void user_cnn_app_test(int argc, const char** argv) {
-	if (cnn_test(argc, argv) == false) {
+	//if (cnn_test(argc, argv) == false) {
 		cnn_detect(argc, argv);
-	}
+	//}
 }

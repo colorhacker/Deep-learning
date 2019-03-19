@@ -249,21 +249,15 @@ void user_cnn_model_load_input_image(user_cnn_layers *layers, char *path, int in
 	user_nn_matrix_memcpy_uchar_mult_constant(save_matrix, (unsigned char *)load_image->imageData, (float)1 / 255);//拷贝矩阵数据并且归1化数据
 	cvReleaseImage(&load_image);//释放内存
 }
-//加载mnist数据至输入层返回类别数字
-//mnist 连续矩阵
-//mnist_index 图像矩阵位置
-//layers 加载对象层
-//layers_index 加载到层的第几个矩阵中
-//返回 当前图像数字
-void user_cnn_model_load_input_mnist(user_nn_list_matrix *mnist, int mnist_index, user_cnn_layers *layers, int layers_index) {
-	user_cnn_layers *cnn_input_layer = user_cnn_layers_get(layers, 1);//获取输入层
-	user_nn_matrix *save_matrix = user_nn_matrices_ext_matrix_index(((user_cnn_input_layers *)cnn_input_layer->content)->feature_matrices, layers_index - 1);//获取矩阵位置
-	user_nn_matrix *mnist_matrix = user_nn_matrices_ext_matrix_index(mnist, mnist_index);
-	user_nn_matrix_cpy_matrix(save_matrix, mnist_matrix);//拷贝矩阵
-	//user_nn_matrix_cpy_matrix_p(save_matrix, mnist_matrix);//指向矩阵
-	user_nn_matrix_divi_constant(save_matrix,255.0);//归一化
-}
 
+//加载特征数据到指定到期望特征数据中
+//layers 加载对象层
+//src_matrix 目标数据
+//返回 无
+void user_cnn_model_load_target_feature(user_cnn_layers *layers, user_nn_matrix *src_matrix) {
+	user_cnn_layers *nn_output_layer = user_cnn_model_return_layer(layers, u_cnn_layer_type_output);//获取输出层
+	user_nn_matrix_cpy_matrix(((user_cnn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix);
+}
 //正向执行一次迭代
 //layers 所创建的层
 //返回值 无
@@ -303,7 +297,7 @@ void user_cnn_model_ffp(user_cnn_layers *layers){
 //index：当前标签位置
 //alpha：更新系数
 //返回值：无
-void user_cnn_model_bp(user_cnn_layers *layers, user_nn_matrix *target, float alpha){
+void user_cnn_model_bp(user_cnn_layers *layers,float alpha){
 	//取得指向最后一层数据指针
 	while (layers->next != NULL){
 		layers = layers->next;
@@ -325,7 +319,7 @@ void user_cnn_model_bp(user_cnn_layers *layers, user_nn_matrix *target, float al
 			user_cnn_bp_fullconnect_back_prior(layers->prior, layers);
 			break;
 		case u_cnn_layer_type_output:
-			user_cnn_bp_output_back_prior(layers->prior, layers, target);
+			user_cnn_bp_output_back_prior(layers->prior, layers);
 			break;
 		default:
 			break;
@@ -416,7 +410,7 @@ float user_cnn_model_return_loss(user_cnn_layers *layers){
 user_cnn_layers *user_cnn_model_return_layer(user_cnn_layers *layers, user_cnn_layer_type type){
 	while (1){
 		if (layers->type == type){
-			return layers;//返回最大值
+			return layers;//返回
 		}
 		if (layers->next == NULL){
 			break;

@@ -11,15 +11,16 @@
 //output_layer 本层
 //index 设置某个位置期望值为1
 //返回 无
-void user_cnn_bp_output_back_prior(user_cnn_layers *prior_layer, user_cnn_layers *output_layer, user_nn_matrix *target){
+void user_cnn_bp_output_back_prior(user_cnn_layers *prior_layer, user_cnn_layers *output_layer){
 	user_cnn_output_layers  *output_layers = (user_cnn_output_layers  *)output_layer->content;//获取本层池化层数据
 	user_nn_matrix			*output_feature_matrix = ((user_cnn_output_layers *)output_layer->content)->feature_matrix;//输出特征数据  矩阵
 	user_nn_matrix          *output_deltas_matrix = ((user_cnn_output_layers *)output_layer->content)->deltas_matrix;//输出层的灵敏度或者残差
 	user_nn_matrix			*output_kernel_matrix = ((user_cnn_output_layers *)output_layer->content)->kernel_matrix;//卷积核连续矩阵
 	user_nn_matrix          *output_error_matrix = ((user_cnn_output_layers *)output_layer->content)->error_matrix;//错误值保存
+	user_nn_matrix			*output_target_matrix = ((user_cnn_output_layers *)output_layer->content)->target_matrix;//目标矩阵
 	user_nn_matrix          *_feture_vector_deltas = NULL;//残差反向传播回前一层,net.fvd保存的是残差
 	//计算输出层 错误值 E = 实际值 - 期望值
-	user_nn_matrix_cum_matrix_mult_alpha(output_error_matrix, output_feature_matrix, target, -1.0f);//计算错误值
+	user_nn_matrix_cum_matrix_mult_alpha(output_error_matrix, output_feature_matrix, output_target_matrix, -1.0f);//计算错误值
 //	user_nn_matrix_printf(NULL, output_feture_maps);
 //	user_nn_matrix_printf(NULL, output_error_maps);
 	//计算输出层代价函数 Y = (1/2)*E^2

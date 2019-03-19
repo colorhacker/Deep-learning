@@ -31,7 +31,7 @@
 #include "user_types.h"
 
 //CNNÅäÖÃ¿ªÊ¼
-#define		user_nn_cnn_softmax				activation_tanh
+#define		user_nn_cnn_softmax				activation_sigmoid
 
 #define		user_nn_cnn_training_folder		"digital"
 #define		user_nn_cnn_training_type		".jpg"

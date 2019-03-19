@@ -34,11 +34,9 @@ void user_nn_app_test(int argc, const char** argv) {
 	target_data->data[1] = 0.01f;
 	while (!model_is_exist) {
 		user_nn_model_load_input_feature(rnn_layers, input_data);//加载输入数据
-		user_nn_model_load_target_feature(rnn_layers, target_data);//记载目标数据
-																   //正向计算一次 按时间片迭代N此
-		user_nn_model_ffp(rnn_layers);
-		//反向计算一次 按时间片迭代N此
-		user_nn_model_bp(rnn_layers, 0.01f);
+		user_nn_model_load_target_feature(rnn_layers, target_data);//加载目标数据									   
+		user_nn_model_ffp(rnn_layers);//正向计算一次
+		user_nn_model_bp(rnn_layers, 0.01f);//反向计算一次
 		loss_function = user_nn_model_return_loss(rnn_layers);
 		if (loss_function <= 0.001f) {
 			user_nn_model_save_model(user_nn_model_nn_file_name, rnn_layers);//保存模型
