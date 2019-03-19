@@ -777,6 +777,18 @@ void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_
 		*save_data++ = *sub_data++;//memcpy
 	}
 }
+//指向sub_matrix矩阵值到src_matrix矩阵
+//参数 要求矩阵相同
+//src_matrix：矩阵
+//sub_matrix：矩阵
+//返回 无
+void user_nn_matrix_cpy_matrix_p(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix) {
+	if ((save_matrix->width != sub_matrix->width) && (save_matrix->height != sub_matrix->height)) {
+		return;
+	}
+	save_matrix->data = sub_matrix->data;
+}
+
 //拷贝sub_matrix矩阵值到src_matrix矩阵 并且在给定位置进行求和参数
 //参数 要求矩阵相同
 //src_matrix：矩阵

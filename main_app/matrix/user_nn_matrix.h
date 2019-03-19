@@ -98,6 +98,7 @@ float user_nn_matrix_cum_element(user_nn_matrix *src_matrix);//ÇóºÍ¾ØÕóÀïÃæËùÓĞÖ
 void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//ÇóºÍÁ½¸ö¾ØÕó ¾ØÕósrc_matrixÓë¾ØÕósub_matrixÃ¿¸öÔªËØ½øĞĞ¼Ó·¨ÔËËã ½á¹û±£´æÔÚsrc_matrixÀïÃæ
 void user_nn_matrix_cum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, float alpha);//ÇóºÍÁ½¸ö¾ØÕó ¾ØÕósrc_matrixÓë¾ØÕósub_matrix*alphaÃ¿¸öÔªËØ½øĞĞ¼Ó·¨ÔËËã ½á¹û±£´æÔÚsrc_matrixÀïÃæ
 void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix);//¿½±´¾ØÕósub_matrixÊı¾İµ½¾ØÕósrc_matrixÖĞ
+void user_nn_matrix_cpy_matrix_p(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix);//Ö¸Ïò¾ØÕósub_matrixÊı¾İµ½¾ØÕósrc_matrixÖĞ
 void user_nn_matrix_cpy_matrix_sum_constant(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix, int index, float constant);//¿½±´¾ØÕóµ½Ö¸¶¨¾ØÕóÖĞ£¬ÔÚ¸ø¶¨Î»ÖÃµØ·½½øĞĞÇóºÍconstant
 float user_nn_matrix_mult_cum_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//¾ØÕósrc_matrix.*sub_matrix È»ºóÇóºÍ¾ØÕóÀïÃæËùÓĞÖµ £¨Ìõ¼şÒªÇó¾ØÕó´óĞ¡ÍêÈ«Ò»ÖÂ£©
 user_nn_matrix *user_nn_matrix_ext_matrix(user_nn_matrix *src_matrix, int startx, int starty, int width, int height);//ÔÚ¾ØÕósrc_matrix ÖĞÌáÈ¡Ö¸¶¨£¨startx,starty£©Î»ÖÃÎª»ùµã µÄÖ¸¶¨width¡¢height´óĞ¡µÄ¾ØÕóÇøÓò

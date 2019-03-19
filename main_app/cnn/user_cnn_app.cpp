@@ -19,7 +19,6 @@ void cnn_detect(int argc, const char** argv) {
 		'o', 10//输出层 特征（分类个数）
 	};
 
-	int target_index = 0;
 	char *full_path = NULL;
 	bool model_is_exist = false;
 	float loss_function = 0;
@@ -28,6 +27,12 @@ void cnn_detect(int argc, const char** argv) {
 	user_nn_list_matrix *test_images = user_nn_model_file_read_matrices("./mnist/files/t10k-images.idx3-ubyte.bx", 0);
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
+
+	if (train_images == NULL) {
+		printf("not found mnist files!");
+		system("pause");
+		return ;
+	}
 
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	user_cnn_layers *cnn_layers = user_cnn_model_load_model(user_nn_model_cnn_file_name);//载入模型
@@ -46,9 +51,9 @@ void cnn_detect(int argc, const char** argv) {
 	//进行训练
 	while (!model_is_exist) {
 		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
-			target_index = user_cnn_model_load_input_mnist(train_images, train_lables, train_index, cnn_layers, 1);//加载图像
+			user_cnn_model_load_input_mnist(train_images, train_index, cnn_layers, 1);//加载图像
 			user_cnn_model_ffp(cnn_layers);//正向计算一次
-			user_cnn_model_bp(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, target_index), 0.5f);//反向训练一次
+			user_cnn_model_bp(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index), 0.5f);//反向训练一次
 			loss_function = user_cnn_model_return_loss(cnn_layers);//获取损失函数
 			if (sw_display) {
 				user_cnn_model_display_feature(cnn_layers);//显示所有特征数据
@@ -76,14 +81,14 @@ void cnn_detect(int argc, const char** argv) {
 	user_model_save_string("分钟");
 	//进行测试
 	int error_count = 0;
-	for (int train_index = 0; train_index < test_images->height * test_images->width; train_index++) {
-		target_index = user_cnn_model_load_input_mnist(test_images, train_lables, train_index, cnn_layers, 1);//加载图像
+	for (int test_index = 0; test_index < test_images->height * test_images->width; test_index++) {
+		user_cnn_model_load_input_mnist(test_images, test_index, cnn_layers, 1);//加载图像
 		user_cnn_model_ffp(cnn_layers);//正向计算一次
-		if (user_cnn_model_return_class(cnn_layers) != user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, target_index))) {
+		if (user_cnn_model_return_class(cnn_layers) != user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index))) {
 			error_count++;
 			user_model_save_string("\n\n识别错误\n 文件路径:");
 			user_model_save_string("\n测试数值为:");
-			user_model_save_int(user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, target_index)));
+			user_model_save_int(user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index)));
 			user_model_save_string("\n识别为:");
 			user_model_save_int(user_cnn_model_return_class(cnn_layers));
 		}
