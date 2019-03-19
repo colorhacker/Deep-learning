@@ -259,9 +259,9 @@ void user_cnn_model_load_input_mnist(user_nn_list_matrix *mnist, int mnist_index
 	user_cnn_layers *cnn_input_layer = user_cnn_layers_get(layers, 1);//获取输入层
 	user_nn_matrix *save_matrix = user_nn_matrices_ext_matrix_index(((user_cnn_input_layers *)cnn_input_layer->content)->feature_matrices, layers_index - 1);//获取矩阵位置
 	user_nn_matrix *mnist_matrix = user_nn_matrices_ext_matrix_index(mnist, mnist_index);
-	//user_nn_matrix_cpy_matrix(save_matrix, mnist_matrix);//拷贝矩阵
-	user_nn_matrix_cpy_matrix_p(save_matrix, mnist_matrix);//指向矩阵
-	//user_nn_matrix_divi_constant(save_matrix,255.0);//归一化
+	user_nn_matrix_cpy_matrix(save_matrix, mnist_matrix);//拷贝矩阵
+	//user_nn_matrix_cpy_matrix_p(save_matrix, mnist_matrix);//指向矩阵
+	user_nn_matrix_divi_constant(save_matrix,255.0);//归一化
 }
 
 //正向执行一次迭代
