@@ -43,10 +43,7 @@ void cnn_detect(int argc, const char** argv) {
 	else {
 		printf("loading model success\n");
 		model_is_exist = true;
-		printf("\n是否继续训练：\n 键入 y 回车进行开启，直接回车默认关闭\n\n");
-		model_is_exist = (getchar() == 'y') ?  false : true;
 	}
-	model_is_exist = false;////*************
 	clock_t start_time = clock();
 	int loss_info = 0;
 	//进行训练
@@ -89,7 +86,7 @@ void cnn_detect(int argc, const char** argv) {
 		user_cnn_model_ffp(cnn_layers);//正向计算一次
 		if (user_cnn_model_return_class(cnn_layers) != user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index))) {
 			error_count++;
-			user_model_save_string("\n\n识别错误\n 文件路径:");
+			user_model_save_string("\n\n识别错误");
 			user_model_save_string("\n测试数值为:");
 			user_model_save_int(user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index)));
 			user_model_save_string("\n识别为:");
