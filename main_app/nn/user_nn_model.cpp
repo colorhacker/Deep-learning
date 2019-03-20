@@ -181,3 +181,55 @@ user_nn_layers *user_nn_model_return_layer(user_nn_layers *layers, user_nn_layer
 user_nn_matrix *user_nn_model_return_result(user_nn_layers *layers) {
 	return ((user_nn_output_layers *)user_nn_model_return_layer(layers, u_nn_layer_type_output)->content)->feature_matrix;
 }
+
+//显示一连续矩阵
+//window_name 窗口名称
+//src_matrices 连续矩阵的对象
+//gain 放大倍数
+//返回 无
+void user_nn_model_display_matrix(char *window_name, user_nn_matrix  *src_matrix, int gain) {
+	user_nn_matrix *dest_matrix = user_nn_matrix_expand_mult_constant(src_matrix, gain, gain, (float)255);//进行放大处理
+	CvSize cvsize = { dest_matrix->width, dest_matrix->height };
+	IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
+	user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, dest_matrix);//更新图像数据
+	cvShowImage(window_name, dest_image);//显示图像
+	cvWaitKey(1);
+	cvReleaseImage(&dest_image);//释放内存
+	user_nn_matrix_delete(dest_matrix);//删除矩阵
+}
+void user_nn_model_display_feature(user_nn_layers *layers) {
+	static int create_flags = 0;
+	char windows_name[128];
+
+	if (create_flags == 0) {
+		create_flags = 1;
+	}
+	while (1) {
+		memset(windows_name, 0, sizeof(windows_name));
+		switch (layers->type) {
+		case u_nn_layer_type_null:
+			break;
+		case u_nn_layer_type_input:
+			sprintf(windows_name, "input%d", layers->index);
+			user_nn_model_display_matrix(windows_name, ((user_nn_input_layers  *)layers->content)->feature_matrix, 2);//显示到指定窗口
+			break;
+		case u_nn_layer_type_hidden:
+			sprintf(windows_name, "hidden%d", layers->index);
+			user_nn_model_display_matrix(windows_name, ((user_nn_hidden_layers  *)layers->content)->feature_matrix, 2);//显示到指定窗口
+			break;
+		case u_nn_layer_type_output:
+			sprintf(windows_name, "output%d", layers->index);
+			user_nn_model_display_matrix(windows_name, ((user_nn_output_layers  *)layers->content)->feature_matrix, 2);//显示到指定窗口
+			break;
+		default:
+			break;
+		}
+
+		if (layers->next == NULL) {
+			break;
+		}
+		else {
+			layers = layers->next;
+		}
+	}
+}

@@ -13,5 +13,6 @@ void user_nn_model_ffp(user_nn_layers *layers);
 void user_nn_model_bp(user_nn_layers *layers, float alpha);
 float user_nn_model_return_loss(user_nn_layers *layers);
 user_nn_matrix *user_nn_model_return_result(user_nn_layers *layers);
+void user_nn_model_display_feature(user_nn_layers *layers);
 
 #endif

@@ -13,7 +13,6 @@ typedef enum _abswer_type {
 	abswer_hex = 1//
 }abswer_type;
 
-void user_nn_app_test(int argc, const char** argv);
-void user_nn_app_topic(int argc, const char** argv);
+void user_nn_app_train(int argc, const char** argv);
 
 #endif
