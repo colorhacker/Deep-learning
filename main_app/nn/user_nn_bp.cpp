@@ -40,7 +40,7 @@ float user_nn_bp_output_back_prior(user_nn_layers *prior_layer, user_nn_layers *
 
 	//(Lo, Er) = output_loss_error(Oh, Ta)
 	user_nn_matrix_cum_matrix_mult_alpha(error_matrix, output_feature_matrix, target_feature_matrix, -1.0f);//减法
-	output_layers->loss_function = user_nn_matrix_get_rms(error_matrix);//获取均方根误差
+	output_layers->loss_function = user_nn_matrix_get_rmse(error_matrix);//获取均方根误差
 	//dOh=np.multiply(Er,act_function_d(Oh))
 	deltas_matrix = output_layers->deltas_matrix;//获取残差矩阵
 	user_nn_activate_matrix_d(output_feature_matrix, user_nn_nn_softmax);//求导输出数据

@@ -45,7 +45,7 @@ float user_rnn_bp_output_back_prior(user_rnn_layers *prior_layer, user_rnn_layer
 		loss_vaule = &output_layers->loss_function;//获取损失函数
 		//(Lo, Er) = output_loss_error(Oh, Ta)
 		user_nn_matrix_cum_matrix_mult_alpha(error_matrix, output_feature_matrix, target_feature_matrix, -1.0f);//减法
-		*loss_vaule = *loss_vaule + user_nn_matrix_get_rms(error_matrix);//获取军方误差
+		*loss_vaule = *loss_vaule + user_nn_matrix_get_rmse(error_matrix);//获取军方误差
 		//dOh=np.multiply(Er,act_function_d(Oh))
 		deltas_matrix = user_nn_matrices_ext_matrix_index(output_layers->deltas_matrices, time_index);//获取残差矩阵
 		user_nn_activate_matrix_d(output_feature_matrix, user_nn_rnn_softmax);//求导输出数据

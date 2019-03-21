@@ -6,7 +6,8 @@
 
 typedef enum _activation_type {
 	activation_sigmoid = 0,//
-	activation_tanh = 1//
+	activation_tanh = 1,//
+	activation_prelu = 2
 }activation_type;
 
 

@@ -999,7 +999,7 @@ user_nn_matrix *user_nn_matrix_conv2(user_nn_matrix *src_matrix, user_nn_matrix 
 //计算矩阵的均方误差
 //src_matrix：倍计算的矩阵
 //返回 损失函数
-float user_nn_matrix_get_rms(user_nn_matrix *src_matrix) {
+float user_nn_matrix_get_mse(user_nn_matrix *src_matrix) {
 	//user_nn_matrix_poit_mult_matrix(error_matrix_temp, error_matrix_temp, error_matrix_temp);//矩阵乘法
 	//*loss_vaule = *loss_vaule + user_nn_matrix_cum_element(error_matrix_temp) / (error_matrix_temp->height*error_matrix_temp->width);//计算损失函数
 	float loss = 0.0f;
@@ -1010,6 +1010,21 @@ float user_nn_matrix_get_rms(user_nn_matrix *src_matrix) {
 		src_data++;
 	}
 	return float(loss / (src_matrix->width*src_matrix->height));
+}
+//计算矩阵的均方根误差
+//src_matrix：倍计算的矩阵
+//返回 损失函数
+float user_nn_matrix_get_rmse(user_nn_matrix *src_matrix) {
+	//user_nn_matrix_poit_mult_matrix(error_matrix_temp, error_matrix_temp, error_matrix_temp);//矩阵乘法
+	//*loss_vaule = *loss_vaule + user_nn_matrix_cum_element(error_matrix_temp) / (error_matrix_temp->height*error_matrix_temp->width);//计算损失函数
+	float loss = 0.0f;
+	float *src_data = src_matrix->data;
+	int count = src_matrix->width * src_matrix->height;
+	while (count--) {
+		loss = *src_data * *src_data;
+		src_data++;
+	}
+	return sqrt(loss / (src_matrix->width*src_matrix->height));
 }
 
 //矩阵复制

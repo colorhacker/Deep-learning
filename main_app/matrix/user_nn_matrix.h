@@ -109,7 +109,8 @@ bool user_nn_matrix_sum_array_mult_alpha(user_nn_matrix *dest_matrix, float *src
 void user_nn_matrix_pooling(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *kernel_matrix);//池化矩阵  矩阵sub_matrix卷积src_matrix每个区域，区域不重叠 返回新的结果矩阵
 user_nn_matrix *user_nn_matrix_conv2(user_nn_matrix *src_matrix, user_nn_matrix *kernel_matrix, user_nn_conv2_type type);//卷积矩阵  矩阵sub_matrix卷积src_matrix 返回新的结果矩阵
 
-float user_nn_matrix_get_rms(user_nn_matrix *src_matrix);//求取均方误差
+float user_nn_matrix_get_mse(user_nn_matrix *src_matrix);//求取均方误差
+float user_nn_matrix_get_rmse(user_nn_matrix *src_matrix);//求取均方根误差
 
 //matlab函数
 user_nn_matrix *user_nn_matrix_repmat(user_nn_matrix *dest, int m, int n);//矩阵复制

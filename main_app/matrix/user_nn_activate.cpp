@@ -10,6 +10,8 @@ float user_nn_activate_softmax(float value, activation_type type) {
 			return (float)1.0f / ((float)(1.0f + exp(-value)));//S生长型函数
 		case activation_tanh:
 			return (float)tanh(((float)value));//双曲函数
+		case activation_prelu:
+			return value >= 0?value : (float)value*0.01;//relu激活
 		default:break;
 	}
 	return 0;
@@ -24,6 +26,8 @@ float user_nn_activate_softmax_d(float value, activation_type type) {
 		return (float)(value*(1 - value));//S生长型函数
 	case activation_tanh:
 		return (float)(1 - value*value);//双曲函数
+	case activation_prelu:
+		return value >= 0 ? 1.0 : 0.0;//relu激活
 	default:break;
 	}
 	return 0;

@@ -30,7 +30,7 @@ void mnist_conv_list_matrix(char *file_name) {
 		for (int index = 0; index < mnist_header->number_of_items; index++) {
 			matrix_data = user_nn_matrices_ext_matrix_index(mnist_data_list, index)->data;
 			for (int size = 0; size < mnist_header->number_of_columns*mnist_header->number_of_rows; size++) {
-				*matrix_data++ = (float)fgetc(file_handle);
+				*matrix_data++ = (float)fgetc(file_handle)/255.0;
 			}
 		}
 	}

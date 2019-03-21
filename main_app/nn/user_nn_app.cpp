@@ -30,7 +30,6 @@ void user_nn_app_train(int argc, const char** argv) {
 		for (int index = 0;index < train_images->height * train_images->width; index++) {
 			user_nn_matrix_cpy_matrix(input_mnist_data, user_nn_matrices_ext_matrix_index(train_images, index));
 			user_nn_model_load_input_feature(nn_layers, input_mnist_data);//加载输入数据
-			user_nn_matrix_divi_constant(input_mnist_data, 255.0);
 			user_nn_model_load_target_feature(nn_layers, input_mnist_data);//加载目标数据	
 			//user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, 1));//加载目标数据	
 			user_nn_model_ffp(nn_layers);//正向计算一次
