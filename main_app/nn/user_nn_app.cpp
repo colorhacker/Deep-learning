@@ -7,7 +7,7 @@ void user_nn_app_train(int argc, const char** argv) {
 		'i', 1, 784, //输入层 特征（宽度、高度）
 		'h', 784, //隐含层 特征 （高度）
 		//'h', 784, //隐含层 特征 （高度）
-		'o', 10 //输出层 特征 （高度）
+		'o', 784 //输出层 特征 （高度）
 	};
 
 	float loss_function = 1.0f;
@@ -29,13 +29,14 @@ void user_nn_app_train(int argc, const char** argv) {
 	if (model_is_exist == false) {
 		for (int index = 0;index < train_images->height * train_images->width; index++) {
 			user_nn_matrix_cpy_matrix(input_mnist_data, user_nn_matrices_ext_matrix_index(train_images, index));
-			user_nn_matrix_divi_constant(input_mnist_data, 255.0);
 			user_nn_model_load_input_feature(nn_layers, input_mnist_data);//加载输入数据
-			user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_lables, index));//加载目标数据									   
+			user_nn_matrix_divi_constant(input_mnist_data, 255.0);
+			user_nn_model_load_target_feature(nn_layers, input_mnist_data);//加载目标数据	
+			//user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, 1));//加载目标数据	
 			user_nn_model_ffp(nn_layers);//正向计算一次
-			user_nn_model_bp(nn_layers, 0.5f);//反向计算一次
+			user_nn_model_bp(nn_layers, 0.01f);//反向计算一次
 			loss_function = user_nn_model_return_loss(nn_layers);
-			//user_nn_model_display_feature(nn_layers);
+			user_nn_model_display_feature(nn_layers);
 			printf("\n%d loss:%f",  index, loss_function);
 			if (loss_function <= 0.000001f) {
 				//user_nn_model_save_model(user_nn_model_nn_file_name, nn_layers);//保存模型

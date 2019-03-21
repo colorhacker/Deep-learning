@@ -38,7 +38,8 @@ user_nn_layers *user_nn_model_create(int *layer_infor) {
 //返回 无
 void user_nn_model_load_input_feature(user_nn_layers *layers, user_nn_matrix *src_matrix) {
 	user_nn_layers *nn_input_layer = user_nn_layers_get(layers, 1);//获取输入层
-	user_nn_matrix_cpy_matrix(((user_nn_input_layers *)nn_input_layer->content)->feature_matrix, src_matrix);
+	//user_nn_matrix_cpy_matrix(((user_nn_input_layers *)nn_input_layer->content)->feature_matrix, src_matrix);
+	user_nn_matrix_memcpy(((user_nn_input_layers *)nn_input_layer->content)->feature_matrix, src_matrix->data);
 }
 //加载特征数据到指定到期望特征数据中
 //layers 加载对象层
@@ -46,7 +47,8 @@ void user_nn_model_load_input_feature(user_nn_layers *layers, user_nn_matrix *sr
 //返回 无
 void user_nn_model_load_target_feature(user_nn_layers *layers, user_nn_matrix *src_matrix) {
 	user_nn_layers *nn_output_layer = user_nn_model_return_layer(layers, u_nn_layer_type_output);//获取输入层
-	user_nn_matrix_cpy_matrix(((user_nn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix);
+	//user_nn_matrix_cpy_matrix(((user_nn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix);
+	user_nn_matrix_memcpy(((user_nn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix->data);
 }
 //正向执行一次迭代
 //layers 所创建的层
@@ -188,7 +190,10 @@ user_nn_matrix *user_nn_model_return_result(user_nn_layers *layers) {
 //gain 放大倍数
 //返回 无
 void user_nn_model_display_matrix(char *window_name, user_nn_matrix  *src_matrix, int gain) {
-	user_nn_matrix *dest_matrix = user_nn_matrix_expand_mult_constant(src_matrix, gain, gain, (float)255);//进行放大处理
+	user_nn_matrix *src_matrix_x = user_nn_matrix_cpy_create(src_matrix);
+	src_matrix_x->height = (int)sqrt(src_matrix->height*src_matrix->width);
+	src_matrix_x->width = (int)sqrt(src_matrix->height*src_matrix->width);
+	user_nn_matrix *dest_matrix = user_nn_matrix_expand_mult_constant(src_matrix_x, gain, gain, (float)255);//进行放大处理
 	CvSize cvsize = { dest_matrix->width, dest_matrix->height };
 	IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
 	user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, dest_matrix);//更新图像数据
@@ -196,15 +201,18 @@ void user_nn_model_display_matrix(char *window_name, user_nn_matrix  *src_matrix
 	cvWaitKey(1);
 	cvReleaseImage(&dest_image);//释放内存
 	user_nn_matrix_delete(dest_matrix);//删除矩阵
+	user_nn_matrix_delete(src_matrix_x);//删除矩阵
 }
 void user_nn_model_display_feature(user_nn_layers *layers) {
 	static int create_flags = 0;
+	int window_count = -1;
 	char windows_name[128];
 
 	if (create_flags == 0) {
 		create_flags = 1;
 	}
 	while (1) {
+		window_count++;
 		memset(windows_name, 0, sizeof(windows_name));
 		switch (layers->type) {
 		case u_nn_layer_type_null:
@@ -212,14 +220,17 @@ void user_nn_model_display_feature(user_nn_layers *layers) {
 		case u_nn_layer_type_input:
 			sprintf(windows_name, "input%d", layers->index);
 			user_nn_model_display_matrix(windows_name, ((user_nn_input_layers  *)layers->content)->feature_matrix, 2);//显示到指定窗口
+			cvMoveWindow(windows_name,50 + window_count*70,20);
 			break;
 		case u_nn_layer_type_hidden:
 			sprintf(windows_name, "hidden%d", layers->index);
 			user_nn_model_display_matrix(windows_name, ((user_nn_hidden_layers  *)layers->content)->feature_matrix, 2);//显示到指定窗口
+			cvMoveWindow(windows_name, 50 + window_count * 70, 20);
 			break;
 		case u_nn_layer_type_output:
 			sprintf(windows_name, "output%d", layers->index);
 			user_nn_model_display_matrix(windows_name, ((user_nn_output_layers  *)layers->content)->feature_matrix, 2);//显示到指定窗口
+			cvMoveWindow(windows_name, 50 + window_count * 70, 20);
 			break;
 		default:
 			break;
