@@ -73,8 +73,8 @@
     <IncludePath>$(ProjectDir)opencv;$(ProjectDir)opencv\opencv;$(ProjectDir)opencv\opencv2;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
     <LibraryPath>$(ProjectDir)opencv\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\deep_output\Debug\exe</OutDir>
-    <IntDir>..\..\deep_output\Debug\link</IntDir>
+    <OutDir>..\..\_output\Debug\exe</OutDir>
+    <IntDir>..\..\_output\Debug\link</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,8 +85,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)output\Release</OutDir>
-    <IntDir>$(ProjectDir)output\Release</IntDir>
+    <OutDir>..\..\_output\Release\exe</OutDir>
+    <IntDir>..\..\_output\Release\link</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
