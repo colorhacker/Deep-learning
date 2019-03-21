@@ -6,7 +6,7 @@ void user_nn_app_train(int argc, const char** argv) {
 	int user_layers[] = {
 		'i', 1, 784, //输入层 特征（宽度、高度）
 		'h', 784, //隐含层 特征 （高度）
-		//'h', 784, //隐含层 特征 （高度）
+		'h', 784, //隐含层 特征 （高度）
 		'o', 784 //输出层 特征 （高度）
 	};
 

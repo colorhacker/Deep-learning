@@ -42,7 +42,7 @@ void user_rnn_app_test(int argc, const char** argv) {
 	//user_nn_matrices_printf(NULL, "target", target_data);
 	while (!model_is_exist) {
 		user_rnn_model_load_input_feature(rnn_layers, input_data);//加载输入数据
-		user_rnn_model_load_target_feature(rnn_layers, target_data);//记载目标数据
+		user_rnn_model_load_target_feature(rnn_layers, target_data);//加载目标数据
 																	//正向计算一次 按时间片迭代N此
 		user_rnn_model_ffp(rnn_layers);
 		//反向计算一次 按时间片迭代N此
