@@ -145,18 +145,14 @@ void user_cnn_model_display_matrices(char *window_name, user_nn_list_matrix  *sr
 //返回 无
 void user_cnn_model_display_feature(user_cnn_layers *layers){
 	static int create_flags = 0;
+	int window_count = -1;
 	char windows_name[128];
 
 	if (create_flags == 0){
 		create_flags = 1;
-		/*cvNamedWindow("input1", CV_WINDOW_AUTOSIZE); cvMoveWindow("input1", 100, 100);
-		cvNamedWindow("conv2", CV_WINDOW_AUTOSIZE); cvMoveWindow("conv2", 300, 100);
-		//cvNamedWindow("pool3", CV_WINDOW_AUTOSIZE);cvMoveWindow("pool3", 100, 100);
-		cvNamedWindow("conv4", CV_WINDOW_AUTOSIZE); cvMoveWindow("conv4", 500, 100);
-		//cvNamedWindow("pool5", CV_WINDOW_AUTOSIZE);cvMoveWindow("pool5", 100, 100);
-		//cvNamedWindow("output6", CV_WINDOW_AUTOSIZE);cvMoveWindow("output6", 100, 100);*/
 	}
 	while (1){
+		window_count++;
 		memset(windows_name, 0, sizeof(windows_name));
 		switch (layers->type){
 		case u_cnn_layer_type_null:
@@ -164,10 +160,12 @@ void user_cnn_model_display_feature(user_cnn_layers *layers){
 		case u_cnn_layer_type_input:
 			sprintf(windows_name, "input%d", layers->index);
 			user_cnn_model_display_matrices(windows_name, ((user_cnn_input_layers  *)layers->content)->feature_matrices, 2);//显示到指定窗口
+			cvMoveWindow(windows_name, 50 + window_count * 70, 20);
 			break;
 		case u_cnn_layer_type_conv:
 			sprintf(windows_name, "conv%d", layers->index);
 			user_cnn_model_display_matrices(windows_name, ((user_cnn_conv_layers  *)layers->content)->feature_matrices, 2);//显示到指定窗口
+			cvMoveWindow(windows_name, 50 + window_count * 70, 20);
 			break;
 		case u_cnn_layer_type_pool:
 			//sprintf(windows_name, "pool%d", layers->index);
@@ -420,6 +418,53 @@ user_cnn_layers *user_cnn_model_return_layer(user_cnn_layers *layers, user_cnn_l
 		}
 	}
 	return NULL;
+}
+
+//显示layers所有属性配置
+//layers 查找的对象层
+//type 直接打印出来
+//返回 结果对象层
+void user_cnn_model_info_layer(user_cnn_layers *layers) {
+	user_cnn_input_layers	*input_infor = NULL;
+	user_cnn_conv_layers	*conv_infor = NULL;
+	user_cnn_pool_layers	*pool_infor = NULL;
+	user_cnn_output_layers  *output_infor = NULL;
+	user_cnn_full_layers	*full_infor = NULL;
+	printf("\n\n-----CNN神经网络层信息-----\n");
+	while (1) {
+		switch (layers->type) {
+		case u_cnn_layer_type_null:
+			break;
+		case u_cnn_layer_type_input:
+			input_infor = (user_cnn_input_layers *)layers->content;
+			printf("\n第%d层,输入%d个(%d,%d)数据", layers->index,input_infor->feature_number, input_infor->feature_width, input_infor->feature_height);
+			break;
+		case u_cnn_layer_type_conv:
+			conv_infor = (user_cnn_conv_layers *)layers->content;
+			printf("\n第%d层,卷积%d个(%d,%d)神经集", layers->index, conv_infor->feature_number, conv_infor->kernel_width, conv_infor->kernel_height);
+			break;
+		case u_cnn_layer_type_pool:
+			pool_infor = (user_cnn_pool_layers *)layers->content;
+			printf("\n第%d层,池化类型%d,大小(%d,%d)", layers->index, pool_infor->pool_type, pool_infor->pool_width, pool_infor->pool_height);
+			break;
+		case u_cnn_layer_type_full:
+			full_infor = (user_cnn_full_layers *)layers->content;
+			printf("\n第%d层,全连接大小(%d,%d)", layers->index, full_infor->kernel_matrix->width, full_infor->kernel_matrix->height);
+			break;
+		case u_cnn_layer_type_output:
+			output_infor = (user_cnn_output_layers *)layers->content;
+			printf("\n第%d层,输出大小(%d,%d)\n", layers->index, output_infor->feature_matrix->width, output_infor->feature_matrix->height);
+			break;
+		default:
+			break;
+		}
+		if (layers->next == NULL) {
+			break;
+		}
+		else {
+			layers = layers->next;
+		}
+	}
 }
 
 //指定文件追加字符串

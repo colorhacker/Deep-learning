@@ -11,9 +11,9 @@ void user_cnn_mnist_train() {
 		'f',//全连接层---增减全链接层之后 训练速度明显降低许多
 		'o', 10//输出层 特征（分类个数）
 	};
-	bool model_is_exist = false, sw_display = false;
+	bool sw_display = false;
 	int save_model_count = 0;
-	float loss_function = 0;
+	float loss_function = 0,target_loss= 0.001f;
 	clock_t start_time, end_time;
 	printf("\n\n");
 	printf("\n-----训练可视化-----\n");
@@ -29,20 +29,14 @@ void user_cnn_mnist_train() {
 		system("pause");
 		return ;
 	}
-	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	user_cnn_layers *cnn_layers = user_cnn_model_load_model(user_nn_model_cnn_file_name);//载入模型
 	if (cnn_layers == NULL) {
 		printf("loading model failed\ncreate cnn new object \n");
 		cnn_layers = user_cnn_model_create(user_layers);//创建模型
-		model_is_exist = false;
 	}
-	else {
-		printf("loading model success\n");
-		model_is_exist = true;
-	}
+	user_cnn_model_info_layer(cnn_layers);
 	start_time = clock();
-	//进行训练
-	while (!model_is_exist) {
+	while (1) {
 		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
 			user_cnn_model_load_input_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index), 1);
 			user_cnn_model_load_target_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标矩阵
@@ -53,7 +47,7 @@ void user_cnn_mnist_train() {
 				user_cnn_model_display_feature(cnn_layers);//显示所有特征数据
 			}
 			//如果损失函数小于期望值直接退出
-			if (loss_function < 0.001f) {
+			if (loss_function < target_loss) {
 				break;//跳出迭代
 			}
 			if (save_model_count++ > 1000) {
@@ -62,9 +56,9 @@ void user_cnn_mnist_train() {
 				user_cnn_model_save_model(user_nn_model_cnn_file_name, cnn_layers);//保存一次模型
 			}
 		}
-		printf("loss:%f\n", loss_function);
+		printf("target:%f loss:%f\n", target_loss, loss_function);
 		//如果损失函数小于期望值直接退出
-		if (loss_function < 0.001f) {
+		if (loss_function < target_loss) {
 			break;//跳出训练
 		}
 	}

@@ -21,7 +21,7 @@ void user_cnn_model_bp(user_cnn_layers *layers,float alpha);//反向计算一次
 int user_cnn_model_return_class(user_cnn_layers *layers);//获取识别的类
 float user_cnn_model_return_loss(user_cnn_layers *layers);//获取代价函数
 user_cnn_layers *user_cnn_model_return_layer(user_cnn_layers *layers, user_cnn_layer_type type);
-
+void user_cnn_model_info_layer(user_cnn_layers *layers);
 
 void user_model_save_string(char *str);
 void user_model_save_int(int vaule);

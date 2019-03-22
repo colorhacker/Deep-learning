@@ -177,6 +177,42 @@ user_nn_layers *user_nn_model_return_layer(user_nn_layers *layers, user_nn_layer
 	}
 	return NULL;
 }
+//显示layers所有属性配置
+//layers 查找的对象层
+//type 直接打印出来
+//返回 结果对象层
+void user_nn_model_info_layer(user_nn_layers *layers) {
+	user_nn_input_layers	*input_infor = NULL;
+	user_nn_hidden_layers	*hidden_infor = NULL;
+	user_nn_output_layers   *output_infor = NULL;
+	printf("\n\n-----NN神经网络层信息-----\n");
+	while (1) {
+		switch (layers->type) {
+			case u_nn_layer_type_null:
+				break;
+			case u_nn_layer_type_input:
+				input_infor = (user_nn_input_layers *)layers->content;
+				printf("\n第%d层,输入数据(%d,%d).", layers->index, input_infor->feature_width, input_infor->feature_height);
+				break;
+			case u_nn_layer_type_hidden:
+				hidden_infor = (user_nn_hidden_layers *)layers->content;
+				printf("\n第%d层,神经元大小(%d,%d).", layers->index, hidden_infor->feature_width, hidden_infor->feature_height);
+				break;
+			case u_nn_layer_type_output:
+				output_infor = (user_nn_output_layers *)layers->content;
+				printf("\n第%d层,输出数据(%d,%d).\n", layers->index, output_infor->feature_width, output_infor->feature_height);
+				break;
+			default:
+				break;
+		}
+		if (layers->next == NULL) {
+			break;
+		}
+		else {
+			layers = layers->next;
+		}
+	}
+}
 //获取输出矩阵
 //layers 获取对象层
 //返回 矩阵值
@@ -220,7 +256,7 @@ void user_nn_model_display_feature(user_nn_layers *layers) {
 		case u_nn_layer_type_input:
 			sprintf(windows_name, "input%d", layers->index);
 			user_nn_model_display_matrix(windows_name, ((user_nn_input_layers  *)layers->content)->feature_matrix, 2);//显示到指定窗口
-			cvMoveWindow(windows_name,50 + window_count*70,20);
+			cvMoveWindow(windows_name,50 + window_count * 70,20);
 			break;
 		case u_nn_layer_type_hidden:
 			sprintf(windows_name, "hidden%d", layers->index);

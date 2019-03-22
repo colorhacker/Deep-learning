@@ -7,6 +7,7 @@
 
 user_nn_layers *user_nn_model_create(int *layer_infor);//创建nn模型
 user_nn_layers *user_nn_model_return_layer(user_nn_layers *layers, user_nn_layer_type type);
+void user_nn_model_info_layer(user_nn_layers *layers);//显示层信息
 void user_nn_model_load_input_feature(user_nn_layers *layers, user_nn_matrix *src_matrix);
 void user_nn_model_load_target_feature(user_nn_layers *layers, user_nn_matrix *src_matrix);
 void user_nn_model_ffp(user_nn_layers *layers);

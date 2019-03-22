@@ -73,7 +73,7 @@ typedef struct _cnn_full_layers{
 //输出层
 typedef struct _cnn_output_layers{
 	int feature_number;//本层具有特征个数
-	int class_number;//分类个数
+	int class_number;//分类个数---临时保存
 	float loss_function;//代价函数
 
 	user_nn_matrix *input_feature_matrix;//输入特征数据 是上层的所有特征拉成一个矩阵

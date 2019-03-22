@@ -11,7 +11,19 @@
 #include "mnist\user_mnist.h"
 
 int main(int argc, const char** argv){
-	user_nn_app_train(NULL,NULL);
+	printf("\n-----功能选择-----\n");
+	printf("\n1.cnn测试");
+	printf("\n2.rnn测试");
+	printf("\n3.nn测试\n");
+	//printf("\n随机码：%d\n", (unsigned)time(NULL));
+	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
+	printf("\n请输入数字：");
+	switch (getch()) {
+		case '1':user_cnn_app_test(argc, argv); break;
+		case '2':user_rnn_app_test(argc, argv); break;
+		case '3':user_nn_app_test(argc, argv); break;
+		default: break;
+	}
 	getch();
 	return 0;
 }

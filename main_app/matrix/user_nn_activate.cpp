@@ -11,7 +11,7 @@ float user_nn_activate_softmax(float value, activation_type type) {
 		case activation_tanh:
 			return (float)tanh(((float)value));//Ë«Çúº¯Êý
 		case activation_prelu:
-			return value >= 0?value : (float)value*0.01;//relu¼¤»î
+			return value >= 0? (float)value : (float)value*0.01f;//relu¼¤»î
 		default:break;
 	}
 	return 0;
@@ -27,7 +27,7 @@ float user_nn_activate_softmax_d(float value, activation_type type) {
 	case activation_tanh:
 		return (float)(1 - value*value);//Ë«Çúº¯Êý
 	case activation_prelu:
-		return value >= 0 ? 1.0 : 0.01;//relu¼¤»î
+		return value >= 0 ? 1.0f : 0.01f;//relu¼¤»î
 	default:break;
 	}
 	return 0;
