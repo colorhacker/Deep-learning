@@ -32,7 +32,7 @@
 #include "user_types.h"
 
 //CNN配置开始
-#define		user_nn_cnn_softmax				activation_prelu
+#define		user_nn_cnn_softmax				activation_tanh
 
 #define		user_nn_cnn_training_folder		"digital"
 #define		user_nn_cnn_training_type		".jpg"
@@ -50,7 +50,7 @@
 #define		user_nn_model_rnn_data_addr		 0x1000		//保存数据的基地址
 //RNN配置结束
 //NN配置开始
-#define		user_nn_nn_softmax				activation_tanh
+#define		user_nn_nn_softmax				activation_prelu
 
 #define		user_nn_model_nn_file_name		"./model/nn_model.bin"
 #define		user_nn_model_nn_layer_addr		 0x0		//保存层的基地址
