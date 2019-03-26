@@ -11,7 +11,11 @@
 #include "mnist\user_mnist.h"
 
 int main(int argc, const char** argv){
-
+	/*for (int i = 0; i < 100;i++) {
+		printf("%f\n", user_nn_init_lecun_uniform(28,28));
+	}
+	getchar();
+	return 1;*/
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");

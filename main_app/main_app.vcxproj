@@ -182,6 +182,7 @@
     <ClInclude Include="cnn\user_cnn_model.h" />
     <ClInclude Include="cnn\user_cnn_rw_model.h" />
     <ClInclude Include="matrix\user_nn_activate.h" />
+    <ClInclude Include="matrix\user_nn_initialization.h" />
     <ClInclude Include="matrix\user_nn_matrix.h" />
     <ClInclude Include="matrix\user_nn_matrix_cuda.h" />
     <ClInclude Include="matrix\user_nn_matrix_file.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="cnn\user_cnn_rw_model.cpp" />
     <ClCompile Include="main_app.cpp" />
     <ClCompile Include="matrix\user_nn_activate.cpp" />
+    <ClCompile Include="matrix\user_nn_initialization.cpp" />
     <ClCompile Include="matrix\user_nn_matrix.cpp" />
     <ClCompile Include="matrix\user_nn_matrix_file.cpp" />
     <ClCompile Include="mnist\user_mnist.cpp" />

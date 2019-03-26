@@ -150,6 +150,9 @@
     <ClInclude Include="mnist\user_mnist.h">
       <Filter>头文件\mnist</Filter>
     </ClInclude>
+    <ClInclude Include="matrix\user_nn_initialization.h">
+      <Filter>头文件\matrix</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -247,6 +250,9 @@
     </ClCompile>
     <ClCompile Include="mnist\user_mnist.cpp">
       <Filter>源文件\mnist</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix\user_nn_initialization.cpp">
+      <Filter>源文件\matrix</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

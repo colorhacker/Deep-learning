@@ -2,31 +2,31 @@
 
 //返回0~+1的随机数
 static float user_nn_init_normal(void) {
-	return (float)(rand() / double(RAND_MAX));
+	return (float)((float)rand() / RAND_MAX);
 }
 //返回 -1~+1的随机数
 static float user_nn_init_uniform(void) {
-	return (float)(((float)(rand()*2 / RAND_MAX) - 1));
+	return (float)(((float)(rand()*2.0 / RAND_MAX) - 1.0f));
 }
 //lecun初始化
 float user_nn_init_lecun_uniform(int input_count, int output_count) {
-	return user_nn_init_uniform()*sqrt(float(3 / input_count));
+	return (float)user_nn_init_uniform()*sqrt(3.0 / input_count);
 }
 //glorot Xavier初始化 
 float user_nn_init_glorot_normal(int input_count, int output_count) {
-	return user_nn_init_normal()*sqrt(float(2 / (input_count + output_count)));
+	return (float)user_nn_init_normal()*sqrt(2.0 / (input_count + output_count));
 }
 //glorot初始化
 float user_nn_init_glorot_uniform(int input_count, int output_count) {
-	return user_nn_init_uniform()*sqrt(float(6 / (input_count + output_count)));
+	return (float)user_nn_init_uniform()*sqrt(6.0 / (input_count + output_count));
 }
 //he初始化
 float user_nn_init_he_normal(int input_count, int output_count) {
-	return user_nn_init_normal()*sqrt(float(2 / input_count));
+	return (float)user_nn_init_normal()*sqrt(2.0 / input_count);
 }
 //he初始化
 float user_nn_init_he_uniform(int input_count, int output_count) {
-	return user_nn_init_normal()*sqrt(float(6 / input_count));
+	return (float)user_nn_init_normal()*sqrt(6.0 / input_count);
 }
 //orthogonal初始化
 float user_nn_init_orthogonal(int input_count, int output_count) {
