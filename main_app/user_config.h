@@ -31,6 +31,10 @@
 //#include "user_cnn_create.h"
 #include "user_types.h"
 
+//初始化网络值的方式
+//lecun_uniform、glorot_normal、glorot_uniform、he_normal、he_uniform
+#define		user_nn_init_type				lecun_uniform
+
 //CNN配置开始
 #define		user_nn_cnn_softmax				activation_sigmoid
 

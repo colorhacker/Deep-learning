@@ -4,7 +4,17 @@
 #include "../user_config.h"
 #include "user_nn_matrix.h"
 
-#define user_nn_init_rand(x,y) user_nn_init_lecun_uniform(x,y)
+#if user_nn_init_type == lecun_uniform
+	#define user_nn_init_rand(x,y) user_nn_init_lecun_uniform(x,y)
+#elif user_nn_init_type == glorot_normal
+	#define user_nn_init_rand(x,y) user_nn_init_glorot_normal(x,y)
+#elif user_nn_init_type == glorot_uniform
+	#define user_nn_init_rand(x,y) user_nn_init_glorot_uniform(x,y)
+#elif user_nn_init_type == he_normal
+	#define user_nn_init_rand(x,y) user_nn_init_he_normal(x,y)
+#else
+	#define user_nn_init_rand(x,y) user_nn_init_he_uniform(x,y)
+#endif
 
 float user_nn_init_lecun_uniform(int input_count, int output_count);
 float user_nn_init_glorot_normal(int input_count, int output_count);
