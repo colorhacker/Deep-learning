@@ -33,10 +33,10 @@
 
 //初始化网络值的方式
 //lecun_uniform、glorot_normal、glorot_uniform、he_normal、he_uniform
-#define		user_nn_init_type				glorot_uniform
+#define		user_nn_init_type				glorot_normal
 
 //CNN配置开始
-#define		user_nn_cnn_softmax				activation_sigmoid
+#define		user_nn_cnn_softmax				activation_tanh
 
 #define		user_nn_cnn_training_folder		"digital"
 #define		user_nn_cnn_training_type		".jpg"
@@ -46,7 +46,7 @@
 #define		user_nn_model_cnn_data_addr		 0x1000		//保存数据的基地址
 //CNN配置结束
 //RNN配置开始
-#define		user_nn_rnn_softmax				activation_tanh
+#define		user_nn_rnn_softmax				activation_sigmoid
 
 #define		user_nn_model_rnn_file_name		"./model/rnn_model.bin"
 #define		user_nn_model_rnn_layer_addr	 0x0		//保存层的基地址
