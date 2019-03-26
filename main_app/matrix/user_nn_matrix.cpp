@@ -277,38 +277,6 @@ user_nn_matrix *user_nn_matrices_ext_matrix(user_nn_list_matrix *list_matrix, in
 	return user_nn_matrices_ext_matrix_index(list_matrix,postx + posty * list_matrix->width);
 }
 
-//获取一个随机浮点数0-1.0之间
-float user_nn_rand_0_1(void){
-	//srand((unsigned)time(NULL));
-	return (float)(rand() / double(RAND_MAX));
-}
-//数据归一化处理 返回数据 -1 - +1 范围
-float user_nn_rand__1_1(float post){
-	//return 1;
-	return (float)((user_nn_rand_0_1() - 0.5) * 2 * sqrt(6 / post));
-}
-//设置单个居中里面的值 随机设置
-void user_nn_matrix_rand_vaule(user_nn_matrix *src_matrix, float post){
-	int total = src_matrix->height * src_matrix->width;//设置高度与宽度
-	float *data = src_matrix->data;//获取内存指针
-	while (total--){
-		*data++ = user_nn_rand__1_1(post);//设置值
-	}
-}
-//设置连续矩阵里面的值 随机设置
-void user_nn_matrices_rand_vaule(user_nn_list_matrix *list_matrix, float post){
-	user_nn_matrix *matrix = list_matrix->matrix;//获取第一个矩阵对象
-	float *data = 0;
-	int total = 0;
-
-	if (matrix == NULL){
-		return;
-	}
-	while (matrix != NULL){
-		user_nn_matrix_rand_vaule(matrix, post);
-		matrix = matrix->next;//继续处理下一个数据
-	}
-}
 //按照指定上、下、左、右扩充并创建新的矩阵，并且拷贝数据到新的矩阵中
 //参数
 //src_matrix ：原矩阵

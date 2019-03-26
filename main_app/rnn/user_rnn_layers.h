@@ -7,7 +7,7 @@
 #include "../user_config.h"
 #include "../matrix/user_nn_matrix.h"
 #include "../matrix/user_nn_activate.h"
-//#include "user_rnn_create.h"
+#include "../matrix/user_nn_initialization.h"
 
 typedef enum _rnn_layer_type {
 	u_rnn_layer_type_null = 0,

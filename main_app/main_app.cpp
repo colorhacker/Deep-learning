@@ -11,6 +11,7 @@
 #include "mnist\user_mnist.h"
 
 int main(int argc, const char** argv){
+
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");

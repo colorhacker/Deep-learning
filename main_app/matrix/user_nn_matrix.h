@@ -50,9 +50,6 @@ typedef enum _eigs_type {
 	qr_givens = 1//
 }eigs_type;
 
-float user_nn_rand_0_1(void);//获取随机数范围0 - +1
-float user_nn_rand__1_1(float post);//归一化数据-1 - +1之间
-
 user_nn_matrix *user_nn_matrix_create(int width, int height);//创建一个宽度为width 高度为height的矩阵
 user_nn_matrix *user_nn_matrix_cpy_create(user_nn_matrix *dest_matrix);//复制一个矩阵，返回新的矩阵
 void user_nn_matrix_transpose(user_nn_matrix *src_matrix);//矩阵转置 交换一个矩阵的长度和宽度大小并且交换数据
@@ -79,8 +76,6 @@ bool user_nn_matrix_cpy_array_mult_constant(float *dest_data, user_nn_matrix *sr
 user_nn_matrix *user_nn_matrix_expand_mult_constant(user_nn_matrix *src_matrix, int width, int height, float constant);//扩充矩阵src_matrix， 每个像素按照给定扩大width和height倍 扩充之后乘以系数bias
 user_nn_matrix *user_nn_matrix_expand(user_nn_matrix *src_matrix, int above, int below, int left, int right);//扩充矩阵src_matrix，按照上下、左右各扩充指定大小
 
-void user_nn_matrix_rand_vaule(user_nn_matrix *src_matrix, float post);//随机设置矩阵值给定参数作为系数
-void user_nn_matrices_rand_vaule(user_nn_list_matrix *list_matrix, float post);//随机设置连续矩阵list_matrix值，post是系数
 user_nn_matrix *user_nn_matrix_rotate180(user_nn_matrix *src_matrix);//矩阵src_matrix旋转180°
 void user_nn_matrix_poit_mult_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//矩阵src_matrix.*sub_matrix 结果保存在src_matrix里面
 user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//矩阵src_matrix*sub_matrix 返回乘积后的矩阵

@@ -7,7 +7,7 @@
 #include "../user_config.h"
 #include "../matrix/user_nn_matrix.h"
 #include "../matrix/user_nn_activate.h"
-//#include "user_cnn_create.h"
+#include "../matrix/user_nn_initialization.h"
 
 typedef enum _cnn_layer_type{
 	u_cnn_layer_type_null = 0,
@@ -19,7 +19,7 @@ typedef enum _cnn_layer_type{
 }user_cnn_layer_type;
 
 typedef struct _cnn_layers{
-	struct _cnn_layers *prior;//上一个ceng
+	struct _cnn_layers *prior;//上一个层
 	int index;//指数
 	user_cnn_layer_type type;//类型
 	void *content;//对象
