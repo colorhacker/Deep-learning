@@ -22,6 +22,8 @@
 #include <float.h>
 #include <conio.h>
 
+#include <omp.h>
+
 //#include <cuda_runtime.h>
 //#include <cublas_v2.h>
 //#include <device_launch_parameters.h>
@@ -30,6 +32,8 @@
 //#include "user_nn_matrix.h"
 //#include "user_cnn_create.h"
 #include "user_types.h"
+
+#define		user_nn_use_openmp				true
 
 //初始化网络值的方式
 //lecun_uniform、glorot_normal、glorot_uniform、he_normal、he_uniform

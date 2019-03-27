@@ -10,23 +10,23 @@ static float user_nn_init_uniform(void) {
 }
 //lecun初始化
 float user_nn_init_lecun_uniform(int input_count, int output_count) {
-	return (float)user_nn_init_uniform()*sqrt(3.0 / input_count);
+	return (float)(user_nn_init_uniform()*sqrt(3.0 / input_count));
 }
 //glorot Xavier初始化 
 float user_nn_init_glorot_normal(int input_count, int output_count) {
-	return (float)user_nn_init_normal()*sqrt(2.0 / (input_count + output_count));
+	return (float)(user_nn_init_normal()*sqrt(2.0 / (input_count + output_count)));
 }
 //glorot初始化
 float user_nn_init_glorot_uniform(int input_count, int output_count) {
-	return (float)user_nn_init_uniform()*sqrt(6.0 / (input_count + output_count));
+	return (float)(user_nn_init_uniform()*sqrt(6.0 / (input_count + output_count)));
 }
 //he初始化
 float user_nn_init_he_normal(int input_count, int output_count) {
-	return (float)user_nn_init_normal()*sqrt(2.0 / input_count);
+	return (float)(user_nn_init_normal()*sqrt(2.0 / input_count));
 }
 //he初始化
 float user_nn_init_he_uniform(int input_count, int output_count) {
-	return (float)user_nn_init_normal()*sqrt(6.0 / input_count);
+	return (float)(user_nn_init_normal()*sqrt(6.0 / input_count));
 }
 //orthogonal初始化
 float user_nn_init_orthogonal(int input_count, int output_count) {

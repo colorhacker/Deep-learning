@@ -20,7 +20,7 @@ void user_cnn_mnist_train() {
 	printf("\n1.开启");
 	printf("\n2.关闭（或者其他按键）");
 	printf("\n请输入数字：");
-	sw_display = (getch() == '1') ? true : false;
+	sw_display = (_getch() == '1') ? true : false;
 	//加载mnist数据
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
@@ -138,7 +138,7 @@ void user_cnn_app_test(int argc, const char** argv) {
 	printf("\n2.测试mnist数据");
 	printf("\n3.识别28*28图像\n");
 	printf("\n请输入数字：");
-	switch (getch()) {
+	switch (_getch()) {
 		case '1':user_cnn_mnist_train(); break;
 		case '2':user_cnn_mnist_test(); break;
 		case '3':user_cnn_load_ident(argc, argv); break;

@@ -105,9 +105,6 @@
     <ClInclude Include="matrix\user_nn_matrix.h">
       <Filter>头文件\matrix</Filter>
     </ClInclude>
-    <ClInclude Include="matrix\user_nn_matrix_cuda.h">
-      <Filter>头文件\matrix</Filter>
-    </ClInclude>
     <ClInclude Include="rnn\user_rnn_model.h">
       <Filter>头文件\rnn</Filter>
     </ClInclude>

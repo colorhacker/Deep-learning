@@ -129,3 +129,424 @@ void user_nn_matrix_printf(FILE *debug_file, user_nn_matrix *src_matrix);//´òÓ¡¾
 void user_nn_matrices_printf(FILE *debug_file, char *title, user_nn_list_matrix *src_matrix);//´òÓ¡Á¬Ğø¾ØÕó
 
 #endif
+
+
+
+
+/*
+//°ÑÒ»¸ö¾ØÕóÊı¾İ¿½±´µ½ÁíÍâÒ»¸ö¾ØÕóÖĞ
+user_nn_matrix *matrix = NULL;
+user_nn_matrix *dest = NULL;
+
+matrix = user_nn_matrix_create(6, 6);//´´½¨3*3´óĞ¡µÄ¶şÎ¬¾ØÕó
+dest   = user_nn_matrix_create(2, 2);//´´½¨2*2´óĞ¡µÄ¶şÎ¬¾ØÕó
+user_nn_matrix_rand_vaule(matrix,1);
+
+user_nn_matrix_printf(NULL, matrix);//´òÓ¡¾ØÕó
+bool is_success = user_nn_matrix_save_matrix(matrix, dest, 1, 4);
+printf("\n%s\n", is_success==true?"true":"false");
+
+user_nn_matrix_printf(NULL, matrix);//´òÓ¡¾ØÕó
+
+getchar();
+return 0;
+
+*/
+/*
+//°ÑÒ»¸öÄÚ´æÊı¾İ¿½±´µ½ÁíÍâÒ»¸ö¾ØÕóÖĞ °´ÕÕ¹æ¶¨²ÎÊı
+user_nn_matrix *matrix = NULL;
+user_nn_matrix *dest = NULL;
+
+matrix = user_nn_matrix_create(6, 6);//´´½¨3*3´óĞ¡µÄ¶şÎ¬¾ØÕó
+dest = user_nn_matrix_create(2, 2);//´´½¨2*2´óĞ¡µÄ¶şÎ¬¾ØÕó
+user_nn_matrix_rand_vaule(matrix, 1);
+
+user_nn_matrix_printf(NULL, matrix);//´òÓ¡¾ØÕó
+bool is_success = user_nn_matrix_save_array(matrix, dest->data, 2, 3, dest->width, dest->height);
+printf("\n%s\n", is_success == true ? "true" : "false");
+
+user_nn_matrix_printf(NULL, matrix);//´òÓ¡¾ØÕó
+
+getchar();
+return 0;
+*/
+
+/* ³Ø»¯¾ØÕó
+user_nn_matrix *src_matrix = NULL;
+user_nn_matrix *sub_matrix = NULL;
+user_nn_matrix *res_matrix = NULL;
+float *result = NULL;
+
+
+src_matrix = user_nn_matrix_create(28, 28);
+sub_matrix = user_nn_matrix_create(2, 2);
+
+user_nn_matrix_memset(src_matrix, 2.5);//ÉèÖÃ¾ØÕóÖµ
+user_nn_matrix_memset(sub_matrix, 0.25);//ÉèÖÃ¾ØÕóÖµ
+
+result = user_nn_matrix_ext_value(src_matrix, 27, 27);
+*result = 1;
+
+res_matrix = user_nn_matrix_pool(src_matrix, sub_matrix);
+if (res_matrix != NULL){
+user_nn_matrix_printf(res_matrix);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/* ¾ØÕó¾í»ı²âÊÔ
+user_nn_matrix *src_matrix = NULL;
+user_nn_matrix *sub_matrix = NULL;
+user_nn_matrix *res_matrix = NULL;
+
+src_matrix = user_nn_matrix_create(28, 28);
+sub_matrix = user_nn_matrix_create(5, 5);
+
+user_nn_matrix_memset(src_matrix, 2.5);//ÉèÖÃ¾ØÕóÖµ
+user_nn_matrix_memset(sub_matrix, 1.0);//ÉèÖÃ¾ØÕóÖµ
+
+res_matrix = user_nn_matrix_conv2(src_matrix, sub_matrix, u_nn_conv2_type_valid);
+if (res_matrix != NULL){
+user_nn_matrix_printf(res_matrix);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/* ¶şÎ¬¾ØÕó ÌáÈ¡
+user_nn_list_matrix *list = NULL;
+user_nn_matrix *dest = NULL;
+
+list = user_nn_matrices_create(2, 2, 1, 1);//´´½¨2*2¸ö1*1´óĞ¡µÄ¶şÎ¬¾ØÕó
+user_nn_matrix_memset(list->matrix, 1);
+user_nn_matrix_memset(list->matrix->next, 2);
+user_nn_matrix_memset(list->matrix->next->next, 3);
+user_nn_matrix_memset(list->matrix->next->next->next, 4);
+
+dest = user_nn_matrices_ext_matrix(list, 1, 0);//»ñÈ¡ÆäÖĞÒ»¸ö¾ØÕó
+
+if (dest != NULL){
+user_nn_matrix_printf(NULL,dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/* ¾ØÕó½ØÈ¡²âÊÔ
+user_nn_matrix *matrix = NULL;
+user_nn_matrix *dest = NULL;
+
+matrix = user_nn_matrix_create(2, 2);//´´½¨2*2´óĞ¡µÄ¶şÎ¬¾ØÕó
+matrix->data[0] = 1.0;
+matrix->data[1] = 2.0;
+matrix->data[2] = 3.0;
+matrix->data[3] = 4.0;
+
+dest = user_nn_matrix_ext_matrix(matrix, 1, 1, 1, 1);//½ØÈ¡¾ØÕó
+
+if (dest != NULL){
+user_nn_matrix_printf(NULL,dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+
+
+/*»ñÈ¡¾ØÕóÖĞµÄÒ»¸öÖµ
+user_nn_matrix *matrix = NULL;
+float *p;
+
+matrix = user_nn_matrix_create(2, 2);//´´½¨2*2´óĞ¡µÄ¶şÎ¬¾ØÕó
+matrix->data[0] = 1.0;
+matrix->data[1] = 2.0;
+matrix->data[2] = 3.0;
+matrix->data[3] = 4.0;
+
+p = user_nn_matrix_ext_value(matrix, 1, 1);//»ñÈ¡¾ØÕóÖµ
+if (p != NULL)
+printf("%f \n", *p);
+*/
+/*Æ«ÖÃ²ÎÊı²âÊÔ
+user_nn_list_biases *biases = NULL;
+user_nn_bias *dest = NULL;
+
+biases = user_nn_biases_create(4);
+
+biases->bias->bias = 1.0;
+biases->bias->next->bias = 2.0;
+biases->bias->next->next->bias = 3.0;
+biases->bias->next->next->next->bias = 4.0;
+
+dest = user_nn_biases_ext_bias(biases,0);
+if (dest != NULL)
+printf("%f \n", dest->bias);
+*/
+/* ¾ØÕó³Ë·¨
+user_nn_matrix *src_matrix = NULL;
+user_nn_matrix *sub_matrix = NULL;
+user_nn_matrix *res_matrix = NULL;
+
+src_matrix = user_nn_matrix_create(1, 1);
+sub_matrix = user_nn_matrix_create(1, 1);
+
+user_nn_matrix_memset(src_matrix, 2.5);//ÉèÖÃ¾ØÕóÖµ
+user_nn_matrix_memset(sub_matrix, 1.0);//ÉèÖÃ¾ØÕóÖµ
+
+res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//¾ØÕóÏà³Ë
+if (res_matrix != NULL){
+user_nn_matrix_printf(res_matrix);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/*µ¥¸ö¾ØÕó×ª»¯Îª ¸ß¶ÈÎª1µÄÁ¬ĞøÁ´±í¾ØÕó
+user_nn_list_matrix *list = NULL;
+user_nn_matrix *dest = NULL;
+
+dest = user_nn_matrix_create(2,2);
+dest->data[0] = 1.0;
+dest->data[1] = 2.0;
+dest->data[2] = 3.0;
+dest->data[3] = 4.0;
+
+list = user_nn_matrix_to_matrices(dest,1,1);//»ñÈ¡ÆäÖĞÒ»¸ö¾ØÕó
+
+if (list != NULL){
+user_nn_matrix_printf(list->matrix);//´òÓ¡¾ØÕó
+user_nn_matrix_printf(list->matrix->next);//´òÓ¡¾ØÕó
+user_nn_matrix_printf(list->matrix->next->next);//´òÓ¡¾ØÕó
+user_nn_matrix_printf(list->matrix->next->next->next);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/*Á´±í¾ØÕó×ª»¯Îª¸ß¶ÈÎª1µÄµ¥¸ö¾ØÕó
+user_nn_list_matrix *list = NULL;
+user_nn_matrix *dest = NULL;
+
+list = user_nn_matrices_create(5, 2, 1, 1);//´´½¨2*2¸ö1*1´óĞ¡µÄ¶şÎ¬¾ØÕó
+user_nn_matrix_memset(list->matrix, 1);
+user_nn_matrix_memset(list->matrix->next, 2);
+user_nn_matrix_memset(list->matrix->next->next, 3);
+user_nn_matrix_memset(list->matrix->next->next->next, 4);
+
+dest = user_nn_matrices_to_matrix(list);//»ñÈ¡ÆäÖĞÒ»¸ö¾ØÕó
+
+if (dest != NULL){
+user_nn_matrix_printf(NULL,dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/*Á´±íÆ«ÖÃ²ÎÊı×ª¾ØÕó²âÊÔ
+user_nn_list_biases *list = NULL;
+user_nn_matrix *dest = NULL;
+
+list = user_nn_biases_create(1);
+
+list->bias->bias = 1.0;
+list->bias->next->bias = 2.0;
+list->bias->next->next->bias = 3.0;
+list->bias->next->next->next->bias = 4.0;
+list->bias->next->next->next->next->bias = 5.0;
+
+dest = user_nn_biases_to_matrix(list);
+
+if (dest != NULL){
+user_nn_matrix_printf(NULL,dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/*¾ØÕó¾ùÖµÀ©³ä
+user_nn_matrix *matrix = NULL;
+user_nn_matrix *dest = NULL;
+
+matrix = user_nn_matrix_create(2, 2);//´´½¨2*2´óĞ¡µÄ¶şÎ¬¾ØÕó
+matrix->data[0] = 1.0;
+matrix->data[1] = 2.0;
+matrix->data[2] = 3.0;
+matrix->data[3] = 4.0;
+
+dest = user_nn_matrix_expand_matrix(matrix, 2, 3);//
+
+if (dest != NULL){
+user_nn_matrix_printf(NULL,dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/*¾ØÕóÀ©³ä ±ß¿òÀ©³ä
+user_nn_matrix *matrix = NULL;
+user_nn_matrix *dest = NULL;
+
+matrix = user_nn_matrix_create(1, 1);//´´½¨2*2´óĞ¡µÄ¶şÎ¬¾ØÕó
+matrix->data[0] = 1.0;
+//matrix->data[1] = 2.0;
+//matrix->data[2] = 3.0;
+//matrix->data[3] = 4.0;
+
+dest = user_nn_matrix_expand(matrix, 1, 1);//
+
+if (dest != NULL){
+user_nn_matrix_printf(NULL,dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/*Á¬Ğø¾ØÕó¿½±´
+user_nn_list_matrix *list = NULL;
+user_nn_list_matrix *dest = NULL;
+
+list = user_nn_matrices_create(5, 2, 1, 1);//´´½¨2*2¸ö1*1´óĞ¡µÄ¶şÎ¬¾ØÕó
+dest = user_nn_matrices_create(5, 2, 1, 1);//´´½¨2*2¸ö1*1´óĞ¡µÄ¶şÎ¬¾ØÕó
+
+user_nn_matrix_memset(list->matrix, 1);
+user_nn_matrix_memset(list->matrix->next, 2);
+user_nn_matrix_memset(list->matrix->next->next, 3);
+user_nn_matrix_memset(list->matrix->next->next->next, 4);
+
+user_nn_matrices_cpy_matrices(dest, list);//»ñÈ¡ÆäÖĞÒ»¸ö¾ØÕó
+
+if (dest != NULL){
+user_nn_matrices_printf(NULL,"TEST", dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+*/
+/* ¾ØÕó½»»»
+unsigned char src[] = { 1, 2, 3, 4, 5, 6 };
+unsigned char sub[] = { 1, 2, 3 };
+
+user_nn_matrix *src_matrix = NULL;
+user_nn_matrix *sub_matrix = NULL;
+user_nn_matrix *res_matrix = NULL;
+
+src_matrix = user_nn_matrix_create(2, 3);
+sub_matrix = user_nn_matrix_create(1, 3);
+
+user_nn_matrix_memcpy_char(src_matrix, src);
+user_nn_matrix_memcpy_char(sub_matrix, sub);
+
+user_nn_matrix_exc_width_height(src_matrix);//½»»»output_kernel_maps µÄ widthÓëheight
+res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//¼ÆËãfeature vector delta  ######Èç¹û²»ÄÜÏà³ËĞèÒª±ä»¯ºá×İ´óĞ¡######
+user_nn_matrix_exc_width_height(src_matrix);//½»»»output_kernel_maps µÄ widthÓëheight ½»»»»ØÀ´
+
+if (res_matrix != NULL){
+user_nn_matrix_printf(NULL,res_matrix);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+
+*/
+/* ¾ØÕóÓëÁ¬Ğø¾ØÕó±ä»¯
+unsigned char src[192] ;
+int i = 0;
+for (i = 0; i < 192; i++){
+src[i] = i;
+}
+user_nn_list_matrix *list = NULL;
+user_nn_matrix *dest = NULL;
+dest = user_nn_matrix_create(1, 192);
+user_nn_matrix_memcpy_char(dest, src);
+list = user_nn_matrix_to_matrices(dest, 4, 4);//»ñÈ¡ÆäÖĞÒ»¸ö¾ØÕó
+dest = user_nn_matrices_to_matrix(list);
+if (dest != NULL){
+user_nn_matrix_printf(NULL, dest);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+
+*/
+/*¾ØÕó·µ»Ø×î´óÖµ²âÊÔ
+user_nn_matrix *matrix = NULL;
+
+matrix = user_nn_matrix_create(6, 6);//´´½¨2*2´óĞ¡µÄ¶şÎ¬¾ØÕó
+user_nn_matrix_rand_vaule(matrix, 1);
+
+int max_value_index = user_nn_matrix_return_max_index(matrix);//
+int min_value_index = user_nn_matrix_return_min_index(matrix);//
+
+user_nn_matrix_printf(NULL,matrix);//´òÓ¡¾ØÕó
+
+printf("\nmax_value_index=%d,vaule=%f\n",max_value_index,*user_nn_matrix_return_max_addr(matrix));
+printf("\nmin_value_index=%d,vaule=%f\n",min_value_index,*user_nn_matrix_return_min_addr(matrix));
+*/
+
+
+/* ¾ØÕó×ªÖÃÊ±¼ä²âÊÔ
+
+FILE *debug_file = NULL;
+debug_file = fopen("debug.txt", "w+");
+user_nn_matrix *src_matrix = NULL;
+user_nn_matrix *sub_matrix = NULL;
+user_nn_matrix *res_matrix = NULL;
+int matrix_w = 128, matrix_h = 128;
+src_matrix = user_nn_matrix_create(matrix_w, matrix_h);
+sub_matrix = user_nn_matrix_create(matrix_w, matrix_h);
+clock_t test_start_time, test_end_time;
+float *src_data = src_matrix->data;
+float *sub_data = sub_matrix->data;
+
+int count = 0,total_count=499;
+
+while (count++ < (src_matrix->width * src_matrix->height)){
+*src_data++ = count * 0.01f;
+*sub_data++ = count * 0.01f;
+}
+printf("test start:\n");
+printf("width:%d,height:%d\n", src_matrix->width ,src_matrix->height);
+user_nn_matrix_transpose_cuda(sub_matrix);//Æô¶¯ÏÔ¿¨
+Sleep(1000);
+//user_nn_matrix_printf(debug_file, src_matrix);//´òÓ¡¾ØÕó
+while (1){
+test_start_time = clock();
+count = total_count;
+while (count--){
+//user_nn_matrix_transpose_cuda(src_matrix);//GPU¼ÓËÙ
+user_nn_matrix_transpose(src_matrix);//CPU×ªÖÃ
+}
+src_data = src_matrix->data;//»ñÈ¡Êı¾İ
+sub_data = sub_matrix->data;//»ñÈ¡Êı¾İ
+count = 0;
+while (count++ < (src_matrix->width * src_matrix->height)){
+if (*src_data++ != *sub_data++){
+break;
+}
+}
+if ((count - 1) != src_matrix->width * src_matrix->height){
+printf("count:%d ", count);
+printf("test error \n");
+break;
+}
+else{
+test_end_time = (clock() - test_start_time);//»ñÈ¡½áÊøÊ±¼ä
+printf("total time : %f ms\n", (float)test_end_time / total_count);
+break;
+}
+}
+
+//res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//¾ØÕóÏà³Ë
+//user_nn_matrix_transpose(src_matrix);
+if (src_matrix != NULL){
+//user_nn_matrix_printf(debug_file, src_matrix);//´òÓ¡¾ØÕó
+}
+else{
+printf("null\n");
+}
+fclose(debug_file);
+getchar();
+return 1;
+
+*/

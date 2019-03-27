@@ -421,16 +421,33 @@ user_nn_matrix *user_nn_matrix_ext_matrix(user_nn_matrix *src_matrix, int startx
 	}
 	result = user_nn_matrix_create(width, height);//创建矩阵
 	result_data = result->data;//取得数据指针
-
-	//post_index = startx + starty* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
-	for (post_y = 0; post_y < height; post_y++){
-		for (post_x = 0; post_x < width; post_x++){
+#if (user_nn_use_openmp)
+/*#pragma omp parallel for private(post_y, post_x)
+	for (post_y = 0; post_y < height; post_y++) {
+		for (post_x = 0; post_x < width; post_x++) {
+			result_data[post_y*width+ post_x] = src_data[(startx + post_x) + (starty + post_y)* src_matrix->width];//获取数据
+	}
+}*/
+	for (post_y = 0; post_y < height; post_y++) {
+		for (post_x = 0; post_x < width; post_x++) {
 			post_index = (startx + post_x) + (starty + post_y)* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
 			*result_data++ = src_data[post_index];//获取数据
-			//printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
+												  //printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
 		}
 		//printf("\n");
 	}
+#else
+	//post_index = startx + starty* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
+	for (post_y = 0; post_y < height; post_y++) {
+		for (post_x = 0; post_x < width; post_x++) {
+			post_index = (startx + post_x) + (starty + post_y)* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
+			*result_data++ = src_data[post_index];//获取数据
+												  //printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
+		}
+		//printf("\n");
+	}
+#endif
+
 	return result;
 }
 //把连续的矩阵的数据拷贝到一个矩阵中
@@ -741,9 +758,17 @@ void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_
 	if ((save_matrix->width != sub_matrix->width) && (save_matrix->height != sub_matrix->height)){
 		return;
 	}
-	while (count--){
+#if (user_nn_use_openmp)
+	#pragma omp parallel for
+	for (int index=0; index < count; index++) {
+		save_data[index] = sub_data[index];
+	}
+#else
+	while (count--) {
 		*save_data++ = *sub_data++;//memcpy
 	}
+#endif
+
 }
 //指向sub_matrix矩阵值到src_matrix矩阵
 //参数 要求矩阵相同
@@ -803,30 +828,35 @@ float user_nn_matrix_mult_cum_matrix(user_nn_matrix *src_matrix, user_nn_matrix 
 //src_matrix：矩阵A
 //sub_matrix：矩阵B
 //返回值 无
-user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix){
-#ifdef WIN64
-	return user_nn_matrix_mult_matrix_cuda(src_matrix, sub_matrix);
-#else
 
+user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix) {
 	user_nn_matrix *result = NULL;//结果矩阵
 	float *src_data = NULL;//
 	float *sub_data = NULL;//
-
 	float *result_data = NULL;
-
-	int width, height,point;//矩阵列数
-
-	if (src_matrix->width != sub_matrix->height){//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
+	int width, height, point;//矩阵列数
+	if (src_matrix->width != sub_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
 		return NULL;
 	}
 	result = user_nn_matrix_create(sub_matrix->width, src_matrix->height);//创建新的矩阵
 	result_data = result->data;//获取数据指针
-
-	for (height = 0; height < result->height; height++){
-		for (width = 0; width < result->width; width++){
+#if (user_nn_use_openmp)
+	#pragma omp parallel for private(height, width, point)
+	for (height = 0; height < result->height; height++) {
+		for (width = 0; width < result->width; width++) {
+			src_data = src_matrix->data + height * src_matrix->width;
+			sub_data = sub_matrix->data + width;
+			for (point = 0; point < sub_matrix->height; point++) {
+				result_data[height*result->width + width] += src_data[point] * sub_data[point*sub_matrix->width];
+			}
+		}
+	}
+#else
+	for (height = 0; height < result->height; height++) {
+		for (width = 0; width < result->width; width++) {
 			src_data = src_matrix->data + height * src_matrix->width;//指向行开头
 			sub_data = sub_matrix->data + width;//指向列开头
-			for (point = 0; point < sub_matrix->height; point++){
+			for (point = 0; point < sub_matrix->height; point++) {
 				*result_data += *src_data * *sub_data;
 				sub_data += sub_matrix->width;
 				src_data++;
@@ -834,8 +864,9 @@ user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_m
 			result_data++;
 		}
 	}
-	return result;
 #endif
+
+	return result;
 }
 //两个矩阵进行点乘操作 对应数据进行相乘
 //src_matrix：矩阵A
@@ -889,10 +920,16 @@ user_nn_matrix *user_nn_matrix_rotate180(user_nn_matrix *src_matrix){
 
 	result = user_nn_matrix_create(src_matrix->width, src_matrix->height);
 	result_data = result->data;//取得数据指针
-
-	while (count--){
+//#if (user_nn_use_openmp)
+//#pragma omp parallel for
+//	for (int index = 0; index < count;index++) {
+//		result_data[index] = input_data[count-index];
+//	}
+//#else
+	while (count--) {
 		*result_data++ = input_data[count];//直接首尾进行交换
 	}
+//#endif
 	return result;
 }
 //对矩阵进行pooling操作 此操作针对cnn使用
@@ -952,8 +989,8 @@ user_nn_matrix *user_nn_matrix_conv2(user_nn_matrix *src_matrix, user_nn_matrix 
 	}
 	else{}
 	mode_matrix = user_nn_matrix_rotate180(kernel_matrix);//模板翻转180°
-	for (start_y = 0; start_y < result->height; start_y++){//纵轴移动一次 横轴需要移动整个行
-		for (start_x = 0; start_x < result->width; start_x++){
+	for (start_y = 0; start_y < result->height; start_y++) {//纵轴移动一次 横轴需要移动整个行
+		for (start_x = 0; start_x < result->width; start_x++) {
 			temp_matrix = user_nn_matrix_ext_matrix(conv_matrix, start_x, start_y, kernel_matrix->width, kernel_matrix->height);//从被卷积对象中获取卷积数据 数据大小为模板大小
 			*result_data++ = user_nn_matrix_mult_cum_matrix(temp_matrix, mode_matrix);//卷积运算 
 			user_nn_matrix_delete(temp_matrix);//删除矩阵
@@ -1443,421 +1480,3 @@ void user_nn_matrices_printf(FILE *debug_file,char *title, user_nn_list_matrix *
 	}
 }
 
-
-/*
-	//把一个矩阵数据拷贝到另外一个矩阵中
-	user_nn_matrix *matrix = NULL;
-	user_nn_matrix *dest = NULL;
-
-	matrix = user_nn_matrix_create(6, 6);//创建3*3大小的二维矩阵
-	dest   = user_nn_matrix_create(2, 2);//创建2*2大小的二维矩阵
-	user_nn_matrix_rand_vaule(matrix,1);
-
-	user_nn_matrix_printf(NULL, matrix);//打印矩阵
-	bool is_success = user_nn_matrix_save_matrix(matrix, dest, 1, 4);
-	printf("\n%s\n", is_success==true?"true":"false");
-
-	user_nn_matrix_printf(NULL, matrix);//打印矩阵
-
-	getchar();
-	return 0;
-
-*/
-/*
-	//把一个内存数据拷贝到另外一个矩阵中 按照规定参数
-	user_nn_matrix *matrix = NULL;
-	user_nn_matrix *dest = NULL;
-
-	matrix = user_nn_matrix_create(6, 6);//创建3*3大小的二维矩阵
-	dest = user_nn_matrix_create(2, 2);//创建2*2大小的二维矩阵
-	user_nn_matrix_rand_vaule(matrix, 1);
-
-	user_nn_matrix_printf(NULL, matrix);//打印矩阵
-	bool is_success = user_nn_matrix_save_array(matrix, dest->data, 2, 3, dest->width, dest->height);
-	printf("\n%s\n", is_success == true ? "true" : "false");
-
-	user_nn_matrix_printf(NULL, matrix);//打印矩阵
-
-	getchar();
-	return 0;
-*/
-
-/* 池化矩阵
-	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-	user_nn_matrix *res_matrix = NULL;
-	float *result = NULL;
-
-
-	src_matrix = user_nn_matrix_create(28, 28);
-	sub_matrix = user_nn_matrix_create(2, 2);
-
-	user_nn_matrix_memset(src_matrix, 2.5);//设置矩阵值
-	user_nn_matrix_memset(sub_matrix, 0.25);//设置矩阵值
-
-	result = user_nn_matrix_ext_value(src_matrix, 27, 27);
-	*result = 1;
-
-	res_matrix = user_nn_matrix_pool(src_matrix, sub_matrix);
-	if (res_matrix != NULL){
-	user_nn_matrix_printf(res_matrix);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/* 矩阵卷积测试
-	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-	user_nn_matrix *res_matrix = NULL;
-
-	src_matrix = user_nn_matrix_create(28, 28);
-	sub_matrix = user_nn_matrix_create(5, 5);
-
-	user_nn_matrix_memset(src_matrix, 2.5);//设置矩阵值
-	user_nn_matrix_memset(sub_matrix, 1.0);//设置矩阵值
-
-	res_matrix = user_nn_matrix_conv2(src_matrix, sub_matrix, u_nn_conv2_type_valid);
-	if (res_matrix != NULL){
-	user_nn_matrix_printf(res_matrix);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/* 二维矩阵 提取
-	user_nn_list_matrix *list = NULL;
-	user_nn_matrix *dest = NULL;
-
-	list = user_nn_matrices_create(2, 2, 1, 1);//创建2*2个1*1大小的二维矩阵
-	user_nn_matrix_memset(list->matrix, 1);
-	user_nn_matrix_memset(list->matrix->next, 2);
-	user_nn_matrix_memset(list->matrix->next->next, 3);
-	user_nn_matrix_memset(list->matrix->next->next->next, 4);
-
-	dest = user_nn_matrices_ext_matrix(list, 1, 0);//获取其中一个矩阵
-
-	if (dest != NULL){
-	user_nn_matrix_printf(NULL,dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/* 矩阵截取测试
-	user_nn_matrix *matrix = NULL;
-	user_nn_matrix *dest = NULL;
-
-	matrix = user_nn_matrix_create(2, 2);//创建2*2大小的二维矩阵
-	matrix->data[0] = 1.0;
-	matrix->data[1] = 2.0;
-	matrix->data[2] = 3.0;
-	matrix->data[3] = 4.0;
-
-	dest = user_nn_matrix_ext_matrix(matrix, 1, 1, 1, 1);//截取矩阵
-
-	if (dest != NULL){
-	user_nn_matrix_printf(NULL,dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-
-
-/*获取矩阵中的一个值
-	user_nn_matrix *matrix = NULL;
-	float *p;
-
-	matrix = user_nn_matrix_create(2, 2);//创建2*2大小的二维矩阵
-	matrix->data[0] = 1.0;
-	matrix->data[1] = 2.0;
-	matrix->data[2] = 3.0;
-	matrix->data[3] = 4.0;
-
-	p = user_nn_matrix_ext_value(matrix, 1, 1);//获取矩阵值
-	if (p != NULL)
-	printf("%f \n", *p);
-*/
-/*偏置参数测试
-	user_nn_list_biases *biases = NULL;
-	user_nn_bias *dest = NULL;
-
-	biases = user_nn_biases_create(4);
-
-	biases->bias->bias = 1.0;
-	biases->bias->next->bias = 2.0;
-	biases->bias->next->next->bias = 3.0;
-	biases->bias->next->next->next->bias = 4.0;
-
-	dest = user_nn_biases_ext_bias(biases,0);
-	if (dest != NULL)
-	printf("%f \n", dest->bias);
-*/
-/* 矩阵乘法
-	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-	user_nn_matrix *res_matrix = NULL;
-
-	src_matrix = user_nn_matrix_create(1, 1);
-	sub_matrix = user_nn_matrix_create(1, 1);
-
-	user_nn_matrix_memset(src_matrix, 2.5);//设置矩阵值
-	user_nn_matrix_memset(sub_matrix, 1.0);//设置矩阵值
-
-	res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//矩阵相乘
-	if (res_matrix != NULL){
-	user_nn_matrix_printf(res_matrix);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/*单个矩阵转化为 高度为1的连续链表矩阵
-	user_nn_list_matrix *list = NULL;
-	user_nn_matrix *dest = NULL;
-
-	dest = user_nn_matrix_create(2,2);
-	dest->data[0] = 1.0;
-	dest->data[1] = 2.0;
-	dest->data[2] = 3.0;
-	dest->data[3] = 4.0;
-
-	list = user_nn_matrix_to_matrices(dest,1,1);//获取其中一个矩阵
-
-	if (list != NULL){
-	user_nn_matrix_printf(list->matrix);//打印矩阵
-	user_nn_matrix_printf(list->matrix->next);//打印矩阵
-	user_nn_matrix_printf(list->matrix->next->next);//打印矩阵
-	user_nn_matrix_printf(list->matrix->next->next->next);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/*链表矩阵转化为高度为1的单个矩阵
-	user_nn_list_matrix *list = NULL;
-	user_nn_matrix *dest = NULL;
-
-	list = user_nn_matrices_create(5, 2, 1, 1);//创建2*2个1*1大小的二维矩阵
-	user_nn_matrix_memset(list->matrix, 1);
-	user_nn_matrix_memset(list->matrix->next, 2);
-	user_nn_matrix_memset(list->matrix->next->next, 3);
-	user_nn_matrix_memset(list->matrix->next->next->next, 4);
-
-	dest = user_nn_matrices_to_matrix(list);//获取其中一个矩阵
-
-	if (dest != NULL){
-	user_nn_matrix_printf(NULL,dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/*链表偏置参数转矩阵测试
-	user_nn_list_biases *list = NULL;
-	user_nn_matrix *dest = NULL;
-
-	list = user_nn_biases_create(1);
-
-	list->bias->bias = 1.0;
-	list->bias->next->bias = 2.0;
-	list->bias->next->next->bias = 3.0;
-	list->bias->next->next->next->bias = 4.0;
-	list->bias->next->next->next->next->bias = 5.0;
-
-	dest = user_nn_biases_to_matrix(list);
-
-	if (dest != NULL){
-	user_nn_matrix_printf(NULL,dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/*矩阵均值扩充
-	user_nn_matrix *matrix = NULL;
-	user_nn_matrix *dest = NULL;
-
-	matrix = user_nn_matrix_create(2, 2);//创建2*2大小的二维矩阵
-	matrix->data[0] = 1.0;
-	matrix->data[1] = 2.0;
-	matrix->data[2] = 3.0;
-	matrix->data[3] = 4.0;
-
-	dest = user_nn_matrix_expand_matrix(matrix, 2, 3);//
-
-	if (dest != NULL){
-	user_nn_matrix_printf(NULL,dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/*矩阵扩充 边框扩充
-	user_nn_matrix *matrix = NULL;
-	user_nn_matrix *dest = NULL;
-
-	matrix = user_nn_matrix_create(1, 1);//创建2*2大小的二维矩阵
-	matrix->data[0] = 1.0;
-	//matrix->data[1] = 2.0;
-	//matrix->data[2] = 3.0;
-	//matrix->data[3] = 4.0;
-
-	dest = user_nn_matrix_expand(matrix, 1, 1);//
-
-	if (dest != NULL){
-	user_nn_matrix_printf(NULL,dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/*连续矩阵拷贝
-	user_nn_list_matrix *list = NULL;
-	user_nn_list_matrix *dest = NULL;
-
-	list = user_nn_matrices_create(5, 2, 1, 1);//创建2*2个1*1大小的二维矩阵
-	dest = user_nn_matrices_create(5, 2, 1, 1);//创建2*2个1*1大小的二维矩阵
-
-	user_nn_matrix_memset(list->matrix, 1);
-	user_nn_matrix_memset(list->matrix->next, 2);
-	user_nn_matrix_memset(list->matrix->next->next, 3);
-	user_nn_matrix_memset(list->matrix->next->next->next, 4);
-
-	user_nn_matrices_cpy_matrices(dest, list);//获取其中一个矩阵
-
-	if (dest != NULL){
-	user_nn_matrices_printf(NULL,"TEST", dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-*/
-/* 矩阵交换
-	unsigned char src[] = { 1, 2, 3, 4, 5, 6 };
-	unsigned char sub[] = { 1, 2, 3 };
-
-	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-	user_nn_matrix *res_matrix = NULL;
-
-	src_matrix = user_nn_matrix_create(2, 3);
-	sub_matrix = user_nn_matrix_create(1, 3);
-
-	user_nn_matrix_memcpy_char(src_matrix, src);
-	user_nn_matrix_memcpy_char(sub_matrix, sub);
-
-	user_nn_matrix_exc_width_height(src_matrix);//交换output_kernel_maps 的 width与height
-	res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//计算feature vector delta  ######如果不能相乘需要变化横纵大小######
-	user_nn_matrix_exc_width_height(src_matrix);//交换output_kernel_maps 的 width与height 交换回来
-
-	if (res_matrix != NULL){
-	user_nn_matrix_printf(NULL,res_matrix);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-
-*/
-/* 矩阵与连续矩阵变化
-	unsigned char src[192] ;
-	int i = 0;
-	for (i = 0; i < 192; i++){
-	src[i] = i;
-	}
-	user_nn_list_matrix *list = NULL;
-	user_nn_matrix *dest = NULL;
-	dest = user_nn_matrix_create(1, 192);
-	user_nn_matrix_memcpy_char(dest, src);
-	list = user_nn_matrix_to_matrices(dest, 4, 4);//获取其中一个矩阵
-	dest = user_nn_matrices_to_matrix(list);
-	if (dest != NULL){
-	user_nn_matrix_printf(NULL, dest);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-
-*/
-/*矩阵返回最大值测试
-	user_nn_matrix *matrix = NULL;
-
-	matrix = user_nn_matrix_create(6, 6);//创建2*2大小的二维矩阵
-	user_nn_matrix_rand_vaule(matrix, 1);
-
-	int max_value_index = user_nn_matrix_return_max_index(matrix);//
-	int min_value_index = user_nn_matrix_return_min_index(matrix);//
-
-	user_nn_matrix_printf(NULL,matrix);//打印矩阵
-
-	printf("\nmax_value_index=%d,vaule=%f\n",max_value_index,*user_nn_matrix_return_max_addr(matrix));
-	printf("\nmin_value_index=%d,vaule=%f\n",min_value_index,*user_nn_matrix_return_min_addr(matrix));
-*/
-
-
-/* 矩阵转置时间测试
-
-	FILE *debug_file = NULL;
-	debug_file = fopen("debug.txt", "w+");
-	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-	user_nn_matrix *res_matrix = NULL;
-	int matrix_w = 128, matrix_h = 128;
-	src_matrix = user_nn_matrix_create(matrix_w, matrix_h);
-	sub_matrix = user_nn_matrix_create(matrix_w, matrix_h);
-	clock_t test_start_time, test_end_time;
-	float *src_data = src_matrix->data;
-	float *sub_data = sub_matrix->data;
-
-	int count = 0,total_count=499;
-
-	while (count++ < (src_matrix->width * src_matrix->height)){
-	*src_data++ = count * 0.01f;
-	*sub_data++ = count * 0.01f;
-	}
-	printf("test start:\n");
-	printf("width:%d,height:%d\n", src_matrix->width ,src_matrix->height);
-	user_nn_matrix_transpose_cuda(sub_matrix);//启动显卡
-	Sleep(1000);
-	//user_nn_matrix_printf(debug_file, src_matrix);//打印矩阵
-	while (1){
-	test_start_time = clock();
-	count = total_count;
-	while (count--){
-	//user_nn_matrix_transpose_cuda(src_matrix);//GPU加速
-	user_nn_matrix_transpose(src_matrix);//CPU转置
-	}
-	src_data = src_matrix->data;//获取数据
-	sub_data = sub_matrix->data;//获取数据
-	count = 0;
-	while (count++ < (src_matrix->width * src_matrix->height)){
-	if (*src_data++ != *sub_data++){
-	break;
-	}
-	}
-	if ((count - 1) != src_matrix->width * src_matrix->height){
-	printf("count:%d ", count);
-	printf("test error \n");
-	break;
-	}
-	else{
-	test_end_time = (clock() - test_start_time);//获取结束时间
-	printf("total time : %f ms\n", (float)test_end_time / total_count);
-	break;
-	}
-	}
-
-	//res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//矩阵相乘
-	//user_nn_matrix_transpose(src_matrix);
-	if (src_matrix != NULL){
-	//user_nn_matrix_printf(debug_file, src_matrix);//打印矩阵
-	}
-	else{
-	printf("null\n");
-	}
-	fclose(debug_file);
-	getchar();
-	return 1;
-
-*/
