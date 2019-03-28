@@ -85,9 +85,17 @@ void user_nn_activate_matrix_sum_matrix(user_nn_matrix *save_matrix, user_nn_mat
 	float *save_data = save_matrix->data;
 	float *sub_data = sub_matrix->data;
 
+#ifdef _OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		save_data[index] = user_nn_activate_softmax(src_data[index] + sub_data[index], type);
+	}
+#else
 	while (count--) {
 		*save_data++ = user_nn_activate_softmax(*src_data++ + *sub_data++, type);
 	}
+#endif
+
 }
 //对矩阵进行求导数，结果乘矩阵，进行返回
 //参数
@@ -100,9 +108,17 @@ void user_nn_activate_matrix_d_mult_matrix(user_nn_matrix *save_matrix, user_nn_
 	float *src_data = src_matrix->data;
 	float *save_data = save_matrix->data;
 	float *sub_data = sub_matrix->data;
-	while (count--) {
-		*save_data++ = (float)*src_data++ * user_nn_activate_softmax_d(*sub_data++,type);
+
+#ifdef _OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		save_data[index] = (float)src_data[index] * user_nn_activate_softmax_d(sub_data[index], type);
 	}
+#else
+	while (count--) {
+		*save_data++ = (float)*src_data++ * user_nn_activate_softmax_d(*sub_data++, type);
+	}
+#endif
 }
 //对连续矩阵进行求导数，结果乘矩阵，进行返回
 //参数

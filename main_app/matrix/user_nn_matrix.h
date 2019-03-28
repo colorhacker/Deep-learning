@@ -189,7 +189,7 @@ result = user_nn_matrix_ext_value(src_matrix, 27, 27);
 
 res_matrix = user_nn_matrix_pool(src_matrix, sub_matrix);
 if (res_matrix != NULL){
-user_nn_matrix_printf(res_matrix);//打印矩阵
+user_nn_matrix_printf(NULL,res_matrix);//打印矩阵
 }
 else{
 printf("null\n");
@@ -208,7 +208,7 @@ user_nn_matrix_memset(sub_matrix, 1.0);//设置矩阵值
 
 res_matrix = user_nn_matrix_conv2(src_matrix, sub_matrix, u_nn_conv2_type_valid);
 if (res_matrix != NULL){
-user_nn_matrix_printf(res_matrix);//打印矩阵
+user_nn_matrix_printf(NULL,res_matrix);//打印矩阵
 }
 else{
 printf("null\n");
@@ -296,7 +296,7 @@ user_nn_matrix_memset(sub_matrix, 1.0);//设置矩阵值
 
 res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//矩阵相乘
 if (res_matrix != NULL){
-user_nn_matrix_printf(res_matrix);//打印矩阵
+user_nn_matrix_printf(NULL,res_matrix);//打印矩阵
 }
 else{
 printf("null\n");
@@ -315,10 +315,10 @@ dest->data[3] = 4.0;
 list = user_nn_matrix_to_matrices(dest,1,1);//获取其中一个矩阵
 
 if (list != NULL){
-user_nn_matrix_printf(list->matrix);//打印矩阵
-user_nn_matrix_printf(list->matrix->next);//打印矩阵
-user_nn_matrix_printf(list->matrix->next->next);//打印矩阵
-user_nn_matrix_printf(list->matrix->next->next->next);//打印矩阵
+user_nn_matrix_printf(NULL,list->matrix);//打印矩阵
+user_nn_matrix_printf(NULL,list->matrix->next);//打印矩阵
+user_nn_matrix_printf(NULL,list->matrix->next->next);//打印矩阵
+user_nn_matrix_printf(NULL,list->matrix->next->next->next);//打印矩阵
 }
 else{
 printf("null\n");
@@ -507,14 +507,12 @@ while (count++ < (src_matrix->width * src_matrix->height)){
 }
 printf("test start:\n");
 printf("width:%d,height:%d\n", src_matrix->width ,src_matrix->height);
-user_nn_matrix_transpose_cuda(sub_matrix);//启动显卡
 Sleep(1000);
 //user_nn_matrix_printf(debug_file, src_matrix);//打印矩阵
 while (1){
 test_start_time = clock();
 count = total_count;
 while (count--){
-//user_nn_matrix_transpose_cuda(src_matrix);//GPU加速
 user_nn_matrix_transpose(src_matrix);//CPU转置
 }
 src_data = src_matrix->data;//获取数据

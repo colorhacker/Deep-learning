@@ -1,6 +1,5 @@
 
 #include "user_nn_matrix.h"
-#include "user_nn_matrix_cuda.h"
 
 //创建一个矩阵
 //参数
@@ -41,37 +40,38 @@ user_nn_matrix *user_nn_matrix_cpy_create(user_nn_matrix *dest_matrix){
 }
 //矩阵转置 交换矩阵的width height包括数据
 void user_nn_matrix_transpose(user_nn_matrix *src_matrix){
-#ifdef USE_CUDA
-	user_nn_matrix_transpose_cuda(src_matrix);
-#else
 	user_nn_matrix *temp_matrix = NULL;
 	float *temp_data = NULL;
 	float *src_data = src_matrix->data;
 	int width = 0;
 	int height = 0;
 
+	src_matrix->width = src_matrix->width ^ src_matrix->height;
+	src_matrix->height = src_matrix->width ^ src_matrix->height;
+	src_matrix->width = src_matrix->width ^ src_matrix->height;
 	if ((src_matrix->width == 1) || (src_matrix->height == 1)){
-		//如果是一条矩阵向量 那么直接交换横纵坐标 不用交换数据
-		src_matrix->width = src_matrix->width ^ src_matrix->height;
-		src_matrix->height = src_matrix->width ^ src_matrix->height;
-		src_matrix->width = src_matrix->width ^ src_matrix->height;
-
-		return;//直接退出
+		return;//直接退出//如果是一条矩阵向量 那么直接交换横纵坐标 不用交换数据
 	}
 	temp_matrix = user_nn_matrix_create(src_matrix->width, src_matrix->height);//创建矩阵
 	user_nn_matrix_cpy_matrix(temp_matrix, src_matrix);//拷贝数据
 	temp_data = temp_matrix->data;//获取缓冲矩阵的数据指针
 
-	for (width = 0; width < temp_matrix->width; width++){
-		for (height = 0; height < temp_matrix->height; height++){
+#ifndef _OPENMP
+#pragma omp parallel for
+	for (width = 0; width < temp_matrix->width; width++) {
+		for (height = 0; height < temp_matrix->height; height++) {
+			src_data[width*temp_matrix->height+height] = *user_nn_matrix_ext_value(temp_matrix, width, height);
+		}
+	}
+#else
+	for (width = 0; width < temp_matrix->width; width++) {
+		for (height = 0; height < temp_matrix->height; height++) {
 			*src_data++ = *user_nn_matrix_ext_value(temp_matrix, width, height);
 		}
 	}
-	src_matrix->height = width;
-	src_matrix->width = height;
+#endif
 
 	user_nn_matrix_delete(temp_matrix);
-#endif
 }
 //返回矩阵中指定位置的值
 //参数
@@ -192,7 +192,6 @@ user_nn_list_matrix *user_nn_matrices_create(int total_w, int total_h, int matri
 	while (--n) {
 		matrix->next = user_nn_matrix_create(matrix_w, matrix_h);//添加一个矩阵
 		matrix = matrix->next;//更新指针对象
-		//printf("create matrix=%d\n", width * height - n + 1);
 	}
 	return list_matrix;
 }
@@ -289,17 +288,14 @@ user_nn_matrix *user_nn_matrix_expand(user_nn_matrix *src_matrix, int above, int
 	user_nn_matrix *result = NULL;//
 	float *src_data = src_matrix->data;//数据指针
 	float *result_data;
-	int count;//
-	int index = 0;
 
 	result = user_nn_matrix_create(left + src_matrix->width + right, above + src_matrix->height + below);//创建矩阵
 	result_data = result->data;//取得数据指针
-
 	result_data = result_data + (result->width * above + left);//跳过开头位置
 	//拷贝数据
-	for (count = 0; count < (src_matrix->width * src_matrix->height); count++){
+	for (int count = 0,index = 0; count < (src_matrix->width * src_matrix->height); count++) {
 		*result_data++ = *src_data++;
-		if (++index >= src_matrix->width){
+		if (++index >= src_matrix->width) {
 			index = 0;
 			result_data = result_data + left + right;
 		}
@@ -323,12 +319,24 @@ bool user_nn_matrix_save_array(user_nn_matrix *dest_matrix, float *src_data, int
 		return false;//如果超出范围那么直接返回空
 	}
 	dest_data += starty * dest_matrix->width + startx;//跳转到开始位置
+
+#ifndef _OPENMP //待测试
+	
+	#pragma omp parallel for
+	for (post_y = 0; post_y < height; post_y++) {
+		dest_data = dest_data + (dest_matrix->width - width)*post_y;
+		for (post_x = 0; post_x < width; post_x++) {
+			dest_data[post_y*width +post_x] = src_data[post_y*width + post_x];
+		}
+	}
+#else
 	for (post_y = 0; post_y < height; post_y++) {
 		for (post_x = 0; post_x < width; post_x++) {
 			*dest_data++ = *src_data++;
 		}
 		dest_data += dest_matrix->width - width;
 	}
+#endif
 	return true;
 }
 //
@@ -412,7 +420,7 @@ bool user_nn_matrix_save_matrix(user_nn_matrix *src_matrix, user_nn_matrix *save
 //返回：成功或者失败
 user_nn_matrix *user_nn_matrix_ext_matrix(user_nn_matrix *src_matrix, int startx, int starty, int width, int height){
 	user_nn_matrix *result = NULL;
-	int post_x, post_y, post_index;
+	int post_x, post_y;
 	float *src_data = src_matrix->data;//数据指针
 	float *result_data;
 
@@ -421,28 +429,20 @@ user_nn_matrix *user_nn_matrix_ext_matrix(user_nn_matrix *src_matrix, int startx
 	}
 	result = user_nn_matrix_create(width, height);//创建矩阵
 	result_data = result->data;//取得数据指针
-#if (user_nn_use_openmp)
-/*#pragma omp parallel for private(post_y, post_x)
+#ifndef _OPENMP
+#pragma omp parallel for 
 	for (post_y = 0; post_y < height; post_y++) {
 		for (post_x = 0; post_x < width; post_x++) {
-			result_data[post_y*width+ post_x] = src_data[(startx + post_x) + (starty + post_y)* src_matrix->width];//获取数据
-	}
-}*/
-	for (post_y = 0; post_y < height; post_y++) {
-		for (post_x = 0; post_x < width; post_x++) {
-			post_index = (startx + post_x) + (starty + post_y)* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
-			*result_data++ = src_data[post_index];//获取数据
-												  //printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
+			result_data[post_y*width+post_x] = src_data[(startx + post_x) + (starty + post_y)* src_matrix->width];//获取数据
 		}
-		//printf("\n");
 	}
 #else
 	//post_index = startx + starty* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
 	for (post_y = 0; post_y < height; post_y++) {
 		for (post_x = 0; post_x < width; post_x++) {
-			post_index = (startx + post_x) + (starty + post_y)* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
-			*result_data++ = src_data[post_index];//获取数据
-												  //printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
+			//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
+			*result_data++ = src_data[(startx + post_x) + (starty + post_y)* src_matrix->width];//获取数据
+			//printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
 		}
 		//printf("\n");
 	}
@@ -545,15 +545,27 @@ void user_nn_matrix_to_matrices(user_nn_list_matrix *src_matrices, user_nn_matri
 	int count_matrix, count_data;//
 	float *result_data = sub_matrix->data;//指向对象数据
 	float *src_data = NULL;
-
-	for (count_matrix = 0; count_matrix < (src_matrices->width * src_matrices->height); count_matrix++){
+#ifndef _OPENMP
+	for (count_matrix = 0; count_matrix < (src_matrices->width * src_matrices->height); count_matrix++) {
 		src_data = matrix->data;//获取保存数据指针
-		for (count_data = 0; count_data < (matrix->width * matrix->height); count_data++){
+		#pragma omp parallel for
+		for (count_data = 0; count_data < (matrix->width * matrix->height); count_data++) {
+			src_data[count_data] = result_data[count_data];//保存数据
+		}
+		//user_nn_matrix_exc_width_height(matrix);//交换矩阵 matlab同步
+		matrix = matrix->next;
+}
+#else
+	for (count_matrix = 0; count_matrix < (src_matrices->width * src_matrices->height); count_matrix++) {
+		src_data = matrix->data;//获取保存数据指针
+		for (count_data = 0; count_data < (matrix->width * matrix->height); count_data++) {
 			*src_data++ = *result_data++;//保存数据
 		}
 		//user_nn_matrix_exc_width_height(matrix);//交换矩阵 matlab同步
 		matrix = matrix->next;
-	}
+}
+#endif
+
 
 }
 //矩阵扩充 均值扩充
@@ -569,11 +581,26 @@ user_nn_matrix *user_nn_matrix_expand_mult_constant(user_nn_matrix *src_matrix, 
 
 	result = user_nn_matrix_create(src_matrix->width * width, src_matrix->height * height);//创建扩充后的矩阵
 	result_data = result->data;
+#ifndef _OPENMP
+#pragma omp parallel for
+	for (y = 0; y < src_matrix->height; y++) {
+		src_data = src_data + src_matrix->width*y;//跳转到结束位置
+		for (hi = 0; hi < height; hi++) {
+			src_data = src_data - src_matrix->width*(y*height+hi);//跳转到开始位置
+			for (x = 0; x < src_matrix->width; x++) {
+				for (wi = 0; wi < width; wi++) {
+					result_data[y*height*src_matrix->width*width + hi*src_matrix->width*width + x*width + wi] = \
+						(float)src_data[y*height*src_matrix->width*width + hi*src_matrix->width*width + x] * constant;//更新数据
+				}
+			}
+		}
 
-	for (y = 0; y < src_matrix->height; y++){
-		for (hi = 0; hi < height; hi++){
-			for (x = 0; x < src_matrix->width; x++){
-				for (wi = 0; wi < width; wi++){
+	}
+#else
+	for (y = 0; y < src_matrix->height; y++) {
+		for (hi = 0; hi < height; hi++) {
+			for (x = 0; x < src_matrix->width; x++) {
+				for (wi = 0; wi < width; wi++) {
 					*result_data++ = (float)*src_data * constant;//更新数据
 				}
 				src_data++;
@@ -582,6 +609,8 @@ user_nn_matrix *user_nn_matrix_expand_mult_constant(user_nn_matrix *src_matrix, 
 		}
 		src_data = src_data + src_matrix->width;//跳转到结束位置
 	}
+#endif
+
 	return result;
 }
 //设置矩阵值
@@ -703,10 +732,16 @@ float user_nn_matrix_cum_element(user_nn_matrix *src_matrix){
 	float result = 0;
 	float *src_data = src_matrix->data;
 	int count = src_matrix->width * src_matrix->height;
-
-	while (count--){
+#ifndef _OPENMP
+	#pragma omp parallel for reduction(+: result)
+	for (int index = 0; index < count; index++) {
+		result += src_data[index];
+	}
+#else
+	while (count--) {
 		result += *src_data++;
 	}
+#endif
 	return result;
 }
 //求和两个矩阵  save_matrix = src_matrix + sub_matrix 
@@ -723,9 +758,17 @@ void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_
 	if ((src_matrix->width != sub_matrix->width) || (src_matrix->height != sub_matrix->height)){
 		return;
 	}
-	while (count--){
-		*save_data++ = *src_data++ + (*sub_data++);
+#ifndef _OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count;index++) {
+		save_data[index] = src_data[index] + sub_data[index];
 	}
+#else
+	while (count--) {
+		*save_data++ = *src_data++ + (*sub_data++);
+}
+#endif
+
 }
 //求和两个矩阵  save_matrix = src_matrix + sub_matrix * alpha
 //参数
@@ -758,7 +801,7 @@ void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_
 	if ((save_matrix->width != sub_matrix->width) && (save_matrix->height != sub_matrix->height)){
 		return;
 	}
-#if (user_nn_use_openmp)
+#ifndef _OPENMP
 	#pragma omp parallel for
 	for (int index=0; index < count; index++) {
 		save_data[index] = sub_data[index];
@@ -813,10 +856,17 @@ float user_nn_matrix_mult_cum_matrix(user_nn_matrix *src_matrix, user_nn_matrix 
 	float *src_data = src_matrix->data;
 	float *sub_data = sub_matrix->data;
 	float result = 0;
-
-	while (count--){
+#ifndef _OPENMP
+#pragma omp parallel for reduction(+: result)
+	for (int index = 0; index < count;index++) {
+		result += src_data[index] * sub_data[index];
+	}
+#else
+	while (count--) {
 		result += (*src_data++) * (*sub_data++);
 	}
+#endif
+
 	return result;
 }
 
@@ -831,32 +881,31 @@ float user_nn_matrix_mult_cum_matrix(user_nn_matrix *src_matrix, user_nn_matrix 
 
 user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix) {
 	user_nn_matrix *result = NULL;//结果矩阵
-	float *src_data = NULL;//
-	float *sub_data = NULL;//
+	float *src_data = src_matrix->data;//
+	float *sub_data = sub_matrix->data;//
 	float *result_data = NULL;
-	int width, height, point;//矩阵列数
+	//int width, height, point;//矩阵列数
 	if (src_matrix->width != sub_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
 		return NULL;
 	}
+
 	result = user_nn_matrix_create(sub_matrix->width, src_matrix->height);//创建新的矩阵
 	result_data = result->data;//获取数据指针
-#if (user_nn_use_openmp)
-	#pragma omp parallel for private(height, width, point)
-	for (height = 0; height < result->height; height++) {
-		for (width = 0; width < result->width; width++) {
-			src_data = src_matrix->data + height * src_matrix->width;
-			sub_data = sub_matrix->data + width;
-			for (point = 0; point < sub_matrix->height; point++) {
-				result_data[height*result->width + width] += src_data[point] * sub_data[point*sub_matrix->width];
+#ifdef _OPENMP
+	#pragma omp parallel for
+	for (int height = 0; height < result->height; height++) {
+		for (int width = 0; width < result->width; width++) {
+			for (int point = 0; point < sub_matrix->height; point++) {
+				result_data[height*result->width + width] += src_data[height * src_matrix->width + point] * sub_data[width+point*sub_matrix->width];
 			}
 		}
 	}
 #else
-	for (height = 0; height < result->height; height++) {
-		for (width = 0; width < result->width; width++) {
+	for (int height = 0; height < result->height; height++) {
+		for (int width = 0; width < result->width; width++) {
 			src_data = src_matrix->data + height * src_matrix->width;//指向行开头
 			sub_data = sub_matrix->data + width;//指向列开头
-			for (point = 0; point < sub_matrix->height; point++) {
+			for (int point = 0; point < sub_matrix->height; point++) {
 				*result_data += *src_data * *sub_data;
 				sub_data += sub_matrix->width;
 				src_data++;
@@ -920,16 +969,16 @@ user_nn_matrix *user_nn_matrix_rotate180(user_nn_matrix *src_matrix){
 
 	result = user_nn_matrix_create(src_matrix->width, src_matrix->height);
 	result_data = result->data;//取得数据指针
-//#if (user_nn_use_openmp)
-//#pragma omp parallel for
-//	for (int index = 0; index < count;index++) {
-//		result_data[index] = input_data[count-index];
-//	}
-//#else
+#ifndef _OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count;index++) {
+		result_data[index] = input_data[count - index - 1];
+	}
+#else
 	while (count--) {
 		*result_data++ = input_data[count];//直接首尾进行交换
 	}
-//#endif
+#endif
 	return result;
 }
 //对矩阵进行pooling操作 此操作针对cnn使用

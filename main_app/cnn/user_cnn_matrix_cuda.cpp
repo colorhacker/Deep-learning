@@ -1,6 +1,4 @@
 
-#include "../matrix/user_nn_matrix_cuda.h"
-
 #ifdef WIN64
 user_nn_matrix * user_nn_matrix_mult_matrix_cuda(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix){
 	cublasHandle_t cuda_handle;
