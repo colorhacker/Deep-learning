@@ -13,6 +13,18 @@ int main(int argc, const char** argv){
 #ifdef _OPENMP
 	omp_set_num_threads(28);
 #endif
+/*
+#pragma omp parallel for 
+	for (int x = 0; x < 3; x++) {
+		for (int y = 0; y < 3; y++) {
+			for (int z = 0; z < 3; z++) {
+				printf("\n%d:%d %d %d",x*3*3+y*3+z,x,y,z);
+			}
+		}
+	}
+*/
+	_getch();
+	return 1;
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");
