@@ -27,7 +27,7 @@ void user_nn_app_train(int argc, const char** argv) {
 			user_nn_model_ffp(nn_layers);//正向计算一次
 			user_nn_model_bp(nn_layers, 0.01f);//反向计算一次
 			loss_function = user_nn_model_return_loss(nn_layers);
-			user_nn_model_display_feature(nn_layers);
+			//user_nn_model_display_feature(nn_layers);
 			if (loss_function <= loss_target) {
 				user_nn_model_save_model(user_nn_model_nn_file_name, nn_layers);//保存模型
 				break;

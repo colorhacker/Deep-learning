@@ -11,29 +11,10 @@
 
 
 int main(int argc, const char** argv){
-	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-	user_nn_matrix *res_matrix = NULL;
+#ifdef _OPENMP
+	omp_set_num_threads(16);
+#endif
 
-	src_matrix = user_nn_matrix_create(10, 10);
-	sub_matrix = user_nn_matrix_create(10, 10);
-
-	user_nn_matrix_memset(src_matrix, 2.5);//设置矩阵值
-	user_nn_matrix_memset(sub_matrix, 1.0);//设置矩阵值
-
-
-	clock_t start_time;
-	start_time = clock();
-	res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//矩阵相乘
-	if (res_matrix != NULL) {
-		user_nn_matrix_printf(NULL, res_matrix);//打印矩阵
-	}
-	else {
-		printf("null\n");
-	}
-	printf("%f", (float)(clock() - start_time) / 1000);
-	return 1;
-	//omp_set_num_threads(16);
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");

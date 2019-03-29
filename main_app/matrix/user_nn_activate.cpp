@@ -39,9 +39,17 @@ float user_nn_activate_softmax_d(float value, activation_type type) {
 void user_nn_activate_matrix(user_nn_matrix *dest_matrix, activation_type type) {
 	int count = dest_matrix->width * dest_matrix->height;//获取矩阵数据大小
 	float *dest_data = dest_matrix->data;
+
+#ifdef _OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		dest_data[index] = user_nn_activate_softmax((float)dest_data[index], type);
+	}
+#else
 	while (count--) {
 		*dest_data++ = user_nn_activate_softmax(*dest_data, type);
 	}
+#endif
 }
 
 //采用激活函数对矩阵进行求导处理
@@ -50,9 +58,17 @@ void user_nn_activate_matrix(user_nn_matrix *dest_matrix, activation_type type) 
 void user_nn_activate_matrix_d(user_nn_matrix *dest_matrix, activation_type type) {
 	int count = dest_matrix->width * dest_matrix->height;//获取矩阵数据大小
 	float *dest_data = dest_matrix->data;
+
+#ifdef _OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		dest_data[index] = user_nn_activate_softmax_d((float)dest_data[index], type);
+	}
+#else
 	while (count--) {
 		*dest_data++ = user_nn_activate_softmax_d(*dest_data, type);
 	}
+#endif
 }
 
 //采用激活函数对矩阵加上一个值进行激活处理
@@ -67,9 +83,16 @@ void user_nn_activate_matrix_sum_constant(user_nn_matrix *save_matrix, user_nn_m
 	int count = src_matrix->width * src_matrix->height;//获取矩阵数据大小
 	float *src_data = src_matrix->data;
 	float *save_data = save_matrix->data;
+#ifdef _OPENMP
+	#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		save_data[index] = user_nn_activate_softmax((float)src_data[index] + constant, type);
+	}
+#else
 	while (count--) {
 		*save_data++ = user_nn_activate_softmax((float)*src_data++ + constant, type);
 	}
+#endif
 }
 //采用激活函数对矩阵加上一个矩阵进行激活处理
 //公式：save_matrix=sigmoid(src_matrix + sub_matrix);
