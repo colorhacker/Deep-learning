@@ -213,6 +213,48 @@ void user_nn_model_info_layer(user_nn_layers *layers) {
 		}
 	}
 }
+
+//求网络层平均值
+//layers a层
+//layers b层
+//返回值 无
+void user_nn_model_layer_average(user_nn_layers *layers,user_nn_layers *layers_s,float alpha) {
+	user_nn_input_layers	*input_infor = NULL;
+	user_nn_hidden_layers	*hidden_infor = NULL;
+	user_nn_hidden_layers	*hidden_infor_s = NULL;
+	user_nn_output_layers   *output_infor = NULL;
+	user_nn_output_layers   *output_infor_s = NULL;
+	while (1) {
+		switch (layers->type) {
+		case u_nn_layer_type_null:
+			break;
+		case u_nn_layer_type_input:
+			input_infor = (user_nn_input_layers *)layers->content;
+			//user_nn_matrix_cum_matrix_mult_alpha(input_infor->);
+			break;
+		case u_nn_layer_type_hidden:
+			hidden_infor = (user_nn_hidden_layers *)layers->content;
+			hidden_infor_s = (user_nn_hidden_layers *)layers_s->content;
+			user_nn_matrix_cum_matrix_mult_alpha(hidden_infor->feature_matrix, hidden_infor->feature_matrix, hidden_infor_s->feature_matrix, alpha);
+			break;
+		case u_nn_layer_type_output:
+			output_infor = (user_nn_output_layers *)layers->content;
+			output_infor_s = (user_nn_output_layers *)layers_s->content;
+			user_nn_matrix_cum_matrix_mult_alpha(output_infor->feature_matrix, output_infor->feature_matrix, output_infor_s->feature_matrix, alpha);
+			break;
+		default:
+			break;
+		}
+		if (layers->next == NULL) {
+			break;
+		}
+		else {
+			layers = layers->next;
+			layers_s = layers_s->next;
+		}
+	}
+}
+
 //获取输出矩阵
 //layers 获取对象层
 //返回 矩阵值

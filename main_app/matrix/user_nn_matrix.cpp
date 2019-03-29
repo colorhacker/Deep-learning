@@ -891,7 +891,8 @@ user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_m
 	result = user_nn_matrix_create(sub_matrix->width, src_matrix->height);//创建新的矩阵
 	result_data = result->data;//获取数据指针
 #ifdef _OPENMP
-	#pragma omp parallel for
+	//#pragma omp parallel for reduction(+:result_data[:0])
+	#pragma omp parallel for //collapse(2) 
 	for (int height = 0; height < result->height; height++) {
 		for (int width = 0; width < result->width; width++) {
 			for (int point = 0; point < sub_matrix->height; point++) {

@@ -9,12 +9,10 @@
 #include "w2c\user_w2c_app.h"
 #include "mnist\user_mnist.h"
 
-
 int main(int argc, const char** argv){
 #ifdef _OPENMP
 	omp_set_num_threads(28);
 #endif
-
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");
