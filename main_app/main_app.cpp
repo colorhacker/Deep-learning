@@ -12,7 +12,7 @@
 
 int main(int argc, const char** argv){
 #ifdef _OPENMP
-	omp_set_num_threads(16);
+	omp_set_num_threads(28);
 #endif
 
 	printf("\n-----功能选择-----\n");
