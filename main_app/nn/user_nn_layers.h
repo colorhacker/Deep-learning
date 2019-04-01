@@ -36,9 +36,9 @@ typedef struct _nn_hidden_layers {
 	int feature_width;//数据宽度 特征数据的宽度
 	int feature_height;//数据高度 特征数据的高度
 
-	user_nn_matrix		*kernel_matrix;//存放本次数据如数到隐藏层的数据	
+	user_nn_matrix		*kernel_matrix;//神经元w	
 	user_nn_matrix		*biases_matrix;//偏置参数
-	user_nn_matrix		*feature_matrix;//存放计算后的特征数据 按照时间序列因此有多个
+	user_nn_matrix		*feature_matrix;//存放计算后的特征数据 
 
 	user_nn_matrix		*deltas_matrix;//保存本层的数据残差
 	user_nn_matrix		*deltas_kernel_matrix;//本层残差对前一层feture maps的结果也就是ΔW的值	

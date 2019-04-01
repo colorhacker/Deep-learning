@@ -36,7 +36,7 @@ void user_nn_app_train(int argc, const char** argv) {
 	start_time = clock();
 	while (1) {
 #ifdef _OPENMP
-		#pragma omp parallel for
+		#pragma omp parallel for reduction(+: save_model_count)
 		for(int index_p = 0; index_p < parallel_count; index_p++){
 			for (int index = 0; index < train_images->height * train_images->width; index++) {
 				user_nn_model_load_input_feature(nn_layers[index_p], user_nn_matrices_ext_matrix_index(train_images, index));//加载输入数据
@@ -61,8 +61,10 @@ void user_nn_app_train(int argc, const char** argv) {
 			}
 			
 		}
+		user_nn_model_layer_average(nn_layers[0], nn_layers[0], -0.9f / parallel_count);
 		for (int index = 0; index < parallel_count - 1; index++) {
 			user_nn_model_layer_average(nn_layers[0], nn_layers[index+1],1.0f/ parallel_count);
+			//user_nn_matrix_cpy_matrix(, nn_layers[0]);
 		}
 		if (loss_function < loss_target) {
 			break;//跳出训练
