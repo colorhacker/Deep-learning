@@ -235,10 +235,8 @@ void user_nn_model_layer_average(user_nn_layers *layers[],int count) {
 		case u_nn_layer_type_input:
 			break;
 		case u_nn_layer_type_hidden:
-			
 			user_nn_matrix_divi_constant(((user_nn_hidden_layers *)layers[0]->content)->kernel_matrix, 0.1f);
 			user_nn_matrix_divi_constant(((user_nn_hidden_layers *)layers[0]->content)->biases_matrix, 0.1f);
-
 			for (int index = 1; index < count; index++) {
 				user_nn_matrix_cum_matrix_alpha(((user_nn_hidden_layers *)layers[0]->content)->kernel_matrix, \
 					((user_nn_hidden_layers *)layers[index]->content)->kernel_matrix, 0.1f);
@@ -251,9 +249,18 @@ void user_nn_model_layer_average(user_nn_layers *layers[],int count) {
 			}
 			break;
 		case u_nn_layer_type_output:
-			output_infor = (user_nn_output_layers *)layers[index]->content;
-			output_infor_s = (user_nn_output_layers *)layers[index + 1]->content;
-			user_nn_matrix_cum_matrix_alpha(output_infor->kernel_matrix, output_infor_s->kernel_matrix, 0.1f);
+			user_nn_matrix_divi_constant(((user_nn_output_layers *)layers[0]->content)->kernel_matrix, 0.1f);
+			user_nn_matrix_divi_constant(((user_nn_output_layers *)layers[0]->content)->biases_matrix, 0.1f);
+			for (int index = 1; index < count; index++) {
+				user_nn_matrix_cum_matrix_alpha(((user_nn_output_layers *)layers[0]->content)->kernel_matrix, \
+					((user_nn_output_layers *)layers[index]->content)->kernel_matrix, 0.1f);
+				user_nn_matrix_cum_matrix_alpha(((user_nn_output_layers *)layers[0]->content)->biases_matrix, \
+					((user_nn_output_layers *)layers[index]->content)->biases_matrix, 0.1f);
+			}
+			for (int index = 1; index < count; index++) {
+				user_nn_matrix_cpy_matrix(((user_nn_output_layers *)layers[index]->content)->kernel_matrix, ((user_nn_output_layers *)layers[0]->content)->kernel_matrix);
+				user_nn_matrix_cpy_matrix(((user_nn_output_layers *)layers[index]->content)->biases_matrix, ((user_nn_output_layers *)layers[0]->content)->biases_matrix);
+			}
 			break;
 		default:
 			break;
