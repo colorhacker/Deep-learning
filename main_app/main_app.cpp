@@ -23,6 +23,13 @@ int main(int argc, const char** argv){
 		}
 	}
 */
+	int result = 0, count=100000;
+#pragma omp parallel for reduction(+: result)
+	for (int index = 0; index < count; index++) {
+		result++;
+	}
+	printf("\n%d", result);
+	return 1;
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");
