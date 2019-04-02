@@ -53,6 +53,7 @@ user_nn_input_layers *user_nn_layers_input_create(user_nn_layers *nn_layers, int
 		last_layers = last_layers->next;//轮询查找nn_layers空对象
 	}
 	last_layers->next = user_nn_layers_create(u_nn_layer_type_input, last_layers->index + 1);//创建输入层 输入层的指数为前一层+1
+	last_layers->next->prior = last_layers;//指向前一层
 	last_layers->next->content = malloc(sizeof(user_nn_input_layers));//分配内存输入层的对象空间
 	input_layers = (user_nn_input_layers *)last_layers->next->content;//转化当前层的值 用于设置参数
 

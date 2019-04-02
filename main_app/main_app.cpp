@@ -11,7 +11,7 @@
 
 int main(int argc, const char** argv){
 #ifdef _OPENMP
-	omp_set_num_threads(28);
+	omp_set_num_threads(32);
 #endif
 /*
 #pragma omp parallel for 
@@ -23,8 +23,6 @@ int main(int argc, const char** argv){
 		}
 	}
 */
-	_getch();
-	return 1;
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");

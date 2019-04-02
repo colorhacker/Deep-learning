@@ -219,15 +219,6 @@ void user_nn_model_info_layer(user_nn_layers *layers) {
 //layers b层
 //返回值 无
 void user_nn_model_layer_average(user_nn_layers *layers[],int count) {
-	user_nn_hidden_layers	*hidden_infor = NULL;
-	user_nn_output_layers   *output_infor = NULL;
-	user_nn_hidden_layers	*hidden_infor_s = NULL;
-	user_nn_output_layers   *output_infor_s = NULL;
-
-	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-
-
 	for (;;) {
 		switch (layers[0]->type) {
 		case u_nn_layer_type_null:
@@ -238,9 +229,9 @@ void user_nn_model_layer_average(user_nn_layers *layers[],int count) {
 			user_nn_matrix_divi_constant(((user_nn_hidden_layers *)layers[0]->content)->kernel_matrix, 0.1f);
 			user_nn_matrix_divi_constant(((user_nn_hidden_layers *)layers[0]->content)->biases_matrix, 0.1f);
 			for (int index = 1; index < count; index++) {
-				user_nn_matrix_cum_matrix_alpha(((user_nn_hidden_layers *)layers[0]->content)->kernel_matrix, \
+				user_nn_matrix_cum_matrix_alpha(((user_nn_hidden_layers *)layers[0]->content)->kernel_matrix,
 					((user_nn_hidden_layers *)layers[index]->content)->kernel_matrix, 0.1f);
-				user_nn_matrix_cum_matrix_alpha(((user_nn_hidden_layers *)layers[0]->content)->biases_matrix, \
+				user_nn_matrix_cum_matrix_alpha(((user_nn_hidden_layers *)layers[0]->content)->biases_matrix,
 					((user_nn_hidden_layers *)layers[index]->content)->biases_matrix, 0.1f);
 			}
 			for (int index = 1; index < count; index++) {
@@ -251,15 +242,19 @@ void user_nn_model_layer_average(user_nn_layers *layers[],int count) {
 		case u_nn_layer_type_output:
 			user_nn_matrix_divi_constant(((user_nn_output_layers *)layers[0]->content)->kernel_matrix, 0.1f);
 			user_nn_matrix_divi_constant(((user_nn_output_layers *)layers[0]->content)->biases_matrix, 0.1f);
+			((user_nn_output_layers *)layers[0]->content)->loss_function *= 0.1f;
 			for (int index = 1; index < count; index++) {
-				user_nn_matrix_cum_matrix_alpha(((user_nn_output_layers *)layers[0]->content)->kernel_matrix, \
+				user_nn_matrix_cum_matrix_alpha(((user_nn_output_layers *)layers[0]->content)->kernel_matrix,
 					((user_nn_output_layers *)layers[index]->content)->kernel_matrix, 0.1f);
-				user_nn_matrix_cum_matrix_alpha(((user_nn_output_layers *)layers[0]->content)->biases_matrix, \
+				user_nn_matrix_cum_matrix_alpha(((user_nn_output_layers *)layers[0]->content)->biases_matrix,
 					((user_nn_output_layers *)layers[index]->content)->biases_matrix, 0.1f);
+				((user_nn_output_layers *)layers[0]->content)->loss_function += \
+					((user_nn_output_layers *)layers[index]->content)->loss_function*0.1f;
 			}
 			for (int index = 1; index < count; index++) {
 				user_nn_matrix_cpy_matrix(((user_nn_output_layers *)layers[index]->content)->kernel_matrix, ((user_nn_output_layers *)layers[0]->content)->kernel_matrix);
 				user_nn_matrix_cpy_matrix(((user_nn_output_layers *)layers[index]->content)->biases_matrix, ((user_nn_output_layers *)layers[0]->content)->biases_matrix);
+				((user_nn_output_layers *)layers[index]->content)->loss_function = ((user_nn_output_layers *)layers[0]->content)->loss_function;
 			}
 			break;
 		default:
@@ -269,9 +264,22 @@ void user_nn_model_layer_average(user_nn_layers *layers[],int count) {
 			break;
 		}
 		else {
-			layers[0] = layers[0]->next;
+			for (int index = 0; index < count; index++) {
+				layers[index] = layers[index]->next;
+			}
 		}
 	}
+	while (1) {
+		if (layers[0]->prior == NULL) {
+			break;
+		}
+		else {
+			for (int index = 0; index < count; index++) {
+				layers[index] = layers[index]->prior;
+			}
+		}
+	}
+
 }
 
 //获取输出矩阵

@@ -33,6 +33,9 @@
 //#include "user_cnn_create.h"
 #include "user_types.h"
 
+
+#define _USER_API_OPENMP false
+
 //初始化网络值的方式
 //lecun_uniform、glorot_normal、glorot_uniform、he_normal、he_uniform
 #define		user_nn_init_type				glorot_normal
