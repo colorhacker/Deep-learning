@@ -11,7 +11,7 @@
 
 int main(int argc, const char** argv){
 #ifdef _OPENMP
-	omp_set_num_threads(32);
+	omp_set_num_threads(10);
 #endif
 /*
 #pragma omp parallel for 
