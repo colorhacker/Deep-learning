@@ -27,14 +27,14 @@
 
 #include "user_types.h"
 //是否开启OPENMP底层API
-#define _USER_API_OPENMP					false
+#define		_USER_API_OPENMP				false
 //配置输出文件夹
-#define user_nn_debug_file					"./debug.txt"
+#define		user_nn_debug_file				"./debug.txt"
 //初始化网络值的方式
 //lecun_uniform、glorot_normal、glorot_uniform、he_normal、he_uniform
 #define		user_nn_init_type				glorot_normal
 //CNN配置开始
-#define		user_nn_cnn_softmax				activation_tanh
+#define		user_nn_cnn_softmax				activation_sigmoid
 #define		user_nn_model_cnn_file_name		"./model/cnn_model"
 #define		user_nn_model_cnn_layer_addr	 0x0		//保存层的基地址
 #define		user_nn_model_cnn_content_addr	 0x800		//保存层对象的基地址

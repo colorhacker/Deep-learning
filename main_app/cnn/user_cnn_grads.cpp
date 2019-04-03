@@ -21,10 +21,10 @@ void user_cnn_grads_convolution(user_cnn_layers *conv_layer, float alpha){
 			conv_kernel_matrix		  = user_nn_matrices_ext_matrix(conv_kernel_matrices, input_feature_index, output_feature_index);//取出指定位置特征数据
 			conv_deltas_kernel_matrix = user_nn_matrices_ext_matrix(conv_deltas_kernel_matrices, input_feature_index, output_feature_index);//取出指定位置特征数据
 			//conv_kernel_maps = conv_kernel_maps - alpha * conv_deltas_kernel_maps
-			user_nn_matrix_sum_matrix_mult_alpha(conv_kernel_matrix, conv_deltas_kernel_matrix, 1.0f * alpha);
+			user_nn_matrix_sum_matrix_mult_alpha(conv_kernel_matrix, conv_deltas_kernel_matrix, -1.0f * alpha);
 		}
 		//conv_bias = conv_bias - alpha * conv_deltas_bias
-		*conv_biases++ = (float)*conv_biases - alpha * *conv_deltas_biases++;
+		*conv_biases++ = (float)*conv_biases - *conv_deltas_biases++ *alpha;
 	}
 }
 //更新输出层的权值与偏置参数

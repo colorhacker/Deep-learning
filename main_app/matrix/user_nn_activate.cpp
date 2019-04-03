@@ -11,7 +11,7 @@ float user_nn_activate_softmax(float value, activation_type type) {
 		case activation_tanh:
 			return (float)tanh(((float)value));//双曲函数
 		case activation_prelu:
-			return value >= 0? (float)value : (float)value*0.01f;//relu激活
+			return value >= 0.0f? (float)value : (float)value*0.01f;//relu激活
 		default:break;
 	}
 	return 0;
@@ -23,11 +23,11 @@ float user_nn_activate_softmax(float value, activation_type type) {
 float user_nn_activate_softmax_d(float value, activation_type type) {
 	switch (type) {
 	case activation_sigmoid:
-		return (float)(value*(1 - value));//S生长型函数
+		return (value*(1.0f - value));//S生长型函数
 	case activation_tanh:
-		return (float)(1 - value*value);//双曲函数
+		return (1.0f - value*value);//双曲函数
 	case activation_prelu:
-		return value >= 0 ? 1.0f : 0.01f;//relu激活
+		return value >= 0.0f ? 1.0f : 0.01f;//relu激活
 	default:break;
 	}
 	return 0;

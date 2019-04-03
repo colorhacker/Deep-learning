@@ -43,7 +43,7 @@ void user_cnn_mnist_train() {
 			user_cnn_model_ffp(cnn_layers);//正向计算一次
 			user_cnn_model_bp(cnn_layers, 0.5f);//反向训练一次
 			loss_function = user_cnn_model_return_loss(cnn_layers);//获取损失函数
-			printf("\n%f", loss_function);
+			//printf("\n%f", loss_function);
 			if (sw_display) {
 				user_cnn_model_display_feature(cnn_layers);//显示所有特征数据
 			}
@@ -51,10 +51,10 @@ void user_cnn_mnist_train() {
 			if (loss_function < target_loss) {
 				break;//跳出迭代
 			}
-			if (save_model_count++ > 1000) {
+			if (save_model_count++ > 100) {
 				save_model_count = 0;
 				printf("train count:%d,loss:%f\n", train_index,loss_function);
-				user_cnn_model_save_model(cnn_layers,0);//保存一次模型
+				//user_cnn_model_save_model(cnn_layers,0);//保存一次模型
 			}
 		}
 		printf("target:%f loss:%f\n", target_loss, loss_function);
