@@ -47,27 +47,6 @@ char *user_cnn_model_search_file_name(char *folder, int index){
 	}
 	return NULL;
 }
-//给定一个训练的文件夹 获取其完整路径
-//files 文件夹
-//index 获取第几个文件的名称
-//返回 文件名或者null
-char *user_cnn_model_full_path(char *files,int index){
-	static char full_path[MAX_PATH];
-	char *file_name = NULL;
-
-	memset(full_path, 0, sizeof(full_path));
-	sprintf(full_path, "%s/%s/*%s", user_nn_cnn_training_folder, files, user_nn_cnn_training_type);
-	
-	file_name = user_cnn_model_search_file_name(full_path, index);
-	memset(full_path, 0, sizeof(full_path));
-	if (file_name != NULL){
-		sprintf(full_path, "%s/%s/%s", user_nn_cnn_training_folder, files, file_name);
-		return full_path;
-	}
-	else{
-		return NULL;
-	}	
-}
 //把一幅图像转化为一个矩阵
 //path 图像路径
 //返回 矩阵对象
@@ -467,45 +446,3 @@ void user_cnn_model_info_layer(user_cnn_layers *layers) {
 	}
 }
 
-//指定文件追加字符串
-void user_model_save_string(char *str){
-	FILE *output_file = NULL;
-	output_file = fopen("debug.txt", "a+");
-	fprintf(output_file, "%s", str);
-	fclose(output_file);
-}
-//指定文件追加int整形值
-void user_model_save_int(int vaule){
-	FILE *output_file = NULL;
-	output_file = fopen("debug.txt", "a+");
-	fprintf(output_file, "%d", vaule);
-	fclose(output_file);
-}
-//指定文件追加浮点数值
-void user_model_save_float(float vaule){
-	FILE *output_file = NULL;
-	output_file = fopen("debug.txt", "a+");
-	fprintf(output_file, "%f", vaule);
-	fclose(output_file);
-}
-/*
-FILE *debug_file = NULL;
-debug_file = fopen("model.bin", "w+");
-user_cnn_input_layers  *input_layer = (user_cnn_input_layers  *)user_cnn_layers_get(layers, 1)->content;//
-user_cnn_conv_layers   *conv_layer_1 = (user_cnn_conv_layers   *)user_cnn_layers_get(layers, 2)->content;//
-user_cnn_pool_layers   *pool_layer_1 = (user_cnn_pool_layers   *)user_cnn_layers_get(layers, 3)->content;//
-user_cnn_conv_layers   *conv_layer_2 = (user_cnn_conv_layers   *)user_cnn_layers_get(layers, 4)->content;//
-user_cnn_pool_layers   *pool_layer_2 = (user_cnn_pool_layers   *)user_cnn_layers_get(layers, 5)->content;//
-user_cnn_output_layers *output_layer = (user_cnn_output_layers *)user_cnn_layers_get(layers, 6)->content;//
-
-user_nn_matrices_printf(debug_file, "卷积层1", conv_layer_1->kernel_matrices);//打印卷积核数据
-user_nn_matrix_printf(debug_file,					conv_layer_1->biases_matrix);//卷积层1 偏置参数
-user_nn_matrix_printf(debug_file,					pool_layer_1->kernel_matrix);
-user_nn_matrices_printf(debug_file, "卷积层2", conv_layer_2->kernel_matrices);//打印卷积核数据
-user_nn_matrix_printf(debug_file,					conv_layer_2->biases_matrix);//卷积层2 偏置参数
-user_nn_matrix_printf(debug_file,					pool_layer_2->kernel_matrix);
-user_nn_matrix_printf(debug_file,					output_layer->kernel_matrix);//打印输出层核数据
-user_nn_matrix_printf(debug_file,					output_layer->biases_matrix);//打印输出层的偏置参数
-
-fclose(debug_file);
-*/

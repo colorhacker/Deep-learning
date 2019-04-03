@@ -205,6 +205,7 @@
     <ClInclude Include="nn\user_nn_layers.h" />
     <ClInclude Include="nn\user_nn_model.h" />
     <ClInclude Include="nn\user_nn_rw_model.h" />
+    <ClInclude Include="other\user_nn_debug.h" />
     <ClInclude Include="rnn\user_rnn_app.h" />
     <ClInclude Include="rnn\user_rnn_bptt.h" />
     <ClInclude Include="rnn\user_rnn_ffp.h" />
@@ -242,6 +243,7 @@
     <ClCompile Include="nn\user_nn_layers.cpp" />
     <ClCompile Include="nn\user_nn_model.cpp" />
     <ClCompile Include="nn\user_nn_rw_model.cpp" />
+    <ClCompile Include="other\user_nn_debug.cpp" />
     <ClCompile Include="rnn\user_rnn_app.cpp" />
     <ClCompile Include="rnn\user_rnn_bptt.cpp" />
     <ClCompile Include="rnn\user_rnn_ffp.cpp" />

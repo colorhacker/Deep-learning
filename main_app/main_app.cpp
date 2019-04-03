@@ -11,25 +11,8 @@
 
 int main(int argc, const char** argv){
 #ifdef _OPENMP
-	omp_set_num_threads(10);
+	omp_set_num_threads(30);
 #endif
-/*
-#pragma omp parallel for 
-	for (int x = 0; x < 3; x++) {
-		for (int y = 0; y < 3; y++) {
-			for (int z = 0; z < 3; z++) {
-				printf("\n%d:%d %d %d",x*3*3+y*3+z,x,y,z);
-			}
-		}
-	}
-*/
-	int result = 0, count=100000;
-#pragma omp parallel for reduction(+: result)
-	for (int index = 0; index < count; index++) {
-		result++;
-	}
-	printf("\n%d", result);
-	return 1;
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");

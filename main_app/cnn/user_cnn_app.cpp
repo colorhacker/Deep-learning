@@ -63,11 +63,12 @@ void user_cnn_mnist_train() {
 		}
 	}
 	end_time = (clock() - start_time) / 1000 / 60;//获取结束时间
-	user_model_save_string("\n模型训练结束，损失值:");
-	user_model_save_float(loss_function);
-	user_model_save_string("\n总时间:");
-	user_model_save_int(end_time);
-	user_model_save_string("分钟");
+
+	user_nn_debug_printf("%s","\n模型训练结束，损失值:");
+	user_nn_debug_printf("%f",(void *)&loss_function);
+	user_nn_debug_printf("%s","总时间:");
+	user_nn_debug_printf("%d", (void *)&end_time);
+	user_nn_debug_printf("%s","分钟");
 	user_cnn_model_save_model(user_nn_model_cnn_file_name, cnn_layers);//保存模型
 	printf("\n\n");
 	system("pause");
@@ -86,21 +87,22 @@ void user_cnn_mnist_test() {
 		return;
 	}
 	//进行测试
-	int error_count = 0;
+	float error_count = 0;
 	for (int test_index = 0; test_index < test_images->height * test_images->width; test_index++) {
 		user_cnn_model_load_input_feature(cnn_layers, user_nn_matrices_ext_matrix_index(test_images, test_index), 1);
 		user_cnn_model_ffp(cnn_layers);//正向计算一次
 		if (user_cnn_model_return_class(cnn_layers) != user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index))) {
 			error_count++;
-			user_model_save_string("\n识别错误！图像数字:");
-			user_model_save_int(user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index)));
-			user_model_save_string("识别为:");
-			user_model_save_int(user_cnn_model_return_class(cnn_layers));
+			user_nn_debug_printf("%s","\n识别错误！图像数字:");
+			user_nn_debug_printf("%d", (void *)user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index)));
+			user_nn_debug_printf("%s","识别为:");
+			user_nn_debug_printf("%s", (void *)user_cnn_model_return_class(cnn_layers));
 		}
 	}
-	user_model_save_string("\n\n识别成功率:");
-	user_model_save_float(((float)1 - (float)error_count / (test_images->height * test_images->width)) * 100);
-	user_model_save_string("%");
+	user_nn_debug_printf("%s","\n\n识别成功率:");
+	error_count = ((float)1 - (float)error_count / (test_images->height * test_images->width)) * 100;
+	user_nn_debug_printf("%d", (void *)&error_count);
+	user_nn_debug_printf("%s","%");
 	system("pause");
 }
 

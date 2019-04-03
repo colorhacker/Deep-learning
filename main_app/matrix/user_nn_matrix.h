@@ -289,19 +289,23 @@ user_nn_matrix *src_matrix = NULL;
 user_nn_matrix *sub_matrix = NULL;
 user_nn_matrix *res_matrix = NULL;
 
-src_matrix = user_nn_matrix_create(1, 1);
-sub_matrix = user_nn_matrix_create(1, 1);
+src_matrix = user_nn_matrix_create(1280, 1280);
+sub_matrix = user_nn_matrix_create(1280, 1280);
 
-user_nn_matrix_memset(src_matrix, 2.5);//设置矩阵值
-user_nn_matrix_memset(sub_matrix, 1.0);//设置矩阵值
-
-res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//矩阵相乘
-if (res_matrix != NULL){
-user_nn_matrix_printf(NULL,res_matrix);//打印矩阵
+for (int count = 0; count < (src_matrix->width * src_matrix->height); count++) {
+src_matrix->data[count] = (float)count * 0.01f;
+sub_matrix->data[count] = (float)count * 0.01f;
 }
-else{
+res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//矩阵相乘
+if (res_matrix != NULL) {
+user_nn_matrix_printf(NULL, res_matrix);//打印矩阵
+}
+else {
 printf("null\n");
 }
+printf("\nend");
+_getch();
+return 1;
 */
 /*单个矩阵转化为 高度为1的连续链表矩阵
 user_nn_list_matrix *list = NULL;
@@ -488,63 +492,25 @@ printf("\nmin_value_index=%d,vaule=%f\n",min_value_index,*user_nn_matrix_return_
 
 /* 矩阵转置时间测试
 
-FILE *debug_file = NULL;
-debug_file = fopen("debug.txt", "w+");
 user_nn_matrix *src_matrix = NULL;
 user_nn_matrix *sub_matrix = NULL;
-user_nn_matrix *res_matrix = NULL;
 int matrix_w = 128, matrix_h = 128;
 src_matrix = user_nn_matrix_create(matrix_w, matrix_h);
 sub_matrix = user_nn_matrix_create(matrix_w, matrix_h);
-clock_t test_start_time, test_end_time;
-float *src_data = src_matrix->data;
-float *sub_data = sub_matrix->data;
-
-int count = 0,total_count=499;
-
-while (count++ < (src_matrix->width * src_matrix->height)){
-*src_data++ = count * 0.01f;
-*sub_data++ = count * 0.01f;
+for (int count = 0; count < (src_matrix->width * src_matrix->height); count++) {
+src_matrix->data[count] = (float)count * 0.01f;
+sub_matrix->data[count] = (float)count * 0.01f;
 }
-printf("test start:\n");
-printf("width:%d,height:%d\n", src_matrix->width ,src_matrix->height);
-Sleep(1000);
-//user_nn_matrix_printf(debug_file, src_matrix);//打印矩阵
-while (1){
-test_start_time = clock();
-count = total_count;
-while (count--){
-user_nn_matrix_transpose(src_matrix);//CPU转置
-}
-src_data = src_matrix->data;//获取数据
-sub_data = sub_matrix->data;//获取数据
-count = 0;
-while (count++ < (src_matrix->width * src_matrix->height)){
-if (*src_data++ != *sub_data++){
+user_nn_matrix_transpose(src_matrix);
+user_nn_matrix_transpose(src_matrix);
+for (int count = 0; count < (src_matrix->width * src_matrix->height); count++) {
+printf("\n%f %f", src_matrix->data[count],sub_matrix->data[count]);
+if (src_matrix->data[count] != sub_matrix->data[count]) {
+printf(" error");
 break;
 }
 }
-if ((count - 1) != src_matrix->width * src_matrix->height){
-printf("count:%d ", count);
-printf("test error \n");
-break;
-}
-else{
-test_end_time = (clock() - test_start_time);//获取结束时间
-printf("total time : %f ms\n", (float)test_end_time / total_count);
-break;
-}
-}
-
-//res_matrix = user_nn_matrix_mult_matrix(src_matrix, sub_matrix);//矩阵相乘
-//user_nn_matrix_transpose(src_matrix);
-if (src_matrix != NULL){
-//user_nn_matrix_printf(debug_file, src_matrix);//打印矩阵
-}
-else{
-printf("null\n");
-}
-fclose(debug_file);
+printf("end");
 getchar();
 return 1;
 

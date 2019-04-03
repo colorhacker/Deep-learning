@@ -8,6 +8,7 @@
 #include "user_cnn_model.h"
 #include "user_cnn_rw_model.h"
 
+
 void user_cnn_app_test(int argc, const char** argv);
 
 #endif

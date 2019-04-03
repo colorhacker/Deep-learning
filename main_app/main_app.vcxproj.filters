@@ -49,6 +49,12 @@
     <Filter Include="源文件\mnist">
       <UniqueIdentifier>{f8b50bec-5486-4297-b04d-9ee3ad15149e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\other">
+      <UniqueIdentifier>{d3ec5a6b-8004-4542-af57-d45f9b4d3335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\other">
+      <UniqueIdentifier>{4dea53f3-92d9-44a7-8f7e-9919e55fb1b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user_config.h">
@@ -150,6 +156,9 @@
     <ClInclude Include="matrix\user_nn_initialization.h">
       <Filter>头文件\matrix</Filter>
     </ClInclude>
+    <ClInclude Include="other\user_nn_debug.h">
+      <Filter>头文件\other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -250,6 +259,9 @@
     </ClCompile>
     <ClCompile Include="matrix\user_nn_initialization.cpp">
       <Filter>源文件\matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="other\user_nn_debug.cpp">
+      <Filter>源文件\other</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
