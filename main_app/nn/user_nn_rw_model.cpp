@@ -86,7 +86,8 @@ static long user_nn_model_read_output(FILE *file, long offset, user_nn_output_la
 //path 保存路径
 //layers 层对象
 //返回 成功或者失败
-bool user_nn_model_save_model(const char *path,user_nn_layers *layers){
+bool user_nn_model_save_model(user_nn_layers *layers, int id){
+	char full_path[MAX_PATH] = "";
 	FILE *model_file = NULL;
 	user_nn_input_layers	*input_infor = NULL;
 	user_nn_hidden_layers	*hidden_infor = NULL;
@@ -94,8 +95,13 @@ bool user_nn_model_save_model(const char *path,user_nn_layers *layers){
 	long layers_offset = user_nn_model_nn_layer_addr;//层保存位置
 	long infor_offset = user_nn_model_nn_content_addr;//信息描述位置
 	long data_offset = user_nn_model_nn_data_addr;//数据对象位置
-
-	 fopen_s(&model_file,path, "wb+");//打开模型文件
+	if (id == 0) {
+		sprintf(full_path, "%s.bin", user_nn_model_nn_file_name);
+	}
+	else {
+		sprintf(full_path, "%s_%d.bin", user_nn_model_nn_file_name, id);
+	}
+	fopen_s(&model_file, full_path, "wb+");//打开模型文件
 	if (model_file == NULL)return false;
 
 	while (1){
@@ -138,7 +144,8 @@ bool user_nn_model_save_model(const char *path,user_nn_layers *layers){
 //加载模型
 //path 保存路径
 //返回 null或者模型对象
-user_nn_layers	*user_nn_model_load_model(const char *path){
+user_nn_layers	*user_nn_model_load_model(int id){
+	char full_path[MAX_PATH] = "";
 	FILE *model_file = NULL;
 	long layers_offset = user_nn_model_nn_layer_addr;//层保存位置
 	long infor_offset = user_nn_model_nn_content_addr;//信息描述位置
@@ -147,8 +154,12 @@ user_nn_layers	*user_nn_model_load_model(const char *path){
 	user_nn_input_layers	*input_infor = NULL, *temp_input_infor = NULL;
 	user_nn_hidden_layers	*hidden_infor = NULL, *temp_hidden_infor = NULL;
 	user_nn_output_layers  *output_infor = NULL, *temp_output_infor = NULL;
-
-	fopen_s(&model_file,path, "rb");//打开模型文件
+	if (id == 0) {
+		sprintf(full_path, "%s.bin", user_nn_model_nn_file_name);
+	}else {
+		sprintf(full_path, "%s_%d.bin", user_nn_model_nn_file_name, id);
+	}
+	fopen_s(&model_file, full_path, "rb");//打开模型文件
 	if (model_file == NULL)return NULL;
 	temp_cnn_layers = user_nn_layers_create(u_nn_layer_type_null, 0);
 	while (1){

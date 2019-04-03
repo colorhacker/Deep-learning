@@ -11,7 +11,7 @@
 
 int main(int argc, const char** argv){
 #ifdef _OPENMP
-	omp_set_num_threads(30);
+	omp_set_num_threads(64);
 #endif
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
