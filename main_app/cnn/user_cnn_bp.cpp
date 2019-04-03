@@ -24,6 +24,7 @@ void user_cnn_bp_output_back_prior(user_cnn_layers *prior_layer, user_cnn_layers
 //	user_nn_matrix_printf(NULL, output_feture_maps);
 //	user_nn_matrix_printf(NULL, output_error_maps);
 	//计算输出层代价函数 Y = (1/2)*E^2
+	
 	output_layers->loss_function = user_nn_matrix_get_rmse(output_error_matrix);//代价函数，采用均方误差函数作为代价函数  
 	//计算输出层灵残差 matlab公式：output_deltas_maps = output_error_maps.*output_feture_maps.*(1-output_feture_maps)  错误值*输出层数据sigmoid的导数
 	user_nn_activate_matrix_d_mult_matrix(output_deltas_matrix, output_error_matrix, output_feature_matrix, user_nn_cnn_softmax);//对本层求导得到输出层的残差 

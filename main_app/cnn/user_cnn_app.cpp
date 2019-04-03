@@ -41,7 +41,7 @@ void user_cnn_mnist_train() {
 			user_cnn_model_load_input_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index), 1);
 			user_cnn_model_load_target_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标矩阵
 			user_cnn_model_ffp(cnn_layers);//正向计算一次
-			user_cnn_model_bp(cnn_layers, 0.01f);//反向训练一次
+			user_cnn_model_bp(cnn_layers, 0.5f);//反向训练一次
 			loss_function = user_cnn_model_return_loss(cnn_layers);//获取损失函数
 			//printf("\n%f", loss_function);
 			if (sw_display) {
