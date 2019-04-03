@@ -18,7 +18,7 @@ void user_rnn_app_test(int argc, const char** argv) {
 	user_nn_list_matrix *input_data = user_nn_matrices_create(1, 2, 1, 2);//创建输入数据
 	user_nn_list_matrix *target_data = user_nn_matrices_create(1, 2, 1, 2);//创建输入数据
 
-	user_rnn_layers *rnn_layers = user_rnn_model_load_model(user_nn_model_rnn_file_name);//载入模型
+	user_rnn_layers *rnn_layers = user_rnn_model_load_model(0);//载入模型
 	if (rnn_layers == NULL) {
 		printf("loading model failed\ncreate cnn new object \n");
 		rnn_layers = user_rnn_model_create(user_layers);//创建模型
@@ -49,7 +49,7 @@ void user_rnn_app_test(int argc, const char** argv) {
 		user_rnn_model_bp(rnn_layers, 0.01f);
 		loss_function = user_rnn_model_return_loss(rnn_layers);
 		if (loss_function <= 0.001f) {
-			user_rnn_model_save_model(user_nn_model_rnn_file_name, rnn_layers);//保存模型
+			user_rnn_model_save_model(rnn_layers,0);//保存模型
 			break;
 		}
 		printf("\nloss:%f", loss_function);

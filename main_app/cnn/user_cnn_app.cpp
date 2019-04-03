@@ -29,7 +29,7 @@ void user_cnn_mnist_train() {
 		system("pause");
 		return ;
 	}
-	user_cnn_layers *cnn_layers = user_cnn_model_load_model(user_nn_model_cnn_file_name);//载入模型
+	user_cnn_layers *cnn_layers = user_cnn_model_load_model(0);//载入模型
 	if (cnn_layers == NULL) {
 		printf("loading model failed\ncreate cnn new object \n");
 		cnn_layers = user_cnn_model_create(user_layers);//创建模型
@@ -53,7 +53,7 @@ void user_cnn_mnist_train() {
 			if (save_model_count++ > 1000) {
 				save_model_count = 0;
 				printf("train count:%d,loss:%f\n", train_index,loss_function);
-				user_cnn_model_save_model(user_nn_model_cnn_file_name, cnn_layers);//保存一次模型
+				user_cnn_model_save_model(cnn_layers,0);//保存一次模型
 			}
 		}
 		printf("target:%f loss:%f\n", target_loss, loss_function);
@@ -69,7 +69,7 @@ void user_cnn_mnist_train() {
 	user_nn_debug_printf("%s","总时间:");
 	user_nn_debug_printf("%d", (void *)&end_time);
 	user_nn_debug_printf("%s","分钟");
-	user_cnn_model_save_model(user_nn_model_cnn_file_name, cnn_layers);//保存模型
+	user_cnn_model_save_model(cnn_layers,0);//保存模型
 	printf("\n\n");
 	system("pause");
 }
@@ -80,7 +80,7 @@ void user_cnn_mnist_test() {
 	printf("%s\n", model_path);
 	user_nn_list_matrix *test_lables = user_nn_model_file_read_matrices("./mnist/files/t10k-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *test_images = user_nn_model_file_read_matrices("./mnist/files/t10k-images.idx3-ubyte.bx", 0);
-	user_cnn_layers *cnn_layers = user_cnn_model_load_model(model_path);//载入模型
+	user_cnn_layers *cnn_layers = user_cnn_model_load_model(0);//载入模型
 	if (cnn_layers == NULL) {
 		printf("\n载入模型失败!\n\n");
 		system("pause");
@@ -111,7 +111,7 @@ bool user_cnn_load_ident(int argc, const char** argv) {
 	char model_path[256] = "";
 	sprintf_s(model_path, "%s\\%s", user_cnn_model_get_exe_path(), user_nn_model_cnn_file_name);
 	printf("%s\n", model_path);
-	user_cnn_layers *cnn_layers = user_cnn_model_load_model(model_path);//载入模型
+	user_cnn_layers *cnn_layers = user_cnn_model_load_model(0);//载入模型
 	if (cnn_layers != NULL) {
 		printf("loading model success\n");
 		if (argv[1] == NULL) {

@@ -7,7 +7,7 @@
 
 
 
-bool user_rnn_model_save_model(const char *path,user_rnn_layers *layers);//保存模型
-user_rnn_layers	*user_rnn_model_load_model(const char *path);//载入层模型
+bool user_rnn_model_save_model(user_rnn_layers *layers,int id);//保存模型
+user_rnn_layers	*user_rnn_model_load_model(int id);//载入层模型
 
 #endif
