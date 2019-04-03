@@ -21,7 +21,7 @@ void user_cnn_grads_convolution(user_cnn_layers *conv_layer, float alpha){
 			conv_kernel_matrix		  = user_nn_matrices_ext_matrix(conv_kernel_matrices, input_feature_index, output_feature_index);//取出指定位置特征数据
 			conv_deltas_kernel_matrix = user_nn_matrices_ext_matrix(conv_deltas_kernel_matrices, input_feature_index, output_feature_index);//取出指定位置特征数据
 			//conv_kernel_maps = conv_kernel_maps - alpha * conv_deltas_kernel_maps
-			user_nn_matrix_sum_matrix_mult_alpha(conv_kernel_matrix, conv_deltas_kernel_matrix, (float)-1 * alpha);
+			user_nn_matrix_sum_matrix_mult_alpha(conv_kernel_matrix, conv_deltas_kernel_matrix, 1.0f * alpha);
 		}
 		//conv_bias = conv_bias - alpha * conv_deltas_bias
 		*conv_biases++ = (float)*conv_biases - alpha * *conv_deltas_biases++;
@@ -37,9 +37,9 @@ void user_cnn_grads_full(user_cnn_layers *full_layer, float alpha){
 	user_nn_matrix          *full_deltas_matrix			= ((user_cnn_full_layers *)full_layer->content)->deltas_matrix;//输出层的灵敏度或者残差
 	user_nn_matrix          *full_deltas_kernel_matrix	= ((user_cnn_full_layers *)full_layer->content)->deltas_kernel_matrix;//输出层的灵敏度或者残差
 	//output_kernel_maps = output_kernel_maps - alpha * output_grads_maps
-	user_nn_matrix_sum_matrix_mult_alpha(full_kernel_matrix, full_deltas_kernel_matrix, (float)-1 * alpha);
+	user_nn_matrix_sum_matrix_mult_alpha(full_kernel_matrix, full_deltas_kernel_matrix, -1.0f * alpha);
 	//output_bias_maps = output_bias_maps - alpha * output_deltas_maps;
-	user_nn_matrix_sum_matrix_mult_alpha(full_bias_matrix, full_deltas_matrix, (float)-1 * alpha);
+	user_nn_matrix_sum_matrix_mult_alpha(full_bias_matrix, full_deltas_matrix, -1.0f * alpha);
 }
 //更新输出层的权值与偏置参数
 //output_layer 更新全输出层的对象
@@ -51,8 +51,8 @@ void user_cnn_grads_output(user_cnn_layers *output_layer, float alpha){
 	user_nn_matrix          *output_deltas_matrix = ((user_cnn_output_layers *)output_layer->content)->deltas_matrix;//输出层的灵敏度或者残差
 	user_nn_matrix          *output_deltas_kernel_matrix = ((user_cnn_output_layers *)output_layer->content)->deltas_kernel_matrix;//输出层的灵敏度或者残差
 	//output_kernel_maps = output_kernel_maps - alpha * output_grads_maps
-	user_nn_matrix_sum_matrix_mult_alpha(output_kernel_matrix, output_deltas_kernel_matrix, (float)-1 * alpha);
+	user_nn_matrix_sum_matrix_mult_alpha(output_kernel_matrix, output_deltas_kernel_matrix, -1.0f * alpha);
 	//output_bias_maps = output_bias_maps - alpha * output_deltas_maps;
-	user_nn_matrix_sum_matrix_mult_alpha(output_bias_matrix, output_deltas_matrix, (float)-1 * alpha);
+	user_nn_matrix_sum_matrix_mult_alpha(output_bias_matrix, output_deltas_matrix, -1.0f * alpha);
 
 }

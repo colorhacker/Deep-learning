@@ -808,7 +808,7 @@ void user_nn_matrix_cum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_m
 	}
 #else
 	while (count--) {
-		*save_data++ = *src_data++ + ((*sub_data++) * alpha);
+		*save_data++ = *src_data++ + *sub_data++ * alpha;
 	}
 #endif
 }

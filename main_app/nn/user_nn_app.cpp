@@ -49,6 +49,7 @@ void user_nn_app_train(int argc, const char** argv) {
 				user_nn_model_save_model(nn_layers,0);//保存一次模型
 				start_time = clock();
 			}
+			
 		}
 		if (loss_function < loss_target) {
 			break;//跳出训练

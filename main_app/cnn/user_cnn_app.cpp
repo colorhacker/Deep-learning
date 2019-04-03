@@ -43,6 +43,7 @@ void user_cnn_mnist_train() {
 			user_cnn_model_ffp(cnn_layers);//正向计算一次
 			user_cnn_model_bp(cnn_layers, 0.5f);//反向训练一次
 			loss_function = user_cnn_model_return_loss(cnn_layers);//获取损失函数
+			printf("\n%f", loss_function);
 			if (sw_display) {
 				user_cnn_model_display_feature(cnn_layers);//显示所有特征数据
 			}
