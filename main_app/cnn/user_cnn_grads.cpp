@@ -24,7 +24,7 @@ void user_cnn_grads_convolution(user_cnn_layers *conv_layer, float alpha){
 			user_nn_matrix_sum_matrix_mult_alpha(conv_kernel_matrix, conv_deltas_kernel_matrix, -1.0f * alpha);
 		}
 		//conv_bias = conv_bias - alpha * conv_deltas_bias
-		*conv_biases++ = (float)*conv_biases - *conv_deltas_biases++ *alpha;
+		*conv_biases++ = *conv_biases - *conv_deltas_biases++ *alpha;
 	}
 }
 //更新输出层的权值与偏置参数

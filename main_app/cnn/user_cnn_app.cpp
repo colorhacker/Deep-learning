@@ -37,13 +37,12 @@ void user_cnn_mnist_train() {
 	user_cnn_model_info_layer(cnn_layers);
 	start_time = clock();
 	while (1) {
-		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
+		for (int train_index = 0; train_index < 20; train_index++) {
 			user_cnn_model_load_input_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index), 1);
 			user_cnn_model_load_target_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标矩阵
 			user_cnn_model_ffp(cnn_layers);//正向计算一次
 			user_cnn_model_bp(cnn_layers, 0.5f);//反向训练一次
 			loss_function = user_cnn_model_return_loss(cnn_layers);//获取损失函数
-			//printf("\n%f", loss_function);
 			if (sw_display) {
 				user_cnn_model_display_feature(cnn_layers);//显示所有特征数据
 			}
@@ -54,7 +53,7 @@ void user_cnn_mnist_train() {
 			if (save_model_count++ > 100) {
 				save_model_count = 0;
 				printf("train count:%d,loss:%f\n", train_index,loss_function);
-				//user_cnn_model_save_model(cnn_layers,0);//保存一次模型
+				user_cnn_model_save_model(cnn_layers,0);//保存一次模型
 			}
 		}
 		printf("target:%f loss:%f\n", target_loss, loss_function);

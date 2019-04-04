@@ -8,11 +8,33 @@
 #include "cnn\user_cnn_app.h"
 #include "w2c\user_w2c_app.h"
 #include "mnist\user_mnist.h"
-
 int main(int argc, const char** argv){
 #ifdef _OPENMP
 	omp_set_num_threads(64);
 #endif
+/*	user_nn_matrix *src_matrix = NULL;
+	user_nn_matrix *sub_matrix = NULL;
+	user_nn_matrix *res_matrix = NULL;
+
+	src_matrix = user_nn_matrix_create(5, 8);
+	sub_matrix = user_nn_matrix_create(5, 8);
+
+	for (int count = 0; count < (src_matrix->width * src_matrix->height); count++) {
+		src_matrix->data[count] = (float)count * 0.1f;	
+	}
+	for (int count = 0; count < (sub_matrix->width * sub_matrix->height); count++) {
+		sub_matrix->data[count] = user_nn_init_glorot_uniform(3,3); 
+		//sub_matrix->data[count] = (float)(((float)(rand()*2.0 / RAND_MAX) - 1.0f))*sqrt(6.0 / 6.0);
+	}
+	if (sub_matrix != NULL) {
+		user_nn_matrix_printf(NULL, sub_matrix);//打印矩阵
+	}
+	else {
+		printf("null\n");
+	}
+	getchar();
+	return 1;*/
+
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");

@@ -110,9 +110,9 @@ user_rnn_hidden_layers *user_rnn_layers_hidden_create(user_rnn_layers *rnn_layer
 	hidden_layers->feature_matrix_t = user_nn_matrix_create(hidden_layers->feature_width, hidden_layers->feature_height);//保存上个时间片的隐含层数据
 	hidden_layers->feature_matrices = user_nn_matrices_create(1, hidden_layers->time_number, hidden_layers->feature_width, hidden_layers->feature_height);//输出层个数
 
-	user_nn_matrix_init_vaule(hidden_layers->kernel_matrix, intput_featrue_width*intput_feature_height, hidden_layers->feature_width*hidden_layers->feature_height);//初始化全连接的权重值
-	user_nn_matrix_init_vaule(hidden_layers->kernel_matrix_t, intput_featrue_width*intput_feature_height, hidden_layers->feature_width*hidden_layers->feature_height);//初始化全连接的权重值
-	user_nn_matrix_init_vaule(hidden_layers->biases_matrix, intput_featrue_width*intput_feature_height, hidden_layers->feature_width*hidden_layers->feature_height);//初始化全连接的权重值
+	user_nn_matrix_init_vaule(hidden_layers->kernel_matrix, hidden_layers->time_number, hidden_layers->time_number);//初始化全连接的权重值
+	user_nn_matrix_init_vaule(hidden_layers->kernel_matrix_t, hidden_layers->time_number, hidden_layers->time_number);//初始化全连接的权重值
+	user_nn_matrix_init_vaule(hidden_layers->biases_matrix, hidden_layers->time_number, hidden_layers->time_number);//初始化全连接的权重值
 
 	return hidden_layers;
 }
@@ -160,8 +160,8 @@ user_rnn_output_layers *user_rnn_layers_output_create(user_rnn_layers *rnn_layer
 	output_layers->deltas_kernel_matrix	= user_nn_matrix_create(intput_feature_height, output_layers->feature_height);//本层残差对上层的结果ΔW
 	output_layers->deltas_biases_matrix	= user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//
 
-	user_nn_matrix_init_vaule(output_layers->kernel_matrix, intput_featrue_width*intput_feature_height, output_layers->feature_width*output_layers->feature_height);//初始化全连接的权重值
-	user_nn_matrix_init_vaule(output_layers->biases_matrix, intput_featrue_width*intput_feature_height, output_layers->feature_width*output_layers->feature_height);//初始化全连接的权重值
+	user_nn_matrix_init_vaule(output_layers->kernel_matrix, output_layers->time_number, output_layers->time_number);//初始化全连接的权重值
+	user_nn_matrix_init_vaule(output_layers->biases_matrix, output_layers->time_number, output_layers->time_number);//初始化全连接的权重值
 
 	return output_layers;
 }

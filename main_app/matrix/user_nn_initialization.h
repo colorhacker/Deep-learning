@@ -4,13 +4,13 @@
 #include "../user_config.h"
 #include "user_nn_matrix.h"
 
-#if user_nn_init_type == lecun_uniform
+#if defined lecun_uniform
 	#define user_nn_init_rand(x,y) user_nn_init_lecun_uniform(x,y)
-#elif user_nn_init_type == glorot_normal
+#elif defined glorot_normal
 	#define user_nn_init_rand(x,y) user_nn_init_glorot_normal(x,y)
-#elif user_nn_init_type == glorot_uniform
+#elif defined glorot_uniform
 	#define user_nn_init_rand(x,y) user_nn_init_glorot_uniform(x,y)
-#elif user_nn_init_type == he_normal
+#elif defined he_normal
 	#define user_nn_init_rand(x,y) user_nn_init_he_normal(x,y)
 #else
 	#define user_nn_init_rand(x,y) user_nn_init_he_uniform(x,y)

@@ -43,33 +43,29 @@ void user_nn_matrix_transpose(user_nn_matrix *src_matrix){
 	user_nn_matrix *temp_matrix = NULL;
 	float *temp_data = NULL;
 	float *src_data = src_matrix->data;
-
+	
+	if ((src_matrix->width != 1) && (src_matrix->height != 1)){//如果是一条矩阵向量 那么直接交换横纵坐标 不用交换数据
+		temp_matrix = user_nn_matrix_cpy_create(src_matrix);//创建矩阵
+		temp_data = temp_matrix->data;//获取缓冲矩阵的数据指针
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for
+		for (int width = 0; width < temp_matrix->width; width++) {
+			for (int height = 0; height < temp_matrix->height; height++) {
+				src_data[width*temp_matrix->height + height] = *user_nn_matrix_ext_value(temp_matrix, width, height);
+			}
+		}
+#else
+		for (int width = 0; width < temp_matrix->width; width++) {
+			for (int height = 0; height < temp_matrix->height; height++) {
+				*src_data++ = *user_nn_matrix_ext_value(temp_matrix, width, height);
+			}
+		}
+#endif
+		user_nn_matrix_delete(temp_matrix);
+	}
 	src_matrix->width = src_matrix->width ^ src_matrix->height;
 	src_matrix->height = src_matrix->width ^ src_matrix->height;
 	src_matrix->width = src_matrix->width ^ src_matrix->height;
-	if ((src_matrix->width == 1) || (src_matrix->height == 1)){
-		return;//直接退出//如果是一条矩阵向量 那么直接交换横纵坐标 不用交换数据
-	}
-	temp_matrix = user_nn_matrix_create(src_matrix->width, src_matrix->height);//创建矩阵
-	user_nn_matrix_cpy_matrix(temp_matrix, src_matrix);//拷贝数据
-	temp_data = temp_matrix->data;//获取缓冲矩阵的数据指针
-
-#if defined _OPENMP && _USER_API_OPENMP
-#pragma omp parallel for
-	for (int width = 0; width < temp_matrix->width; width++) {
-		for (int height = 0; height < temp_matrix->height; height++) {
-			src_data[width*temp_matrix->height+height] = *user_nn_matrix_ext_value(temp_matrix, width, height);
-		}
-	}
-#else
-	for (int width = 0; width < temp_matrix->width; width++) {
-		for (int height = 0; height < temp_matrix->height; height++) {
-			*src_data++ = *user_nn_matrix_ext_value(temp_matrix, width, height);
-		}
-	}
-#endif
-
-	user_nn_matrix_delete(temp_matrix);
 }
 //返回矩阵中指定位置的值
 //参数
@@ -756,35 +752,10 @@ void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_
 	}
 #else
 	while (count--) {
-		*save_data++ = *src_data++ + (*sub_data++);
+		*save_data++ = *src_data++ + *sub_data++;
 	}
 #endif
 
-}
-//求和两个矩阵  src_matrix = src_matrix + sub_matrix * alpha
-//参数
-//src_matrix：目标矩阵 求和值会覆盖此矩阵
-//sub_matrix：被求和矩阵
-//返回 无
-void user_nn_matrix_cum_matrix_alpha(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, float alpha) {
-	int count = sub_matrix->width * sub_matrix->height;//获取矩阵数据大小
-	float *src_data = src_matrix->data;
-	float *sub_data = sub_matrix->data;
-
-	if ((src_matrix->width != sub_matrix->width) || (src_matrix->height != sub_matrix->height)) {
-		return;
-	}
-
-#if defined _OPENMP && _USER_API_OPENMP
-#pragma omp parallel for
-	for (int index = 0; index < count; index++) {
-		src_data[index] = src_data[index] + sub_data[index] * alpha;
-	}
-#else
-	while (count--) {
-		*src_data++ = *src_data + ((*sub_data++) * alpha);
-	}
-#endif
 }
 //求和两个矩阵  save_matrix = src_matrix + sub_matrix * alpha
 //参数
@@ -1099,7 +1070,7 @@ float user_nn_matrix_get_mse(user_nn_matrix *src_matrix) {
 		loss += *src_data * *src_data;
 		src_data++;
 	}
-	return float(loss / (src_matrix->width*src_matrix->height));
+	return loss / (src_matrix->width*src_matrix->height);
 }
 //计算矩阵的均方根误差
 //src_matrix：倍计算的矩阵

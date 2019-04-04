@@ -115,7 +115,7 @@ user_cnn_conv_layers *user_cnn_layers_convolution_create(user_cnn_layers *cnn_la
 	//本层的总输出参数个数 = (float)conv->outputmaps * conv->kernel_width * conv->kernel_height;//计算出输出总参数大小  --- 用于初始化卷积核
 	//本层的总输入参数个数 = (float)conv->inputmaps  * conv->kernel_width * conv->kernel_height;//计算出输入总参数大小  --- 用于初始化卷积核
 	//简化后：(conv->outputmaps + conv->inputmaps) * conv->kernel_width * conv->kernel_height
-	user_nn_matrices_init_vaule(conv_layers->kernel_matrices, conv_layers->input_feature_number*conv_layers->feature_width*conv_layers->feature_height, conv_layers->feature_number*conv_layers->feature_width*conv_layers->feature_height);//对卷积核进行初始化
+	user_nn_matrices_init_vaule(conv_layers->kernel_matrices, conv_layers->feature_number, conv_layers->input_feature_number*conv_layers->kernel_width*conv_layers->kernel_height);//对卷积核进行初始化
 
 	return conv_layers;
 }
@@ -212,7 +212,7 @@ user_cnn_full_layers *user_cnn_layers_fullconnect_create(user_cnn_layers *cnn_la
 	full_layers->deltas_matrix			= user_nn_matrix_create(1, full_layers->feature_number);//保存残差
 	full_layers->deltas_kernel_matrix	= user_nn_matrix_create(full_layers->feature_number, full_layers->feature_number);//本层残差对上层的卷积结果ΔW
 
-	user_nn_matrix_init_vaule(full_layers->kernel_matrix, full_layers->feature_number*full_layers->input_feature_matrix->height*full_layers->input_feature_matrix->width, full_layers->feature_number);//初始化全连接的权重值
+	user_nn_matrix_init_vaule(full_layers->kernel_matrix, full_layers->feature_number, full_layers->feature_number);//初始化全连接的权重值
 
 	return full_layers;
 }
@@ -269,8 +269,8 @@ user_cnn_output_layers *user_cnn_layers_output_create(user_cnn_layers *cnn_layer
 	output_layers->deltas_matrix		= user_nn_matrix_create(1, output_layers->class_number);//保存残差
 	output_layers->deltas_kernel_matrix = user_nn_matrix_create(output_layers->feature_number, output_layers->class_number);//本层残差对上层的卷积结果ΔW
 
-	user_nn_matrix_init_vaule(output_layers->kernel_matrix, output_layers->feature_number*output_layers->input_feature_matrix->width*output_layers->input_feature_matrix->height, output_layers->class_number);//初始化输出层kernel模板
-
+	user_nn_matrix_init_vaule(output_layers->kernel_matrix, output_layers->feature_number, output_layers->class_number);//初始化输出层kernel模板
+	
 	return output_layers;
 }
 

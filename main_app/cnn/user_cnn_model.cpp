@@ -368,7 +368,7 @@ float user_cnn_model_return_loss(user_cnn_layers *layers){
 				loss_function = ((user_cnn_output_layers *)layers->content)->loss_function;
 			}
 			else{
-				loss_function = (float)0.99f * loss_function + 0.01f * ((user_cnn_output_layers *)layers->content)->loss_function;
+				loss_function = 0.99f * loss_function + 0.01f * ((user_cnn_output_layers *)layers->content)->loss_function;
 			}
 		}
 		if (layers->next == NULL){
