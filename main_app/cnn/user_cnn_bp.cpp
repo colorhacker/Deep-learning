@@ -21,8 +21,8 @@ void user_cnn_bp_output_back_prior(user_cnn_layers *prior_layer, user_cnn_layers
 	user_nn_matrix          *_feture_vector_deltas = NULL;//残差反向传播回前一层,net.fvd保存的是残差
 	//计算输出层 错误值 E = 实际值 - 期望值
 	user_nn_matrix_cum_matrix_mult_alpha(output_error_matrix, output_feature_matrix, output_target_matrix, -1.0f);//计算错误值
-	user_nn_matrix_printf(NULL, output_target_matrix);
-	user_nn_matrix_printf(NULL, output_feature_matrix);
+	//user_nn_matrix_printf(NULL, output_target_matrix);
+	//user_nn_matrix_printf(NULL, output_feature_matrix);
 	//计算输出层代价函数 Y = (1/2)*E^2
 	
 	output_layers->loss_function = user_nn_matrix_get_rmse(output_error_matrix);//代价函数，采用均方误差函数作为代价函数  
