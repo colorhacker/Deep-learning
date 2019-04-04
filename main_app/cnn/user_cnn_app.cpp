@@ -37,7 +37,7 @@ void user_cnn_mnist_train() {
 	user_cnn_model_info_layer(cnn_layers);
 	start_time = clock();
 	while (1) {
-		for (int train_index = 0; train_index < 20; train_index++) {
+		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
 			user_cnn_model_load_input_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index), 1);
 			user_cnn_model_load_target_feature(cnn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标矩阵
 			user_cnn_model_ffp(cnn_layers);//正向计算一次
