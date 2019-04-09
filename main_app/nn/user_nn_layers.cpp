@@ -60,7 +60,8 @@ user_nn_input_layers *user_nn_layers_input_create(user_nn_layers *nn_layers, int
 	input_layers->feature_width = feature_width;//设置特征数据的宽度
 	input_layers->feature_height = feature_height;//设置特征数据的高度
 	input_layers->deltas_matrix = user_nn_matrix_create(input_layers->feature_width, input_layers->feature_height);//下一层反馈回来的残差
-	input_layers->feature_matrix = user_nn_matrix_create(input_layers->feature_width, input_layers->feature_height);//创建本层的特征数据矩阵 
+	//input_layers->feature_matrix = user_nn_matrix_create(input_layers->feature_width, input_layers->feature_height);//创建本层的特征数据矩阵 
+	input_layers->feature_matrix = NULL;//预留指向数据地址
 
 	return input_layers;
 }
@@ -146,7 +147,8 @@ user_nn_output_layers *user_nn_layers_output_create(user_nn_layers *nn_layers, i
 	output_layers->biases_matrix = user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//添加N个偏置参数 可以使用softmat回归的偏置参数
 	
 	output_layers->feature_matrix		= user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//
-	output_layers->target_matrix		= user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//
+	//output_layers->target_matrix		= user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//
+	output_layers->target_matrix		= NULL;//预留数据占位符用于加载数据
 	output_layers->error_matrix			= user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//添加错误值
 
 	output_layers->deltas_matrix		= user_nn_matrix_create( output_layers->feature_width, output_layers->feature_height);//保存残差

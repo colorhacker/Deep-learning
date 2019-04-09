@@ -62,7 +62,7 @@ inline int num_strchr(const char *str, char c){
 int base64_decode(const char * base64, char * output){
 	int j = 0;
 	int trans[4] = { 0,0,0,0 };
-	for (int i = 0; i < strlen(base64); i += 4) {
+	for (int i = 0; i < (int)strlen(base64); i += 4) {
 		if (base64[i] == 0x00) {
 			break;
 		}

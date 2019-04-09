@@ -27,7 +27,7 @@
 
 #include "user_types.h"
 //是否开启OPENMP底层API
-#define		_USER_API_OPENMP				false
+#define		_USER_API_OPENMP				true
 //配置输出文件夹
 #define		user_nn_debug_file				"./debug.txt"
 //初始化网络值的方式
