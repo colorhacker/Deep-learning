@@ -9,16 +9,8 @@
 #include "w2c\user_w2c_app.h"
 #include "mnist\user_mnist.h"
 
-#include "other\rgb_hsl.h"
-
 int main(int argc, const char** argv){
-	user_nn_rgb rgb = { 0xFF,0xA0,0x23 };
-	user_nn_hsl hsl = {0,0,0};
-
-	RGB_to_HSL(&rgb, &hsl);
-	HSL_to_RGB(&hsl, &rgb);
-	return 0;
-
+	//cv::cvtColor(frame1, frame2, CV_BGR2HSV);
 #ifdef _OPENMP
 	omp_set_num_threads(64);
 #endif

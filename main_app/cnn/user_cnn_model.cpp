@@ -50,32 +50,24 @@ user_nn_matrix  *user_cnn_model_matrices_gain_matrix(user_nn_list_matrix *src_ma
 	user_nn_matrix_delete(splice_matrix);
 	return gain_matrix;
 }
-//显示一个矩阵
-//window_name 窗口名称
-//src_matrix 矩阵对象
-//返回 无
-void user_cnn_model_display_matrix(char *window_name, user_nn_matrix  *src_matrix){
-	//CvSize cvsize = { src_matrix->width, src_matrix->height }; 
-	//IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
-	//user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, src_matrix);//更新图像数据
-	//cvShowImage(window_name, dest_image);//显示图像
-	//cvWaitKey(1);
-	//cvReleaseImage(&dest_image);//释放内存
-}
+
 //显示一连续矩阵
 //window_name 窗口名称
 //src_matrices 连续矩阵的对象
 //gain 放大倍数
 //返回 无
-void user_cnn_model_display_matrices(char *window_name, user_nn_list_matrix  *src_matrices,int gain){ 
-	//user_nn_matrix *dest_matrix = user_cnn_model_matrices_gain_matrix(src_matrices, gain);//转化矩阵 并且放大
-	//CvSize cvsize = { dest_matrix->width, dest_matrix->height };
-	//IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
-	//user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, dest_matrix);//更新图像数据
-	//cvShowImage(window_name, dest_image);//显示图像
-	//cvWaitKey(1);
-	//cvReleaseImage(&dest_image);//释放内存
-	//user_nn_matrix_delete(dest_matrix);//删除矩阵
+void user_cnn_model_display_matrices(char *window_name, user_nn_list_matrix  *src_matrices, int x, int y) {
+	user_nn_matrix *dest_matrix = user_cnn_model_matrices_splice(src_matrices);//转化矩阵
+	int width = (int)sqrt(dest_matrix->height*dest_matrix->width);
+	int height = (int)sqrt(dest_matrix->height*dest_matrix->width);
+	cv::Mat img(width, height, CV_32FC1, dest_matrix->data);
+	cv::namedWindow(window_name, cv::WINDOW_NORMAL);
+	cv::resizeWindow(window_name, width, height);
+	//cv::updateWindow(win);//opengl
+	//cv::startWindowThread();
+	cv::moveWindow(window_name,x,y);
+	cv::imshow(window_name, img);
+	cv::waitKey(1);
 }
 //显示特征数据
 //layers 显示的模型对象
@@ -96,17 +88,15 @@ void user_cnn_model_display_feature(user_cnn_layers *layers){
 			break;
 		case u_cnn_layer_type_input:
 			sprintf(windows_name, "input%d", layers->index);
-			user_cnn_model_display_matrices(windows_name, ((user_cnn_input_layers  *)layers->content)->feature_matrices, 2);//显示到指定窗口
-			//cvMoveWindow(windows_name, 50 + window_count * 70, 20);
+			user_cnn_model_display_matrices(windows_name, ((user_cnn_input_layers  *)layers->content)->feature_matrices, 50 + window_count * 150, 20);//显示到指定窗口
 			break;
 		case u_cnn_layer_type_conv:
 			sprintf(windows_name, "conv%d", layers->index);
-			user_cnn_model_display_matrices(windows_name, ((user_cnn_conv_layers  *)layers->content)->feature_matrices, 2);//显示到指定窗口
-			//cvMoveWindow(windows_name, 50 + window_count * 70, 20);
+			user_cnn_model_display_matrices(windows_name, ((user_cnn_conv_layers  *)layers->content)->feature_matrices, 50 + window_count * 150, 20);//显示到指定窗口
 			break;
 		case u_cnn_layer_type_pool:
 			//sprintf(windows_name, "pool%d", layers->index);
-			//user_cnn_model_display_matrices(windows_name, ((user_cnn_pool_layers  *)layers->content)->feature_matrices, 2);//显示到指定窗口
+			//user_cnn_model_display_matrices(windows_name, ((user_cnn_pool_layers  *)layers->content)->feature_matrices, 50 + window_count * 150,20);//显示到指定窗口
 			break;
 		case u_cnn_layer_type_full:
 			break;
