@@ -75,9 +75,6 @@ void user_cnn_mnist_train() {
 }
 
 void user_cnn_mnist_test() {
-	char model_path[256] = "";
-	sprintf_s(model_path, "%s\\%s", user_cnn_model_get_exe_path(), user_nn_model_cnn_file_name);
-	printf("%s\n", model_path);
 	user_nn_list_matrix *test_lables = user_nn_model_file_read_matrices("./mnist/files/t10k-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *test_images = user_nn_model_file_read_matrices("./mnist/files/t10k-images.idx3-ubyte.bx", 0);
 	user_cnn_layers *cnn_layers = user_cnn_model_load_model(0);//载入模型
@@ -94,9 +91,9 @@ void user_cnn_mnist_test() {
 		if (user_cnn_model_return_class(cnn_layers) != user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index))) {
 			error_count++;
 			user_nn_debug_printf("%s","\n识别错误！图像数字:");
-			user_nn_debug_printf("%d", (void *)user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index)));
+			//user_nn_debug_printf("%d", (void *)user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(test_lables, test_index)));
 			user_nn_debug_printf("%s","识别为:");
-			user_nn_debug_printf("%s", (void *)user_cnn_model_return_class(cnn_layers));
+			//user_nn_debug_printf("%d", (void *)user_cnn_model_return_class(cnn_layers));
 		}
 	}
 	user_nn_debug_printf("%s","\n\n识别成功率:");
@@ -108,9 +105,6 @@ void user_cnn_mnist_test() {
 
 
 bool user_cnn_load_ident(int argc, const char** argv) {
-	char model_path[256] = "";
-	sprintf_s(model_path, "%s\\%s", user_cnn_model_get_exe_path(), user_nn_model_cnn_file_name);
-	printf("%s\n", model_path);
 	user_cnn_layers *cnn_layers = user_cnn_model_load_model(0);//载入模型
 	if (cnn_layers != NULL) {
 		printf("loading model success\n");

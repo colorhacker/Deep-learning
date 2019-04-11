@@ -2,9 +2,6 @@
 #define _user_config_H
 
 #include <string.h>
-//#include <stdbool.h>
-//#include <cv.h>
-#include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <windows.h>   
 #include <direct.h>
@@ -24,6 +21,8 @@
 #include <conio.h>
 
 #include <omp.h>
+
+#include <opencv.hpp>
 
 #include "user_types.h"
 //ÊÇ·ñ¿ªÆôOPENMPµ×²ãAPI

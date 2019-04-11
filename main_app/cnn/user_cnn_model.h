@@ -3,8 +3,6 @@
 
 #include "../user_config.h"
 
-char *user_cnn_model_get_exe_path(void);
-
 user_nn_matrix *user_cnn_model_matrices_splice(user_nn_list_matrix *src_matrix);//拼接图像连续矩阵为单个矩阵
 void user_cnn_model_display_matrix(char *window_name, user_nn_matrix  *src_matrix);//显示矩阵数据
 void user_cnn_model_display_matrices(char *window_name, user_nn_list_matrix  *src_matrices, int gain);//显示连续的矩阵

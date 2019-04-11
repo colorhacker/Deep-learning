@@ -7,57 +7,15 @@
 #include "../cnn/user_cnn_grads.h"
 #include "../cnn/user_cnn_model.h"
 
-//获取exe文件路径
-//返回 可执行文件完整路径
-char *user_cnn_model_get_exe_path(void){
-	static char exeFullPath[MAX_PATH]=""; 
-	if (exeFullPath[0] == 0){
-		GetModuleFileName(NULL, exeFullPath, MAX_PATH);
-		char *p = strrchr(exeFullPath, '\\');
-		*p = 0x00;
-	}
-	return exeFullPath;
-}
-//对folder文件夹进行扫描，然后获取index位置的文件名称
-//folder 文件夹名称
-//index 返回文件名的 指数
-//返回 null或文件名
-char *user_cnn_model_search_file_name(char *folder, int index){
-	static WIN32_FIND_DATA FindFileData;
-	static HANDLE hFind = INVALID_HANDLE_VALUE;
-
-	FindClose(hFind);//删除已存在的扫描句柄
-	hFind = FindFirstFile(folder, &FindFileData);
-	if (hFind != INVALID_HANDLE_VALUE){
-		if (index == 1){
-			return FindFileData.cFileName;
-		}
-		else{
-			while (index--){
-				if (FindNextFile(hFind, &FindFileData)){
-					if (index == 0){
-						return FindFileData.cFileName;
-					}
-				}
-				else{
-					break;
-				}
-			}
-		}
-	}
-	return NULL;
-}
 //把一幅图像转化为一个矩阵
 //path 图像路径
 //返回 矩阵对象
 user_nn_matrix *user_cnn_model_obtain_image(char *path){
 	user_nn_matrix *result = NULL;
-	IplImage *load_image = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);//加载图像文件 采用单通道加载方式
-
-	result = user_nn_matrix_create(load_image->width, load_image->height);//创建矩阵
-	user_nn_matrix_memcpy_uchar_mult_constant(result, (unsigned char *)load_image->imageData, (float)1 / 255);//拷贝矩阵数据并且归1化数据
-	cvReleaseImage(&load_image);//释放内存
-	
+	//IplImage *load_image = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);//加载图像文件 采用单通道加载方式
+	//result = user_nn_matrix_create(load_image->width, load_image->height);//创建矩阵
+	//user_nn_matrix_memcpy_uchar_mult_constant(result, (unsigned char *)load_image->imageData, (float)1 / 255);//拷贝矩阵数据并且归1化数据
+	//cvReleaseImage(&load_image);//释放内存
 	return result;
 }
 //垂直拼接连续矩阵
@@ -97,12 +55,12 @@ user_nn_matrix  *user_cnn_model_matrices_gain_matrix(user_nn_list_matrix *src_ma
 //src_matrix 矩阵对象
 //返回 无
 void user_cnn_model_display_matrix(char *window_name, user_nn_matrix  *src_matrix){
-	CvSize cvsize = { src_matrix->width, src_matrix->height }; 
-	IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
-	user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, src_matrix);//更新图像数据
-	cvShowImage(window_name, dest_image);//显示图像
-	cvWaitKey(1);
-	cvReleaseImage(&dest_image);//释放内存
+	//CvSize cvsize = { src_matrix->width, src_matrix->height }; 
+	//IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
+	//user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, src_matrix);//更新图像数据
+	//cvShowImage(window_name, dest_image);//显示图像
+	//cvWaitKey(1);
+	//cvReleaseImage(&dest_image);//释放内存
 }
 //显示一连续矩阵
 //window_name 窗口名称
@@ -110,14 +68,14 @@ void user_cnn_model_display_matrix(char *window_name, user_nn_matrix  *src_matri
 //gain 放大倍数
 //返回 无
 void user_cnn_model_display_matrices(char *window_name, user_nn_list_matrix  *src_matrices,int gain){ 
-	user_nn_matrix *dest_matrix = user_cnn_model_matrices_gain_matrix(src_matrices, gain);//转化矩阵 并且放大
-	CvSize cvsize = { dest_matrix->width, dest_matrix->height };
-	IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
-	user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, dest_matrix);//更新图像数据
-	cvShowImage(window_name, dest_image);//显示图像
-	cvWaitKey(1);
-	cvReleaseImage(&dest_image);//释放内存
-	user_nn_matrix_delete(dest_matrix);//删除矩阵
+	//user_nn_matrix *dest_matrix = user_cnn_model_matrices_gain_matrix(src_matrices, gain);//转化矩阵 并且放大
+	//CvSize cvsize = { dest_matrix->width, dest_matrix->height };
+	//IplImage *dest_image = cvCreateImage(cvsize, IPL_DEPTH_8U, 1);
+	//user_nn_matrix_uchar_memcpy((unsigned char *)dest_image->imageData, dest_matrix);//更新图像数据
+	//cvShowImage(window_name, dest_image);//显示图像
+	//cvWaitKey(1);
+	//cvReleaseImage(&dest_image);//释放内存
+	//user_nn_matrix_delete(dest_matrix);//删除矩阵
 }
 //显示特征数据
 //layers 显示的模型对象
@@ -139,12 +97,12 @@ void user_cnn_model_display_feature(user_cnn_layers *layers){
 		case u_cnn_layer_type_input:
 			sprintf(windows_name, "input%d", layers->index);
 			user_cnn_model_display_matrices(windows_name, ((user_cnn_input_layers  *)layers->content)->feature_matrices, 2);//显示到指定窗口
-			cvMoveWindow(windows_name, 50 + window_count * 70, 20);
+			//cvMoveWindow(windows_name, 50 + window_count * 70, 20);
 			break;
 		case u_cnn_layer_type_conv:
 			sprintf(windows_name, "conv%d", layers->index);
 			user_cnn_model_display_matrices(windows_name, ((user_cnn_conv_layers  *)layers->content)->feature_matrices, 2);//显示到指定窗口
-			cvMoveWindow(windows_name, 50 + window_count * 70, 20);
+			//cvMoveWindow(windows_name, 50 + window_count * 70, 20);
 			break;
 		case u_cnn_layer_type_pool:
 			//sprintf(windows_name, "pool%d", layers->index);
@@ -220,11 +178,11 @@ void user_cnn_model_load_input_feature(user_cnn_layers *layers, user_nn_matrix *
 //index 加载到层的第几个矩阵中
 //返回 无
 void user_cnn_model_load_input_image(user_cnn_layers *layers, char *path, int index){
-	IplImage *load_image = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);//加载图像文件
-	user_cnn_layers *cnn_input_layer = user_cnn_layers_get(layers, 1);//获取输入层
-	user_nn_matrix *save_matrix = user_nn_matrices_ext_matrix_index(((user_cnn_input_layers *)cnn_input_layer->content)->feature_matrices, index - 1);//获取矩阵位置
-	user_nn_matrix_memcpy_uchar_mult_constant(save_matrix, (unsigned char *)load_image->imageData, (float)1 / 255);//拷贝矩阵数据并且归1化数据
-	cvReleaseImage(&load_image);//释放内存
+	//IplImage *load_image = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);//加载图像文件
+	//user_cnn_layers *cnn_input_layer = user_cnn_layers_get(layers, 1);//获取输入层
+	//user_nn_matrix *save_matrix = user_nn_matrices_ext_matrix_index(((user_cnn_input_layers *)cnn_input_layer->content)->feature_matrices, index - 1);//获取矩阵位置
+	//user_nn_matrix_memcpy_uchar_mult_constant(save_matrix, (unsigned char *)load_image->imageData, (float)1 / 255);//拷贝矩阵数据并且归1化数据
+	//cvReleaseImage(&load_image);//释放内存
 }
 
 //加载特征数据到指定到期望特征数据中

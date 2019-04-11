@@ -11,7 +11,7 @@ const char padding_char = '=';
 int base64_encode(const char *input, char *base64){
 	int i = 0, j = 0;
 	unsigned char trans_index = 0;    // 索引是8位，但是高两位都为0
-	int datalength = strlen(input);
+	int datalength = (int)strlen(input);
 	for (; i < datalength; i += 3) {
 		// 每三个一组，进行编码
 		// 要编码的数字的第一个
@@ -53,7 +53,7 @@ inline int num_strchr(const char *str, char c){
 	if (NULL == pindex) {
 		return -1;
 	}
-	return pindex - str;
+	return (int)(pindex - str);
 }
 /* 解码
 * const char * base64 码字
