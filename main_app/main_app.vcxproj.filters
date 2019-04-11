@@ -55,6 +55,12 @@
     <Filter Include="源文件\other">
       <UniqueIdentifier>{4dea53f3-92d9-44a7-8f7e-9919e55fb1b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\memory">
+      <UniqueIdentifier>{54f5d20d-1c4d-45a6-b956-03b79a83d7a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\memory">
+      <UniqueIdentifier>{ac8ff829-f08e-4a20-b00f-38f13b969d1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user_config.h">
