@@ -151,8 +151,17 @@ void HSV_to_RGB(float *hsv, unsigned char *rgb) {
 }
 
 
-float user_nn_get_rgb_hue(unsigned char *rgb) {
-	float hsl[3];
-	RGB_to_HSL(rgb, hsl);
-	return hsl[0];
+float user_nn_get_rgb_hue(unsigned char *rgb, rgb_conv_type type) {
+	float result[3];
+	if (type == rgb_conv_hsl) {
+		RGB_to_HSL(rgb, result);
+		return result[0];
+	}
+	else if (type == rgb_conv_hsv) {
+		RGB_to_HSV(rgb, result);
+		return result[0];
+	}
+	else {
+
+	}
 }

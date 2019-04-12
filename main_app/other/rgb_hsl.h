@@ -6,6 +6,11 @@
 #include<string.h>
 #include <math.h>
 
+typedef enum _rgb_conv_type {
+	rgb_conv_hsl = 0,//
+	rgb_conv_hsv = 1,//
+}rgb_conv_type;
+
 typedef struct _nn_rgb {
 	unsigned char R;
 	unsigned char G;
@@ -29,5 +34,6 @@ void HSL_to_RGB(float *hsl, unsigned char *rgb);
 void RGB_to_HSV(unsigned char *rgb, float *hsv);
 void HSV_to_RGB(float *hsv, unsigned char *rgb);
 
+float user_nn_get_rgb_hue(unsigned char *rgb, rgb_conv_type type);
 
 #endif
