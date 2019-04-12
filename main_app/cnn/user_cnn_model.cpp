@@ -62,7 +62,7 @@ void user_cnn_model_display_matrices(char *window_name, user_nn_list_matrix  *sr
 	int height = (int)sqrt(dest_matrix->height*dest_matrix->width);
 	cv::Mat img(width, height, CV_32FC1, dest_matrix->data);
 	cv::namedWindow(window_name, cv::WINDOW_NORMAL);
-	cv::resizeWindow(window_name, width, height);
+	//cv::resizeWindow(window_name, width, height);
 	//cv::updateWindow(win);//opengl
 	//cv::startWindowThread();
 	cv::moveWindow(window_name,x,y);

@@ -24,9 +24,10 @@ typedef struct _nn_hsv {
 	float V;
 }user_nn_hsv;
 
-void RGB_to_HSL(user_nn_rgb *rgb, user_nn_hsl *hsl);
-void HSL_to_RGB(user_nn_hsl *hsl, user_nn_rgb *rgb);
-void RGB_to_HSV(user_nn_rgb *rgb, user_nn_hsv *hsv);
-void HSV_to_RGB(user_nn_hsv *hsv, user_nn_rgb *rgb);
+void RGB_to_HSL(unsigned char *rgb, float *hsl);
+void HSL_to_RGB(float *hsl, unsigned char *rgb);
+void RGB_to_HSV(unsigned char *rgb, float *hsv);
+void HSV_to_RGB(float *hsv, unsigned char *rgb);
+
 
 #endif
