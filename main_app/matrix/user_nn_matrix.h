@@ -85,13 +85,13 @@ void user_nn_matrix_sum_constant(user_nn_matrix *src_matrix, float constant);//¾
 void user_nn_matrix_sum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, float alpha);//¾ØÕósave_matrixÇóºÍ¾ØÕósrc_matrixÓëalphaµÄ³Ë»ı
 void user_nn_matrix_memset(user_nn_matrix *save_matrix, float constant);//ÉèÖÃ¾ØÕósrc_matrixµÄÖµ ½á¹û±£´æÔÚsrc_matrixÀïÃæ
 void user_nn_matrix_memcpy(user_nn_matrix *save_matrix, float *data);//¿½±´Êı¾İÖÁ¾ØÕó ´óĞ¡´óÓÚµÈÓÚ¾ØÕó´óĞ¡
+void user_nn_matrix_memcpy_uchar(user_nn_matrix *save_matrix, unsigned char *input_array);//¿½±´Êı¾İÖÁ¾ØÕó ´óĞ¡´óÓÚµÈÓÚ¾ØÕó´óĞ¡
 void user_nn_matrix_memcpy_uchar_mult_constant(user_nn_matrix *save_matrix, unsigned char *input_array, float constant);//¿½±´Êı¾İÖÁ¾ØÕó ´óĞ¡´óÓÚµÈÓÚ¾ØÕó´óĞ¡
 void user_nn_matrix_uchar_memcpy(unsigned char *save_array,user_nn_matrix *src_matrix);//¿½±´Êı¾İÖÁ¾ØÕó ´óĞ¡´óÓÚµÈÓÚ¾ØÕó´óĞ¡
 user_nn_matrix *user_nn_matrix_sorting(user_nn_matrix *src_matrix, sorting_type type);//¶Ô¾ØÕóÊı¾İ½øĞĞÅÅĞò,·µ»ØÒ»¸öĞÂµÄ¾ØÕó£¬²»»áÉ¾µôÔ­À´µÄ¾ØÕó
 
 float user_nn_matrix_cum_element(user_nn_matrix *src_matrix);//ÇóºÍ¾ØÕóÀïÃæËùÓĞÖµ ¼ÓÔÚÒ»Æğ
 void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//ÇóºÍÁ½¸ö¾ØÕó ¾ØÕósrc_matrixÓë¾ØÕósub_matrixÃ¿¸öÔªËØ½øĞĞ¼Ó·¨ÔËËã ½á¹û±£´æÔÚsrc_matrixÀïÃæ
-void user_nn_matrix_cum_matrix_alpha(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, float alpha);//ÇóºÍÁ½¸ö¾ØÕó ¾ØÕósrc_matrixÓë¾ØÕósub_matrix*alphaÃ¿¸öÔªËØ½øĞĞ¼Ó·¨ÔËËã ½á¹û±£´æÔÚsrc_matrixÀïÃæ
 void user_nn_matrix_cum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, float alpha);//ÇóºÍÁ½¸ö¾ØÕó ¾ØÕósrc_matrixÓë¾ØÕósub_matrix*alphaÃ¿¸öÔªËØ½øĞĞ¼Ó·¨ÔËËã ½á¹û±£´æÔÚsrc_matrixÀïÃæ
 void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix);//¿½±´¾ØÕósub_matrixÊı¾İµ½¾ØÕósrc_matrixÖĞ
 void user_nn_matrix_cpy_matrix_p(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix);//Ö¸Ïò¾ØÕósub_matrixÊı¾İµ½¾ØÕósrc_matrixÖĞ

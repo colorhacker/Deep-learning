@@ -171,6 +171,9 @@
     <ClInclude Include="other\rgb_hsl.h">
       <Filter>头文件\other</Filter>
     </ClInclude>
+    <ClInclude Include="other\user_nn_opencv.h">
+      <Filter>头文件\other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -279,6 +282,9 @@
       <Filter>源文件\other</Filter>
     </ClCompile>
     <ClCompile Include="other\rgb_hsl.cpp">
+      <Filter>源文件\other</Filter>
+    </ClCompile>
+    <ClCompile Include="other\user_nn_opencv.cpp">
       <Filter>源文件\other</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,29 +8,13 @@
 #include "cnn\user_cnn_app.h"
 #include "w2c\user_w2c_app.h"
 #include "mnist\user_mnist.h"
-
-user_nn_matrix *user_nn_matrix_rgb_hsv(user_nn_matrix *src_matrix) {
-	user_nn_matrix *result = NULL;
-	int count = src_matrix->width * src_matrix->height;
-	float *input_data = src_matrix->data;
-	float *result_data;
-
-	result = user_nn_matrix_create(src_matrix->width, src_matrix->height);
-	result_data = result->data;//取得数据指针
-#if defined _OPENMP && _USER_API_OPENMP
-#pragma omp parallel for
-	for (int index = 0; index < count; index++) {
-		result_data[index] = input_data[count - index - 1];
-	}
-#else
-	while (count--) {
-		*result_data++ = input_data[count];//直接首尾进行交换
-	}
-#endif
-	return result;
-}
+#include "other\user_nn_opencv.h"
 
 int main(int argc, const char** argv){
+	user_nn_matrix *image = user_opencv_read_image("E:/GitHub/_output/Release64/exe/1.jpg");
+	user_nn_matrix *hls = user_matrix_rgb_hls(image->data, image->width, image->height);
+	user_nn_matrix_printf(NULL, );
+	return 0;
 #ifdef _OPENMP
 	omp_set_num_threads(64);
 #endif

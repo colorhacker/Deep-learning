@@ -629,6 +629,18 @@ void user_nn_matrix_memcpy(user_nn_matrix *save_matrix, float *data){
 //src_matrix：目标矩阵 求和值会覆盖此矩阵
 //data：数据指针 大于矩阵
 //返回 无
+void user_nn_matrix_memcpy_uchar(user_nn_matrix *save_matrix, unsigned char *input_array) {
+	int count = save_matrix->width * save_matrix->height;//获取矩阵数据大小
+	float *src_data = save_matrix->data;
+	while (count--) {
+		*src_data++ = *input_array++ ;
+	}
+}
+//设置矩阵值
+//参数
+//src_matrix：目标矩阵 求和值会覆盖此矩阵
+//data：数据指针 大于矩阵
+//返回 无
 void user_nn_matrix_memcpy_uchar_mult_constant(user_nn_matrix *save_matrix, unsigned char *input_array, float constant){
 	int count = save_matrix->width * save_matrix->height;//获取矩阵数据大小
 	float *src_data = save_matrix->data;
