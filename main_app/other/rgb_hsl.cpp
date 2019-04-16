@@ -4,9 +4,9 @@
 static float _hue_to_rgb(float p, float q, float t) {
 	if (t < 0.0f) t += 1.0f;
 	if (t > 1.0f) t -= 1.0f;
-	if (t < 1.0f / 6.0f) return (p + (q - p) * 6 * t);
+	if (t < 1.0f / 6.0f) return (p + (q - p) * 6.0f * t);
 	if (t < 1.0f / 2.0f) return q;
-	if (t < 2.0f / 3.0f) return (p + (q - p) * (2 / 3 - t) * 6);
+	if (t < 2.0f / 3.0f) return (p + (q - p) * (2.0f / 3.0f - t) * 6.0f);
 	return p;
 }
 static float _max_rgb(float *rgb) {
@@ -34,10 +34,10 @@ static float _min_rgb(float *rgb) {
 * @return  {Array}           The HSL representation
 */
 
-void RGB_to_HSL(unsigned char *rgb, float *hsl) {
-	float rgb_f[] = { (float)rgb[0] / 255, (float)rgb[1] / 255, (float)rgb[2] / 255};
+void rgb_to_hsl(unsigned char *rgb, float *hsl) {
+	float rgb_f[] = { (float)rgb[0] / 255.0f, (float)rgb[1] / 255.0f, (float)rgb[2] / 255.0f };
 	float max = _max_rgb(rgb_f), min = _min_rgb(rgb_f);
-	hsl[2] = (max + min) / 2;
+	hsl[2] = (max + min) / 2.0f;
 	if (max == min) {
 		hsl[0] = hsl[1] = 0; // achromatic
 	}
@@ -45,13 +45,13 @@ void RGB_to_HSL(unsigned char *rgb, float *hsl) {
 		float d = max - min;
 		hsl[1] = hsl[2] > 0.5f ? d / (2.0f - max - min) : d / (max + min);
 		if (max == rgb_f[0]) {
-			hsl[0] = (rgb_f[1] - rgb_f[2]) / d + (rgb_f[1]  < rgb_f[2] ? 6 : 0);
+			hsl[0] = (rgb_f[1] - rgb_f[2]) / d + (rgb_f[1]  < rgb_f[2] ? 6.0f : 0.0f);
 		}else if (max == rgb_f[1]) {
-			hsl[0] = (rgb_f[2] - rgb_f[0]) / d + 2;
+			hsl[0] = (rgb_f[2] - rgb_f[0]) / d + 2.0f;
 		}else if (max == rgb_f[2]) {
-			hsl[0] = (rgb_f[0] - rgb_f[1]) / d + 4;
+			hsl[0] = (rgb_f[0] - rgb_f[1]) / d + 4.0f;
 		}
-		hsl[0] /= 6;
+		hsl[0] /= 6.0f;
 	}
 }
 /**
@@ -66,7 +66,7 @@ void RGB_to_HSL(unsigned char *rgb, float *hsl) {
 * @return  {Array}           The RGB representation
 */
 
-void HSL_to_RGB(float *hsl, unsigned char *rgb) {
+void hsl_to_rgb(float *hsl, unsigned char *rgb) {
 	float rgb_f[] = { 0.0f, 0.0f, 0.0f };
 	if (hsl[1] == 0) {
 		rgb_f[0] = rgb_f[1] = rgb_f[2] = hsl[2]; // achromatic
@@ -93,7 +93,7 @@ void HSL_to_RGB(float *hsl, unsigned char *rgb) {
 * @param   Number  b       The blue color value
 * @return  Array           The HSV representation
 */
-void RGB_to_HSV(unsigned char *rgb, float *hsv) {
+void rgb_to_hsv(unsigned char *rgb, float *hsv) {
 	float rgb_f[] = { (float)rgb[0] / 255, (float)rgb[1] / 255, (float)rgb[2] / 255 };
 	float max = _max_rgb(rgb_f), min = _min_rgb(rgb_f);
 	float d = max - min;
@@ -127,14 +127,14 @@ void RGB_to_HSV(unsigned char *rgb, float *hsv) {
 * @param   Number  v       The value Ã÷¶È
 * @return  Array           The RGB representation
 */
-void HSV_to_RGB(float *hsv, unsigned char *rgb) {
+void hsv_to_rgb(float *hsv, unsigned char *rgb) {
 	float rgb_f[] = { 0.0f,0.0f,0.0f };
 
-	int i = (int)floor(hsv[0] * 6);
-	float f = hsv[0] * 6 - i;
-	float p = hsv[2] * (1 - hsv[1]);
-	float q = hsv[2] * (1 - f * hsv[1]);
-	float t = hsv[2] * (1 - (1 - f) * hsv[1]);
+	int i = (int)floor(hsv[0] * 6.0f);
+	float f = hsv[0] * 6.0f - i;
+	float p = hsv[2] * (1.0f - hsv[1]);
+	float q = hsv[2] * (1.0f - f * hsv[1]);
+	float t = hsv[2] * (1.0f - (1 - f) * hsv[1]);
 
 	switch (i % 6) {
 	case 0: rgb_f[0] = hsv[2], rgb_f[1] = t, rgb_f[2] = p; break;
@@ -154,14 +154,14 @@ void HSV_to_RGB(float *hsv, unsigned char *rgb) {
 float user_nn_get_rgb_hue(unsigned char *rgb, rgb_conv_type type) {
 	float result[3];
 	if (type == rgb_conv_hsl) {
-		RGB_to_HSL(rgb, result);
+		rgb_to_hsl(rgb, result);
 		return result[0];
 	}
 	else if (type == rgb_conv_hsv) {
-		RGB_to_HSV(rgb, result);
+		rgb_to_hsv(rgb, result);
 		return result[0];
 	}
 	else {
-
+		return 0;
 	}
 }

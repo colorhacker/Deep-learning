@@ -11,9 +11,15 @@
 #include "other\user_nn_opencv.h"
 
 int main(int argc, const char** argv){
-	user_nn_matrix *image = user_opencv_read_image("E:/GitHub/_output/Release64/exe/1.jpg");
-	user_nn_matrix *hls = user_matrix_rgb_hls(image->data, image->width, image->height);
-	user_nn_matrix_printf(NULL, );
+	user_nn_matrix *image = user_opencv_read_image("E:/GitHub/_output/Release64/exe/apple.jpg");
+	user_nn_matrix *hls = user_matrix_rgb_hsv(image);
+	//user_nn_matrix *rgb = user_matrix_hsv_rgb(hls);
+	user_nn_matrix *rgb = user_matrix_hsv_rgb_actor(hls,1.0f,0.5f);
+	//user_nn_matrix_printf(NULL, image);
+	//user_nn_matrix_printf(NULL, hls);
+	//user_nn_matrix_printf(NULL, rgb);
+
+	user_opencv_show_rgb("n", rgb);
 	return 0;
 #ifdef _OPENMP
 	omp_set_num_threads(64);

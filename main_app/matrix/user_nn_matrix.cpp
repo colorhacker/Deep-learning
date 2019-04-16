@@ -402,7 +402,6 @@ bool user_nn_matrix_save_matrix(user_nn_matrix *src_matrix, user_nn_matrix *save
 	return true;
 }
 
-//
 //从矩阵指定(x,y)位置截取(w,h)大小的矩阵。并且返回新截取的矩阵
 //参数
 //src_matrix：矩阵对象

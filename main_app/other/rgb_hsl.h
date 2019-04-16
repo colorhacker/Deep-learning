@@ -29,10 +29,10 @@ typedef struct _nn_hsv {
 	float V;
 }user_nn_hsv;
 
-void RGB_to_HSL(unsigned char *rgb, float *hsl);
-void HSL_to_RGB(float *hsl, unsigned char *rgb);
-void RGB_to_HSV(unsigned char *rgb, float *hsv);
-void HSV_to_RGB(float *hsv, unsigned char *rgb);
+void rgb_to_hsl(unsigned char *rgb, float *hsl);
+void hsl_to_rgb(float *hsl, unsigned char *rgb);
+void rgb_to_hsv(unsigned char *rgb, float *hsv);
+void hsv_to_rgb(float *hsv, unsigned char *rgb);
 
 float user_nn_get_rgb_hue(unsigned char *rgb, rgb_conv_type type);
 
