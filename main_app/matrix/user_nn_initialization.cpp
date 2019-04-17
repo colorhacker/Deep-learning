@@ -1,11 +1,11 @@
 #include "./user_nn_initialization.h"
 
 //返回0~+1的随机数
-static float user_nn_init_normal(void) {
+float user_nn_init_normal(void) {
 	return (float)((float)rand() / RAND_MAX);
 }
 //返回 -1~+1的随机数
-static float user_nn_init_uniform(void) {
+float user_nn_init_uniform(void) {
 	return (float)(((float)(rand()*2.0 / RAND_MAX) - 1.0f));
 }
 //lecun初始化

@@ -10,7 +10,7 @@
 #include "rgb_hsl.h"
 #include "../matrix/user_nn_matrix.h"
 
-void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix, int x, int y);
+void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix, int x, int y, int delay);
 void user_opencv_show_rgb(char *windows, user_nn_matrix *src_matrix);
 user_nn_matrix *user_opencv_read_image(const char *path);
 

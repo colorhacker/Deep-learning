@@ -10,7 +10,30 @@
 #include "mnist\user_mnist.h"
 #include "other\user_nn_opencv.h"
 
+//
 int main(int argc, const char** argv){
+	srand((unsigned)time(NULL));
+	user_nn_matrix *src_matrix = user_nn_matrix_create(100,100);
+
+	int w = src_matrix->width, h = src_matrix->height;
+	int x, y, width, height;
+	for (;;) {
+		user_nn_matrix_memset(src_matrix,0.0f);
+		//随机起点
+		x = (int)(user_nn_init_normal() * (w - 2));
+		y = (int)(user_nn_init_normal() * (h - 2));
+		width = (int)(user_nn_init_normal() * (w - x));
+		height = (int)(user_nn_init_normal() * (w - y));
+		//画圆
+		//user_nn_matrix_paint_circle(src_matrix, 50, 50, 20, 1.0f);
+		//画矩形
+		user_nn_matrix_paint_rectangle(src_matrix, x, y, x + width, y + height, 1.0f);
+		user_nn_matrix_paint_rectangle(src_matrix, x, y, x + width, y + height, 1.0f);
+		user_opencv_show_matrix("windows", src_matrix, 100, 100,20);
+	}
+	_getch();
+	return 0;
+
 #ifdef _OPENMP
 	omp_set_num_threads(64);
 #endif

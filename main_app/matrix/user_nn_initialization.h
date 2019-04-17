@@ -16,6 +16,9 @@
 	#define user_nn_init_rand(x,y) user_nn_init_he_uniform(x,y)
 #endif
 
+float user_nn_init_normal(void);
+float user_nn_init_uniform(void);
+
 float user_nn_init_lecun_uniform(int input_count, int output_count);
 float user_nn_init_glorot_normal(int input_count, int output_count);
 float user_nn_init_glorot_uniform(int input_count, int output_count);

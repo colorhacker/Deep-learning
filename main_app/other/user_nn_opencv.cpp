@@ -1,6 +1,6 @@
 #include "user_nn_opencv.h"
 
-void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix,int x,int y) {
+void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix,int x,int y,int delay) {
 	int width = (int)sqrt(src_matrix->height*src_matrix->width);
 	int height = (int)sqrt(src_matrix->height*src_matrix->width);
 	cv::Mat img(width, height, CV_32FC1, src_matrix->data);
@@ -10,7 +10,7 @@ void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix,int x,int
 	//cv::startWindowThread();
 	cv::moveWindow(windows, x, y);
 	cv::imshow(windows, img);
-	cv::waitKey(1);
+	cv::waitKey(delay);
 }
 void user_opencv_show_rgb(char *windows,user_nn_matrix *src_matrix) {
 	user_nn_matrix_divi_constant(src_matrix, 255.0f);

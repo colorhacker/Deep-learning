@@ -25,6 +25,7 @@
 #include <opencv.hpp>
 
 #include "user_types.h"
+
 //是否开启OPENMP底层API
 #define		_USER_API_OPENMP				true
 //配置输出文件夹

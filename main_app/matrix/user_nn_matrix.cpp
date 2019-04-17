@@ -1483,6 +1483,102 @@ user_nn_matrix *user_nn_matrix_cut_vector(user_nn_matrix *src_matrix, user_nn_ma
 	result = user_nn_matrix_ext_matrix(src_matrix,0,0, total_width, src_matrix->height);
 	return result;
 }
+//画一个点
+//src_matrix 
+//x 左上角坐标起点
+//y 右上角坐标起点
+//value 设置的值
+void user_nn_matrix_paint_p(user_nn_matrix *src_matrix, int x, int y, float value) {
+	src_matrix->data[src_matrix->width*y + x] = value;
+}
+//画一条横线
+//src_matrix 
+//x 左上角坐标起点
+//y 右上角坐标起点
+//length 线段长度
+//value 设置的值
+void user_nn_matrix_paint_hl(user_nn_matrix *src_matrix, int x, int y, int length, float value) {
+	float *point = &src_matrix->data[src_matrix->width*y + x];
+	for (int len = 0; len < length; len++) {
+		*point++ = value;
+	}
+}
+//画一条竖线
+//src_matrix 
+//x 左上角坐标起点
+//y 右上角坐标起点
+//length 线段长度
+//value 设置的值
+void user_nn_matrix_paint_vl(user_nn_matrix *src_matrix, int x, int y, int length, float value) {
+	float *point = &src_matrix->data[src_matrix->width*y + x];
+	for (int len = 0; len < length; len++) {
+		*point = value;
+		point += src_matrix->width;
+	}
+}
+//画一条线段
+//src_matrix 
+//x1 x2 左上角坐标起点
+//y1 y2 右上角坐标起点
+//length 线段长度
+//value 设置的值
+void user_nn_matrix_paint_ol(user_nn_matrix *src_matrix, int x1, int y1, int x2, int y2, float value) {
+	int x_length = x2 - x1;
+	int y_length = y2 - y1;
+	if (abs(x_length) > abs(y_length)) {
+		float delta = (float)(y2 - y1) / (float)(x2 - x1);
+		for (int len = 0; abs(len) < abs(x_length); x_length < 0 ? len-- : len++) {
+			src_matrix->data[src_matrix->width*(x1 + len) + y1 + (int)round(delta*len)] = value;
+		}
+	}
+	else {
+		float delta = (float)(x2 - x1) / (float)(y2 - y1);
+		for (int len = 0; abs(len) < abs(y_length); x_length < 0 ? len-- : len++) {
+			src_matrix->data[src_matrix->width*(y1 + len) + x1 + (int)round(delta*len)] = value;
+		}
+	}
+}
+
+
+//画一个圆
+//src_matrix 
+//x1 x2 左上角坐标起点
+//y1 y2 右上角坐标起点
+//length 线段长度
+//value 设置的值
+void user_nn_matrix_paint_circle(user_nn_matrix *src_matrix, int x,int y,int r,float value) {
+	int count = sizeof(sin_buffer) / sizeof(sin_buffer[0]);
+	int step = (int)round(count / r);
+	int wx,wy;
+	for (int i = 0; i < count; i += step) {
+		wx = (int)round(cos_buffer[i] * r);
+		wy = (int)round(sin_buffer[i] * r);
+		src_matrix->data[src_matrix->width*(y + wy) + x + wx] = value;
+		src_matrix->data[src_matrix->width*(x + wx) + y + wy] = value;
+		src_matrix->data[src_matrix->width*(y - wy) + x + wx] = value;
+		src_matrix->data[src_matrix->width*(x + wx) + y - wy] = value;
+		src_matrix->data[src_matrix->width*(y + wy) + x - wx] = value;
+		src_matrix->data[src_matrix->width*(x - wx) + y + wy] = value;
+		src_matrix->data[src_matrix->width*(y - wy) + x - wx] = value;
+		src_matrix->data[src_matrix->width*(x - wx) + y - wy] = value;
+	}
+}
+//画一个椭圆
+//src_matrix 
+//x1 x2 左上角坐标起点
+//y1 y2 右上角坐标起点
+//length 线段长度
+//value 设置的值
+void user_nn_matrix_paint_oval(user_nn_matrix *src_matrix, int x, int y,int r1, int r2, float value) {
+
+}
+//画一个矩形
+void user_nn_matrix_paint_rectangle(user_nn_matrix *src_matrix,int x1,int y1,int x2,int y2, float value) {
+	user_nn_matrix_paint_hl(src_matrix, x1, y1, x2 - x1, value);
+	user_nn_matrix_paint_hl(src_matrix, x1, y2, x2 - x1, value);
+	user_nn_matrix_paint_vl(src_matrix, x1, y1, y2 - y1, value);
+	user_nn_matrix_paint_vl(src_matrix, x2, y1, y2 - y1, value);
+}
 //打印矩阵数据
 //参数
 //list_matrix：矩阵数据
