@@ -1,28 +1,17 @@
 #include "user_nn_opencv.h"
 
-/*
-cv::Mat hls,img,iiIm = cv::imread("E:/GitHub/_output/Release64/exe/1.jpg", cv::IMREAD_COLOR);
-cv::cvtColor(iiIm, hls, cv::COLOR_BGR2HLS);
-
-int cols = hls.cols, rows = hls.rows;
-printf("\n%d", hls.depth());
-printf("\n%d", hls.channels());
-printf("\n%d", hls.type());
-for (int row = 0; row < hls.rows; row++){
-for (int col = 0; col < hls.cols; col++){
-printf("\n%d ", hls.at<cv::Vec3b>(row, col)[0] = 0);
-printf(" %d", hls.at<cv::Vec3b>(row, col)[1]);
-printf(" %d", hls.at<cv::Vec3b>(row, col)[2] = 255);
-		}
-	}
-
-	cv::cvtColor(hls, img, cv::COLOR_HLS2BGR);
-	//cv::namedWindow("1ao", cv::WINDOW_AUTOSIZE);
-	cv::namedWindow("1ao", cv::WINDOW_NORMAL);
-	cv::imshow("1ao", img);
-	cv::waitKey(0);
-	return 0;
-*/
+void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix,int x,int y) {
+	int width = (int)sqrt(src_matrix->height*src_matrix->width);
+	int height = (int)sqrt(src_matrix->height*src_matrix->width);
+	cv::Mat img(width, height, CV_32FC1, src_matrix->data);
+	cv::namedWindow(windows, cv::WINDOW_AUTOSIZE);
+	//cv::resizeWindow(window_name, width, height);
+	//cv::updateWindow(win);//opengl
+	//cv::startWindowThread();
+	cv::moveWindow(windows, x, y);
+	cv::imshow(windows, img);
+	cv::waitKey(1);
+}
 void user_opencv_show_rgb(char *windows,user_nn_matrix *src_matrix) {
 	user_nn_matrix_divi_constant(src_matrix, 255.0f);
 	cv::Mat d_bgr, d_rgb( src_matrix->height, src_matrix->width / 3, CV_32FC3, src_matrix->data);
