@@ -29,6 +29,19 @@ void user_nn_app_train(int argc, const char** argv) {
 	start_time = clock();
 	user_nn_list_matrix *rand_matrix_list = user_nn_matrices_create(20000,1,1,784);
 	user_nn_matrices_init_vaule(rand_matrix_list,3,3);
+	user_nn_matrix *src_matrix = rand_matrix_list->matrix;
+	for (int count = 0; count < rand_matrix_list->height*rand_matrix_list->width; count++) {
+		int width = (int)sqrt(src_matrix->height*src_matrix->width);
+		int height = (int)sqrt(src_matrix->height*src_matrix->width);
+
+		int x = (int)(user_nn_init_normal() * (width - 2));
+		int y = (int)(user_nn_init_normal() * (height - 2));
+		int w = (int)(user_nn_init_normal() * (width - x));
+		int h = (int)(user_nn_init_normal() * (height - y));
+		user_nn_matrix_paint_rectangle(src_matrix, x, y, x + w, y + h, 1.0f);//»­¾ØÐÎ
+
+		src_matrix = rand_matrix_list->matrix->next;
+	}
 	while (1) {
 		for (int index = 0;index < train_images->height * train_images->width; index++) {
 			user_nn_model_load_input_feature(nn_layers, user_nn_matrices_ext_matrix_index(rand_matrix_list, index));
