@@ -11,6 +11,20 @@
 #include "other\user_nn_opencv.h"
 
 int main(int argc, const char** argv){
+	//user_nn_matrix *src_matrix = user_nn_matrix_create(100,100);
+	//user_nn_matrix_paint_rectangle(src_matrix,
+	//	(int)(user_nn_init_normal() * (src_matrix->width - 2)),
+	//	(int)(user_nn_init_normal() * (src_matrix->width - 2)),
+	//	(int)(user_nn_init_normal() * (src_matrix->width - 2)),
+	//	(int)(user_nn_init_normal() * (src_matrix->width - 2)), 1.0f);//画矩形
+	//user_opencv_show_matrix("p",src_matrix, 100, 100, 10);
+
+	//user_nn_matrix *kernel_matrix = user_nn_matrix_create(4, 4);
+	//user_nn_matrix_memset(kernel_matrix,1.0f);
+	//user_nn_matrix *src_matrix_a = user_nn_matrix_conv2(src_matrix, kernel_matrix, u_nn_conv2_type_same);
+	//user_opencv_show_matrix("q", src_matrix_a, 200, 100, 10);
+	//_getch();
+	//return 0;
 #ifdef _OPENMP
 	omp_set_num_threads(64);
 #endif

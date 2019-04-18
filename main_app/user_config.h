@@ -28,6 +28,7 @@
 
 //是否开启OPENMP底层API
 #define		_USER_API_OPENMP				true
+#define		_USER_API_OPENMP_CONV			false
 //配置输出文件夹
 #define		user_nn_debug_file				"./debug.txt"
 //初始化网络值的方式

@@ -420,7 +420,7 @@ user_nn_matrix *user_nn_matrix_ext_matrix(user_nn_matrix *src_matrix, int startx
 	}
 	result = user_nn_matrix_create(width, height);//创建矩阵
 	result_data = result->data;//取得数据指针
-#if defined _OPENMP && _USER_API_OPENMP
+#if defined _OPENMP && _USER_API_OPENMP && _USER_API_OPENMP_CONV
 #pragma omp parallel for
 	for (int post_y = 0; post_y < height; post_y++) {
 		for (int post_x = 0; post_x < width; post_x++) {
@@ -987,7 +987,7 @@ user_nn_matrix *user_nn_matrix_rotate180(user_nn_matrix *src_matrix){
 
 	result = user_nn_matrix_create(src_matrix->width, src_matrix->height);
 	result_data = result->data;//取得数据指针
-#if defined _OPENMP && _USER_API_OPENMP
+#if defined _OPENMP && _USER_API_OPENMP && _USER_API_OPENMP_CONV
 #pragma omp parallel for
 	for (int index = 0; index < count;index++) {
 		result_data[index] = input_data[count - index - 1];
@@ -1499,9 +1499,17 @@ void user_nn_matrix_paint_p(user_nn_matrix *src_matrix, int x, int y, float valu
 //value 设置的值
 void user_nn_matrix_paint_hl(user_nn_matrix *src_matrix, int x, int y, int length, float value) {
 	float *point = &src_matrix->data[src_matrix->width*y + x];
-	for (int len = 0; len < length; len++) {
-		*point++ = value;
+	if (length >= 0) {
+		for (int len = 0; len <= length; len++) {
+			*point++ = value;
+		}
 	}
+	else {
+		for (int len = 0; len >= length; len--) {
+			*point-- = value;
+		}
+	}
+	
 }
 //画一条竖线
 //src_matrix 
@@ -1511,10 +1519,19 @@ void user_nn_matrix_paint_hl(user_nn_matrix *src_matrix, int x, int y, int lengt
 //value 设置的值
 void user_nn_matrix_paint_vl(user_nn_matrix *src_matrix, int x, int y, int length, float value) {
 	float *point = &src_matrix->data[src_matrix->width*y + x];
-	for (int len = 0; len < length; len++) {
-		*point = value;
-		point += src_matrix->width;
+	if (length >= 0) {
+		for (int len = 0; len <= length; len++) {
+			*point = value;
+			point += src_matrix->width;
+		}
 	}
+	else {
+		for (int len = 0; len >= length; len--) {
+			*point = value;
+			point -= src_matrix->width;
+		}
+	}
+
 }
 //画一条线段
 //src_matrix 
@@ -1525,15 +1542,24 @@ void user_nn_matrix_paint_vl(user_nn_matrix *src_matrix, int x, int y, int lengt
 void user_nn_matrix_paint_ol(user_nn_matrix *src_matrix, int x1, int y1, int x2, int y2, float value) {
 	int x_length = x2 - x1;
 	int y_length = y2 - y1;
+
+	if (x_length == 0) {
+		user_nn_matrix_paint_vl(src_matrix, x1, y1, y_length, value);
+		return;
+	}
+	if (y_length == 0) {
+		user_nn_matrix_paint_hl(src_matrix, x1, y1, x_length, value);
+		return;
+	}
 	if (abs(x_length) > abs(y_length)) {
 		float delta = (float)(y2 - y1) / (float)(x2 - x1);
-		for (int len = 0; abs(len) < abs(x_length); x_length < 0 ? len-- : len++) {
+		for (int len = 0; abs(len) <= abs(x_length); x_length < 0 ? len-- : len++) {
 			src_matrix->data[src_matrix->width*(x1 + len) + y1 + (int)round(delta*len)] = value;
 		}
 	}
 	else {
 		float delta = (float)(x2 - x1) / (float)(y2 - y1);
-		for (int len = 0; abs(len) < abs(y_length); x_length < 0 ? len-- : len++) {
+		for (int len = 0; abs(len) <= abs(y_length); x_length < 0 ? len-- : len++) {
 			src_matrix->data[src_matrix->width*(y1 + len) + x1 + (int)round(delta*len)] = value;
 		}
 	}
@@ -1578,6 +1604,10 @@ void user_nn_matrix_paint_rectangle(user_nn_matrix *src_matrix,int x1,int y1,int
 	user_nn_matrix_paint_hl(src_matrix, x1, y2, x2 - x1, value);
 	user_nn_matrix_paint_vl(src_matrix, x1, y1, y2 - y1, value);
 	user_nn_matrix_paint_vl(src_matrix, x2, y1, y2 - y1, value);
+	//user_nn_matrix_paint_ol(src_matrix, x1, y1, x2, y1, value);
+	//user_nn_matrix_paint_ol(src_matrix, x1, y1, x1, y2, value);
+	//user_nn_matrix_paint_ol(src_matrix, x2, y1, x2, y2, value);
+	//user_nn_matrix_paint_ol(src_matrix, x1, y2, x2, y2, value);
 }
 //打印矩阵数据
 //参数
