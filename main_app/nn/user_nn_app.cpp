@@ -34,7 +34,7 @@ void user_nn_app_train(int argc, const char** argv) {
 	user_nn_matrix *lables_matrix = train_lables->matrix;
 	user_nn_matrix *kernel_matrix = user_nn_matrix_create(4, 4);//¾í»ı¾ØÕó
 	user_nn_matrix *same_matrix = NULL;//¾í»ı¾ØÕó
-	user_nn_matrix_memset(kernel_matrix, 1.0f);
+	user_nn_matrix_memset(kernel_matrix, 0.9f);
 	for (int count = 0; count < train_images->height*train_images->width; count++) {
 		images_matrix->width = 28;
 		images_matrix->height = 28;
@@ -43,10 +43,9 @@ void user_nn_app_train(int argc, const char** argv) {
 			(int)(user_nn_init_normal() * (images_matrix->height - 2)),
 			(int)(user_nn_init_normal() * (images_matrix->width - 2)),
 			(int)(user_nn_init_normal() * (images_matrix->height - 2)), 1.0f);//»­¾ØĞÎ
+		same_matrix = user_nn_matrix_conv2(images_matrix, kernel_matrix, u_nn_conv2_type_same);
 		images_matrix->width = 1;
 		images_matrix->height = 784;
-
-		same_matrix = user_nn_matrix_conv2(images_matrix, kernel_matrix, u_nn_conv2_type_same);
 		same_matrix->width = 1;
 		same_matrix->height = 784;
 		user_nn_matrix_cpy_matrix(lables_matrix, same_matrix);
