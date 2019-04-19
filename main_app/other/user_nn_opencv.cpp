@@ -4,8 +4,8 @@ void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix,int x,int
 	int width = (int)sqrt(src_matrix->height*src_matrix->width);
 	int height = (int)sqrt(src_matrix->height*src_matrix->width);
 	cv::Mat img(width, height, CV_32FC1, src_matrix->data);
-	//cv::namedWindow(windows, cv::WINDOW_AUTOSIZE);
-	cv::namedWindow(windows, cv::WINDOW_NORMAL);
+	cv::namedWindow(windows, cv::WINDOW_AUTOSIZE);
+	//cv::namedWindow(windows, cv::WINDOW_NORMAL);
 	//cv::resizeWindow(window_name, width, height);
 	//cv::updateWindow(win);//opengl
 	//cv::startWindowThread();

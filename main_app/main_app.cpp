@@ -10,33 +10,59 @@
 #include "mnist\user_mnist.h"
 #include "other\user_nn_opencv.h"
 
+void user_nn_app_set_data() {
+	user_nn_list_matrix *train_lables = user_nn_matrices_create(20000, 1, 1, 784);
+	user_nn_list_matrix *train_images = user_nn_matrices_create(20000, 1, 1, 784);
+	user_nn_matrix *images_matrix = train_images->matrix;
+	user_nn_matrix *lables_matrix = train_lables->matrix;
+	user_nn_matrix *kernel_matrix = user_nn_matrix_create(2, 2);//卷积矩阵
+	user_nn_matrix *same_matrix1 = NULL;//卷积矩阵
+	user_nn_matrix *same_matrix2 = NULL;//卷积矩阵
+	user_nn_matrix *temp_matrix1 = user_nn_matrix_create(28, 28);//卷积矩阵
+	user_nn_matrix *temp_matrix2 = user_nn_matrix_create(28, 28);//卷积矩阵
+	user_nn_matrix_memset(kernel_matrix, 0.9f);
+	for (int count = 0; count < train_images->height*train_images->width; count++) {
+		user_nn_matrix_memset(temp_matrix1, 0.0f);
+		user_nn_matrix_memset(temp_matrix2, 0.0f);
+		user_nn_matrix_paint_rectangle(temp_matrix1,
+			(int)(user_nn_init_normal() * 26),
+			(int)(user_nn_init_normal() * 26),
+			(int)(user_nn_init_normal() * 26),
+			(int)(user_nn_init_normal() * 26), 1.0f);//画矩形
+
+		user_nn_matrix_cpy_matrix(temp_matrix2, temp_matrix1);
+		int x, y, mx, my, min;
+		x = (int)(user_nn_init_normal() * 26);
+		y = (int)(user_nn_init_normal() * 26);
+		mx = 26 - x;
+		my = 26 - y;
+		min = x;
+		min = min < y ? min : y;
+		min = min <mx ? min : mx;
+		min = min < my ? min : my;
+		min = min > 0 ? min : 1;
+		user_nn_matrix_paint_circle(temp_matrix1, x, y, min, 1.0f);//画圆
+
+		same_matrix1 = user_nn_matrix_conv2(temp_matrix1, kernel_matrix, u_nn_conv2_type_same);
+		user_nn_matrix_memcpy(images_matrix, same_matrix1->data);
+		user_nn_matrix_delete(same_matrix1);
+
+		same_matrix2 = user_nn_matrix_conv2(temp_matrix2, kernel_matrix, u_nn_conv2_type_same);
+		user_nn_matrix_memcpy(lables_matrix, same_matrix2->data);
+		user_nn_matrix_delete(same_matrix2);
+
+		user_opencv_show_matrix("a", images_matrix, 100, 100,1);
+		user_opencv_show_matrix("b", lables_matrix, 500, 100,1);
+		_getch();
+		images_matrix = images_matrix->next;
+		lables_matrix = lables_matrix->next;
+
+	}
+}
 int main(int argc, const char** argv){
 #ifdef _OPENMP
 	omp_set_num_threads(64);
 #endif
-/*	user_nn_matrix *src_matrix = NULL;
-	user_nn_matrix *sub_matrix = NULL;
-	user_nn_matrix *res_matrix = NULL;
-
-	src_matrix = user_nn_matrix_create(5, 8);
-	sub_matrix = user_nn_matrix_create(5, 8);
-
-	for (int count = 0; count < (src_matrix->width * src_matrix->height); count++) {
-		src_matrix->data[count] = (float)count * 0.1f;	
-	}
-	for (int count = 0; count < (sub_matrix->width * sub_matrix->height); count++) {
-		sub_matrix->data[count] = user_nn_init_glorot_uniform(3,3); 
-		//sub_matrix->data[count] = (float)(((float)(rand()*2.0 / RAND_MAX) - 1.0f))*sqrt(6.0 / 6.0);
-	}
-	if (sub_matrix != NULL) {
-		user_nn_matrix_printf(NULL, sub_matrix);//打印矩阵
-	}
-	else {
-		printf("null\n");
-	}
-	getchar();
-	return 1;*/
-
 	printf("\n-----功能选择-----\n");
 	printf("\n1.cnn测试");
 	printf("\n2.rnn测试");

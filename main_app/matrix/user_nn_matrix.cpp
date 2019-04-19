@@ -1576,17 +1576,18 @@ void user_nn_matrix_paint_circle(user_nn_matrix *src_matrix, int x,int y,int r,f
 	int count = sizeof(sin_buffer) / sizeof(sin_buffer[0]);
 	int step = (int)round(count / r);
 	int wx,wy;
+	float *src_data = &src_matrix->data[src_matrix->width*y + x];
 	for (int i = 0; i < count; i += step) {
 		wx = (int)round(cos_buffer[i] * r);
 		wy = (int)round(sin_buffer[i] * r);
-		src_matrix->data[src_matrix->width*(y + wy) + x + wx] = value;
-		src_matrix->data[src_matrix->width*(x + wx) + y + wy] = value;
-		src_matrix->data[src_matrix->width*(y - wy) + x + wx] = value;
-		src_matrix->data[src_matrix->width*(x + wx) + y - wy] = value;
-		src_matrix->data[src_matrix->width*(y + wy) + x - wx] = value;
-		src_matrix->data[src_matrix->width*(x - wx) + y + wy] = value;
-		src_matrix->data[src_matrix->width*(y - wy) + x - wx] = value;
-		src_matrix->data[src_matrix->width*(x - wx) + y - wy] = value;
+		src_data[src_matrix->width*wy + wx] = value;//水平右下1/4
+		src_data[src_matrix->width*wx + wy] = value;//垂直右下1/4
+		src_data[src_matrix->width*wy - wx] = value;//水平左下1/4
+		src_data[src_matrix->width*wx - wy] = value;//垂直左下1/4
+		src_data[-src_matrix->width*wy + wx] = value;//水平右上1/4
+		src_data[-src_matrix->width*wx + wy] = value;//垂直右上1/4
+		src_data[-src_matrix->width*wy - wx] = value;//水平左上1/4
+		src_data[-src_matrix->width*wx - wy] = value;//垂直左上1/4
 	}
 }
 //画一个椭圆

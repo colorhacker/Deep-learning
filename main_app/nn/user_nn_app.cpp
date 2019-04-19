@@ -1,11 +1,13 @@
 
 #include "user_nn_app.h"
 
+
+
 void user_nn_app_train(int argc, const char** argv) {
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int user_layers[] = {
 		'i', 1, 784, //输入层 特征（宽度、高度）
-		'h', 784, //隐含层 特征 （高度）
+		'h', 392, //隐含层 特征 （高度）
 		'o', 784 //输出层 特征 （高度）
 	};
 	bool sw_display = false;
@@ -27,37 +29,58 @@ void user_nn_app_train(int argc, const char** argv) {
 	}
 	user_nn_model_info_layer(nn_layers);
 	start_time = clock();
+
 	train_lables = user_nn_matrices_create(20000, 1, 1, 784);
 	train_images = user_nn_matrices_create(20000, 1, 1, 784);
-	//user_nn_matrices_init_vaule(rand_matrix_list,3,3);
 	user_nn_matrix *images_matrix = train_images->matrix;
 	user_nn_matrix *lables_matrix = train_lables->matrix;
-	user_nn_matrix *kernel_matrix = user_nn_matrix_create(4, 4);//卷积矩阵
-	user_nn_matrix *same_matrix = NULL;//卷积矩阵
+	user_nn_matrix *kernel_matrix = user_nn_matrix_create(2, 2);//卷积矩阵
+	user_nn_matrix *same_matrix1 = NULL;//卷积矩阵
+	user_nn_matrix *same_matrix2 = NULL;//卷积矩阵
+	user_nn_matrix *temp_matrix1 = user_nn_matrix_create(28, 28);//卷积矩阵
+	user_nn_matrix *temp_matrix2 = user_nn_matrix_create(28, 28);//卷积矩阵
 	user_nn_matrix_memset(kernel_matrix, 0.9f);
 	for (int count = 0; count < train_images->height*train_images->width; count++) {
-		images_matrix->width = 28;
-		images_matrix->height = 28;
-		user_nn_matrix_paint_rectangle(images_matrix,
-			(int)(user_nn_init_normal() * (images_matrix->width - 2)),
-			(int)(user_nn_init_normal() * (images_matrix->height - 2)),
-			(int)(user_nn_init_normal() * (images_matrix->width - 2)),
-			(int)(user_nn_init_normal() * (images_matrix->height - 2)), 1.0f);//画矩形
-		same_matrix = user_nn_matrix_conv2(images_matrix, kernel_matrix, u_nn_conv2_type_same);
-		images_matrix->width = 1;
-		images_matrix->height = 784;
-		same_matrix->width = 1;
-		same_matrix->height = 784;
-		user_nn_matrix_cpy_matrix(lables_matrix, same_matrix);
-		user_nn_matrix_delete(same_matrix);
+		user_nn_matrix_memset(temp_matrix1, 0.0f);
+		user_nn_matrix_memset(temp_matrix2, 0.0f);
+		user_nn_matrix_paint_rectangle(temp_matrix1,
+			(int)(user_nn_init_normal() * 26),
+			(int)(user_nn_init_normal() * 26),
+			(int)(user_nn_init_normal() * 26),
+			(int)(user_nn_init_normal() * 26), 1.0f);//画矩形
 
+		user_nn_matrix_cpy_matrix(temp_matrix2, temp_matrix1);
+		int x, y, mx, my, min;
+		x = (int)(user_nn_init_normal() * 26);
+		y = (int)(user_nn_init_normal() * 26);
+		mx = 26 - x;
+		my = 26 - y;
+		min = x;
+		min = min < y ? min : y;
+		min = min <mx ? min : mx;
+		min = min < my ? min : my;
+		min = min > 0 ? min : 1;
+		user_nn_matrix_paint_circle(temp_matrix1, x, y, min, 1.0f);//画圆
+
+		same_matrix1 = user_nn_matrix_conv2(temp_matrix1, kernel_matrix, u_nn_conv2_type_same);
+		user_nn_matrix_memcpy(images_matrix, same_matrix1->data);
+		user_nn_matrix_delete(same_matrix1);
+
+		same_matrix2 = user_nn_matrix_conv2(temp_matrix2, kernel_matrix, u_nn_conv2_type_same);
+		user_nn_matrix_memcpy(lables_matrix, same_matrix2->data);
+		user_nn_matrix_delete(same_matrix2);
+
+		//user_opencv_show_matrix("a", images_matrix, 100, 100, 1);
+		//user_opencv_show_matrix("b", lables_matrix, 500, 100, 1);
+		//_getch();
 		images_matrix = images_matrix->next;
 		lables_matrix = lables_matrix->next;
+
 	}
 	while (1) {
 		for (int index = 0;index < train_images->height * train_images->width; index++) {
-			user_nn_model_load_input_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_lables, index));//加载输入数据
-			user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, index));//加载目标数据	
+			user_nn_model_load_input_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, index));//加载输入数据
+			user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_lables, index));//加载目标数据	
 			user_nn_model_ffp(nn_layers);//正向计算一次
 			user_nn_model_bp(nn_layers, 0.01f);//反向计算一次
 			loss_function = user_nn_model_return_loss(nn_layers);

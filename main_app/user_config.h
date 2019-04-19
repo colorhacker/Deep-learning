@@ -35,7 +35,7 @@
 //lecun_uniform、glorot_normal、glorot_uniform、he_normal、he_uniform
 #define		glorot_uniform					true
 //CNN配置开始
-#define		user_nn_cnn_softmax				activation_sigmoid
+#define		user_nn_cnn_softmax				activation_tanh
 #define		user_nn_model_cnn_file_name		"./model/cnn_model"
 #define		user_nn_model_cnn_layer_addr	 0x0		//保存层的基地址
 #define		user_nn_model_cnn_content_addr	 0x800		//保存层对象的基地址
