@@ -1,7 +1,56 @@
 
 #include "user_nn_app.h"
 
+void user_nn_app_set_data(user_nn_list_matrix *train_lables, user_nn_list_matrix *train_images) {
+	//user_nn_list_matrix *train_lables = user_nn_matrices_create(20000, 1, 1, 784);
+	//user_nn_list_matrix *train_images = user_nn_matrices_create(20000, 1, 1, 784);
+	int matrix_width = (int)sqrt(train_images->matrix->height*train_images->matrix->width);
+	int matrix_height = (int)sqrt(train_images->matrix->height*train_images->matrix->width);
+	int max_x_width = matrix_width - 2;
+	int max_y_width = matrix_height - 2;
 
+	user_nn_matrix *images_matrix = train_images->matrix;
+	user_nn_matrix *lables_matrix = train_lables->matrix;
+	user_nn_matrix *kernel_matrix = user_nn_matrix_create(2, 2);//卷积矩阵
+	user_nn_matrix *same_matrix1 = NULL;//卷积矩阵
+	user_nn_matrix *same_matrix2 = NULL;//卷积矩阵
+	user_nn_matrix *temp_matrix1 = user_nn_matrix_create(matrix_width, matrix_height);//卷积矩阵
+	user_nn_matrix *temp_matrix2 = user_nn_matrix_create(matrix_width, matrix_height);//卷积矩阵
+	user_nn_matrix_memset(kernel_matrix, 0.9f);
+	for (int count = 0; count < train_images->height*train_images->width; count++) {
+		user_nn_matrix_memset(temp_matrix1, 0.0f);
+		user_nn_matrix_memset(temp_matrix2, 0.0f);
+		user_nn_matrix_paint_rectangle(temp_matrix1,
+			(int)(user_nn_init_normal() * max_x_width),
+			(int)(user_nn_init_normal() * max_y_width),
+			(int)(user_nn_init_normal() * max_x_width),
+			(int)(user_nn_init_normal() * max_y_width), 1.0f);//画矩形
+
+		user_nn_matrix_cpy_matrix(temp_matrix2, temp_matrix1);
+		int x, y, mx, my, min;
+		x = (int)(user_nn_init_normal() * max_x_width);
+		y = (int)(user_nn_init_normal() * max_y_width);
+		mx = 26 - max_x_width;
+		my = 26 - max_y_width;
+		min = x;
+		min = min < y ? min : y;
+		min = min <mx ? min : mx;
+		min = min < my ? min : my;
+		min = min > 0 ? min : 1;
+		user_nn_matrix_paint_circle(temp_matrix1, x, y, min, 1.0f);//画圆
+
+		same_matrix1 = user_nn_matrix_conv2(temp_matrix1, kernel_matrix, u_nn_conv2_type_same);
+		user_nn_matrix_memcpy(images_matrix, same_matrix1->data);
+		user_nn_matrix_delete(same_matrix1);
+
+		same_matrix2 = user_nn_matrix_conv2(temp_matrix2, kernel_matrix, u_nn_conv2_type_same);
+		user_nn_matrix_memcpy(lables_matrix, same_matrix2->data);
+		user_nn_matrix_delete(same_matrix2);
+		images_matrix = images_matrix->next;
+		lables_matrix = lables_matrix->next;
+
+	}
+}
 
 void user_nn_app_train(int argc, const char** argv) {
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
