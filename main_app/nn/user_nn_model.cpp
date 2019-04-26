@@ -39,8 +39,8 @@ user_nn_layers *user_nn_model_create(int *layer_infor) {
 void user_nn_model_load_input_feature(user_nn_layers *layers, user_nn_matrix *src_matrix) {
 	user_nn_layers *nn_input_layer = user_nn_layers_get(layers, 1);//获取输入层
 	//user_nn_matrix_cpy_matrix(((user_nn_input_layers *)nn_input_layer->content)->feature_matrix, src_matrix);
-	//user_nn_matrix_memcpy(((user_nn_input_layers *)nn_input_layer->content)->feature_matrix, src_matrix->data);
-	((user_nn_input_layers *)nn_input_layer->content)->feature_matrix = src_matrix;
+	user_nn_matrix_memcpy(((user_nn_input_layers *)nn_input_layer->content)->feature_matrix, src_matrix->data);
+	//((user_nn_input_layers *)nn_input_layer->content)->feature_matrix = src_matrix;
 }
 //加载特征数据到指定到期望特征数据中
 //layers 加载对象层
@@ -49,8 +49,8 @@ void user_nn_model_load_input_feature(user_nn_layers *layers, user_nn_matrix *sr
 void user_nn_model_load_target_feature(user_nn_layers *layers, user_nn_matrix *src_matrix) {
 	user_nn_layers *nn_output_layer = user_nn_model_return_layer(layers, u_nn_layer_type_output);//获取输入层
 	//user_nn_matrix_cpy_matrix(((user_nn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix);
-	//user_nn_matrix_memcpy(((user_nn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix->data);
-	((user_nn_output_layers *)nn_output_layer->content)->target_matrix = src_matrix;
+	user_nn_matrix_memcpy(((user_nn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix->data);
+	//((user_nn_output_layers *)nn_output_layer->content)->target_matrix = src_matrix;
 }
 //正向执行一次迭代
 //layers 所创建的层
@@ -227,6 +227,7 @@ user_nn_matrix *user_nn_model_return_result(user_nn_layers *layers) {
 //window_name 窗口名称
 //src_matrices 连续矩阵的对象
 //gain 放大倍数
+
 //返回 无
 void user_nn_model_display_matrix(char *window_name, user_nn_matrix  *src_matrix,int x,int y) {
 	int width = (int)sqrt(src_matrix->height*src_matrix->width);

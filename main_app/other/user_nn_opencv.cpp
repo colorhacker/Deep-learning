@@ -1,8 +1,11 @@
 #include "user_nn_opencv.h"
 
+
 void user_opencv_show_matrix(char *windows, user_nn_matrix *src_matrix,int x,int y,int delay) {
-	int width = (int)sqrt(src_matrix->height*src_matrix->width);
-	int height = (int)sqrt(src_matrix->height*src_matrix->width);
+	//int width = (int)sqrt(src_matrix->height*src_matrix->width);
+	//int height = (int)sqrt(src_matrix->height*src_matrix->width);
+	int width = src_matrix->height;
+	int height = src_matrix->width;
 	cv::Mat img(width, height, CV_32FC1, src_matrix->data);
 	cv::namedWindow(windows, cv::WINDOW_AUTOSIZE);
 	//cv::namedWindow(windows, cv::WINDOW_NORMAL);

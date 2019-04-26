@@ -47,9 +47,9 @@ static long user_nn_model_read_input(FILE *file, long offset, user_nn_input_laye
 //offset 偏移地址
 //conv 保存的对象
 //返回 文件指针位置
-static long user_nn_model_save_hidden(FILE *file, long offset, user_nn_hidden_layers *conv){
+static long user_nn_model_save_hidden(FILE *file, long offset, user_nn_hidden_layers *hidden){
 	fseek(file, offset, SEEK_SET);
-	fwrite(conv, sizeof(user_nn_hidden_layers), 1, file);//写入层
+	fwrite(hidden, sizeof(user_nn_hidden_layers), 1, file);//写入层
 	return ftell(file);
 }
 //隐含层卷积层
@@ -57,9 +57,9 @@ static long user_nn_model_save_hidden(FILE *file, long offset, user_nn_hidden_la
 //offset 偏移地址
 //conv 保存的对象
 //返回 文件指针位置
-static long user_nn_model_read_hidden(FILE *file, long offset, user_nn_hidden_layers *conv){
+static long user_nn_model_read_hidden(FILE *file, long offset, user_nn_hidden_layers *hidden){
 	fseek(file, offset, SEEK_SET);
-	fread(conv, sizeof(user_nn_hidden_layers), 1, file);//写入层
+	fread(hidden, sizeof(user_nn_hidden_layers), 1, file);//写入层
 	return ftell(file);
 }
 //保存输出层
