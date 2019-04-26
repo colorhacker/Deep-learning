@@ -56,12 +56,16 @@ user_nn_matrix *user_nn_app_set_input(void) {
 	user_nn_matrix *kernel_matrix = user_nn_matrix_create(2, 2);//¾í»ı¾ØÕó
 	user_nn_matrix *src_matrix = user_nn_matrix_create(28, 28);//¾í»ı¾ØÕó
 	user_nn_matrix_memset(src_matrix,0.0f);
-	user_nn_matrix_memset(kernel_matrix, 0.9f);
+	user_nn_matrix_memset(kernel_matrix, 0.99f);
 	user_nn_matrix_paint_rectangle(src_matrix, 2, 2, 25, 25, 0.9f);//»­¾ØĞÎ
 	user_nn_matrix_paint_circle(src_matrix, 14, 14, 8, 0.9f);//»­Ô²
 	user_nn_matrix_paint_ol(src_matrix, 14, 8, 14, 21, 0.9f);
 	user_nn_matrix_paint_ol(src_matrix, 8, 14, 21, 14, 0.9f);
-	return user_nn_matrix_conv2(src_matrix, kernel_matrix, u_nn_conv2_type_same);
+	
+	user_nn_matrix *result = user_nn_matrix_conv2(src_matrix, kernel_matrix, u_nn_conv2_type_same);
+	user_nn_matrix_mult_constant(result,-1.0f);
+	user_nn_matrix_sum_constant(result, 1.0f);
+	return result;
 }
 void user_nn_app_train(int argc, const char** argv) {
 	
