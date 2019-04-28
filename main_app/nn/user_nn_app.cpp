@@ -53,7 +53,7 @@ void user_nn_app_set_data(user_nn_list_matrix *train_lables, user_nn_list_matrix
 	}
 }
 user_nn_matrix *user_nn_app_set_input(void) {
-	user_nn_matrix *kernel_matrix = user_nn_matrix_create(2, 2);//卷积矩阵
+	/*user_nn_matrix *kernel_matrix = user_nn_matrix_create(2, 2);//卷积矩阵
 	user_nn_matrix *src_matrix = user_nn_matrix_create(28, 28);//卷积矩阵
 	user_nn_matrix_memset(src_matrix,0.0f);
 	user_nn_matrix_memset(kernel_matrix, 0.99f);
@@ -65,7 +65,13 @@ user_nn_matrix *user_nn_app_set_input(void) {
 	user_nn_matrix *result = user_nn_matrix_conv2(src_matrix, kernel_matrix, u_nn_conv2_type_same);
 	user_nn_matrix_mult_constant(result,-1.0f);
 	user_nn_matrix_sum_constant(result, 1.0f);
-	return result;
+	return result;*/
+	//user_nn_matrix *src_matrix = user_nn_matrix_create(28, 28);//卷积矩阵
+	//for (int index = 0; index < src_matrix->height*src_matrix->width; index++) {
+	//	src_matrix->data[index] = float(index % 2);
+	//}
+	user_nn_matrix *src_matrix = user_nn_matrix_create(1, 1);//卷积矩阵
+	return src_matrix;
 }
 void user_nn_app_train(int argc, const char** argv) {
 	
@@ -74,8 +80,8 @@ void user_nn_app_train(int argc, const char** argv) {
 
 	//srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int user_layers[] = {
-		'i', 1, 784, //输入层 特征（宽度、高度）
-		'h', 392, //隐含层 特征 （高度）
+		'i', 1, 1, //输入层 特征（宽度、高度）
+		'h', 784, //隐含层 特征 （高度）
 		'o', 784 //输出层 特征 （高度）
 	};
 	bool sw_display = false;
@@ -102,7 +108,7 @@ void user_nn_app_train(int argc, const char** argv) {
 	{
 		for (int index = 0;index < train_images->height * train_images->width; index++) {
 			user_nn_model_load_input_feature(nn_layers, input_matirx);//加载输入数据
-			user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, 0));//加载目标数据
+			user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, index));//加载目标数据
 			//user_nn_model_load_input_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, index));//加载输入数据
 			//user_nn_model_load_target_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_lables, index));//加载目标数据	
 			//user_nn_model_load_input_feature(nn_layers, user_nn_matrices_ext_matrix_index(train_images, index));//加载输入数据
@@ -132,14 +138,14 @@ void user_nn_app_train(int argc, const char** argv) {
 		}
 	}
 
-	FILE *debug_file = NULL;
+	/*FILE *debug_file = NULL;
 	debug_file = fopen("kernel.txt", "w+");
 	user_nn_layers *nn_output_layer = user_nn_model_return_layer(nn_layers, u_nn_layer_type_output);
 	((user_nn_output_layers *)nn_output_layer->content)->target_matrix->height = 28;
 	((user_nn_output_layers *)nn_output_layer->content)->target_matrix->width = 28;
 	user_nn_matrix_printf(debug_file, ((user_nn_output_layers *)nn_output_layer->content)->kernel_matrix);
 	user_nn_matrix_printf(debug_file, user_nn_matrices_ext_matrix_index(train_images, 0));
-
+	*/
 	system("pause");
 }
 void user_nn_app_ident(int argc, const char** argv) {
