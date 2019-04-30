@@ -120,7 +120,7 @@ void user_nn_app_train(int argc, const char** argv) {
 				user_nn_model_display_feature(nn_layers);
 			}
 			if (loss_function <= loss_target) {
-				//user_nn_model_save_model(nn_layers,0);//保存模型
+				user_nn_model_save_model(nn_layers,0);//保存模型
 				break;
 			}
 			printf("\ntarget:%f loss:%f", loss_target, loss_function);
@@ -128,7 +128,7 @@ void user_nn_app_train(int argc, const char** argv) {
 				save_model_count = 0;
 				end_time = clock();
 				printf("\ntarget:%f loss:%f,time:%ds", loss_target, loss_function, (end_time - start_time) / 1000);
-				//user_nn_model_save_model(nn_layers,0);//保存一次模型
+				user_nn_model_save_model(nn_layers,0);//保存一次模型
 				start_time = clock();
 			}
 			
