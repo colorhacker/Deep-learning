@@ -8,11 +8,11 @@ user_nn_matrix *user_nn_app_set_input(void) {
 	return src_matrix;
 }
 
-void train_mnist_gen_network(int id) {
+void train_mnist_gen_network() {
 	int gen_layers[] = { 'i',1,1,'h',392,'o',784 };
 	user_nn_matrix *input_matirx = user_nn_matrix_create(1, 1);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
-	user_nn_layers *nn_gen_layers = user_nn_model_load_model(id);
+	user_nn_layers *nn_gen_layers = user_nn_model_load_model(1);
 	if (nn_gen_layers == NULL) {
 		nn_gen_layers = user_nn_model_create(gen_layers);
 		for (int count = 1; count < 10000; count++) {
@@ -25,15 +25,33 @@ void train_mnist_gen_network(int id) {
 			}
 		}
 		printf("\nloss:%f", user_nn_model_return_loss(nn_gen_layers));
-		user_nn_model_save_model(nn_gen_layers, id);
+		user_nn_model_save_model(nn_gen_layers, 1);
 	}
-	
 	float gen_loss = user_nn_model_return_loss(nn_gen_layers);
 
+	user_nn_matrix *start_kernel = user_nn_matrix_create(1,392);
+	user_nn_matrix *train_kernel_matrix = NULL;
+	user_nn_list_matrix *train_kernel_matrces = user_nn_matrices_create(1,1000,1,392);
+	train_kernel_matrix = train_kernel_matrces->matrix;
+	for (int index = 10000; index < 20000; index++) {
+		nn_gen_layers = user_nn_model_load_model(1);//¼ÓÔØÄ£ĞÍ
+		user_nn_matrix_cpy_matrix(start_kernel, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
+		for (int count = 0; count < 3;count++) {
+			user_nn_model_load_target_feature(nn_gen_layers, user_nn_matrices_ext_matrix_index(train_images, index));
+			user_nn_model_ffp(nn_gen_layers);
+			user_nn_model_bp(nn_gen_layers, 0.01f);
+		}
+		user_nn_matrix_sub_matrix(train_kernel_matrix, start_kernel, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
+		train_kernel_matrix = train_kernel_matrix->next;
+	}
+
+
 	int dist_layers[] = { 'i',1,1,'h',392,'o',10 };
-	user_nn_layers *nn_dist_layers = user_nn_model_load_model(id);
+	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
+	user_nn_layers *nn_dist_layers = user_nn_model_load_model(2);
 	if (nn_gen_layers == NULL) {
 		nn_gen_layers = user_nn_model_create(dist_layers);
+
 	}
 
 	_getch();

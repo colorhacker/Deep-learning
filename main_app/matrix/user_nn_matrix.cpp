@@ -768,6 +768,32 @@ void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_
 #endif
 
 }
+//求差两个矩阵  save_matrix = src_matrix - sub_matrix 
+//参数
+//src_matrix：目标矩阵 求和值会覆盖此矩阵
+//sub_matrix：被求和矩阵
+//返回 无
+void user_nn_matrix_sub_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix) {
+	int count = sub_matrix->width * sub_matrix->height;//获取矩阵数据大小
+	float *save_data = save_matrix->data;
+	float *src_data = src_matrix->data;
+	float *sub_data = sub_matrix->data;
+
+	if ((src_matrix->width != sub_matrix->width) || (src_matrix->height != sub_matrix->height)) {
+		return;
+	}
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		save_data[index] = src_data[index] - sub_data[index];
+	}
+#else
+	while (count--) {
+		*save_data++ = *src_data++ - *sub_data++;
+	}
+#endif
+
+}
 //求和两个矩阵  save_matrix = src_matrix + sub_matrix * alpha
 //参数
 //src_matrix：目标矩阵 求和值会覆盖此矩阵
