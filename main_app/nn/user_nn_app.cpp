@@ -35,7 +35,8 @@ void train_mnist_gen_network() {
 	user_nn_list_matrix *train_kernel_matrces = user_nn_matrices_create(1,10000,1,392);
 	//train_kernel_matrix = train_kernel_matrces->matrix;
 	for (int index = 10000; index < 20000; index++) {
-		//user_nn_layers_all_delete(nn_gen_layers);//É¾³ý²ã
+		nn_gen_layers = user_nn_model_create(gen_layers);
+		user_nn_layers_all_delete(nn_gen_layers);//É¾³ý²ã
 		//nn_gen_layers = user_nn_model_load_model(1);//¼ÓÔØÄ£ÐÍ
 		//user_nn_matrix_cpy_matrix(start_kernel, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
 		//for (int count = 0; count < 10;count++) {
