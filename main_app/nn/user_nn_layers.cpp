@@ -39,6 +39,16 @@ void user_nn_layers_delete(user_nn_layers *layers) {
 		free(layers);
 	}
 }
+//删除层所有
+void user_nn_layers_all_delete(user_nn_layers *layers) {
+	user_nn_layers *layer = layers;
+	user_nn_layers *layer_next = NULL;
+	while (layer != NULL) {
+		layer_next = layer->next;
+		user_nn_layers_delete(layer);//删除当前矩阵
+		layer = layer_next;//更新矩阵
+	}
+}
 //创建输入层
 //参数
 //feature_width：输入数据的宽度

@@ -65,6 +65,7 @@ typedef struct _nn_output_layers {
 user_nn_layers *user_nn_layers_get(user_nn_layers *dest, int index);
 user_nn_layers *user_nn_layers_create(user_nn_layer_type type, int index);
 void user_nn_layers_delete(user_nn_layers *layers);
+void user_nn_layers_all_delete(user_nn_layers *layers);
 
 user_nn_input_layers *user_nn_layers_input_create(user_nn_layers *nn_layers, int feature_width, int feature_height);
 user_nn_hidden_layers *user_nn_layers_hidden_create(user_nn_layers *nn_layers, int feature_number);

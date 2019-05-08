@@ -192,7 +192,7 @@ user_nn_layers	*user_nn_model_load_model(int id){
 			data_offset = user_nn_model_read_matrix(model_file, data_offset, output_infor->kernel_matrix);//载入偏置参数
 			free(temp_output_infor);//释放空间
 			fclose(model_file);//关闭文件
-			user_nn_layers_delete(temp_cnn_layers);
+			user_nn_layers_all_delete(temp_cnn_layers);
 			return nn_layers;
 			//break;
 		default:
