@@ -200,7 +200,7 @@ user_nn_layers	*user_nn_model_load_model(int id){
 			break;
 		}
 	}
-	user_nn_layers_delete(temp_cnn_layers);
+	user_nn_layers_all_delete(temp_cnn_layers);
 	fclose(model_file);
 	return NULL;
 }

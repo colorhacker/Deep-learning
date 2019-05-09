@@ -24,6 +24,7 @@ void train_mnist_gen_network() {
 			if (count % 1000 == 0) {
 				printf("\ncount:%d,loss:%f", count, user_nn_model_return_loss(nn_gen_layers));
 			}
+			user_nn_model_display_feature(nn_gen_layers);//ÏÔÊ¾Í¼Ïñ
 		}
 		printf("\nloss:%f", user_nn_model_return_loss(nn_gen_layers));
 		user_nn_model_save_model(nn_gen_layers, 1);
@@ -31,40 +32,43 @@ void train_mnist_gen_network() {
 	float gen_loss = user_nn_model_return_loss(nn_gen_layers);
 
 	user_nn_matrix *start_kernel = user_nn_matrix_create(1,392);
-	//user_nn_matrix *train_kernel_matrix = NULL;
-	user_nn_list_matrix *train_kernel_matrces = user_nn_matrices_create(1,10000,1,392);
-	//train_kernel_matrix = train_kernel_matrces->matrix;
-	for (int index = 10000; index < 20000; index++) {
-		nn_gen_layers = user_nn_model_create(gen_layers);
-		user_nn_layers_all_delete(nn_gen_layers);//É¾³ı²ã
-		//nn_gen_layers = user_nn_model_load_model(1);//¼ÓÔØÄ£ĞÍ
-		//user_nn_matrix_cpy_matrix(start_kernel, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
-		//for (int count = 0; count < 10;count++) {
-		//	user_nn_model_load_target_feature(nn_gen_layers, user_nn_matrices_ext_matrix_index(train_images, index));
-		//	user_nn_model_ffp(nn_gen_layers);
-		//	user_nn_model_bp(nn_gen_layers, 0.01f);
-		//}
-		//user_nn_model_display_feature(nn_gen_layers);//ÏÔÊ¾Í¼Ïñ
-		//user_nn_matrix_sub_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index-10000), start_kernel, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
-		//if (train_kernel_matrix->next == NULL)break;
-		//train_kernel_matrix = train_kernel_matrix->next;
-		//printf("\ncount:%d,%d", index, user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(train_lables, index)));
-		printf("\ncount:%d", index);
+	user_nn_list_matrix *train_kernel_matrces = user_nn_model_file_read_matrices("./model/kernel_data.bin", 0);
+	if(train_kernel_matrces == NULL){ 
+		train_kernel_matrces = user_nn_matrices_create(1, 1000, 1, 392);
+		for (int index = 0; index < 1000; index++) {
+			user_nn_layers_all_delete(nn_gen_layers);//É¾³ı²ã
+			nn_gen_layers = user_nn_model_load_model(1);//¼ÓÔØÄ£ĞÍ
+			for (int count = 0; count < 50; count++) {
+				user_nn_model_load_target_feature(nn_gen_layers, user_nn_matrices_ext_matrix_index(train_images, index));
+				user_nn_model_ffp(nn_gen_layers);
+				user_nn_model_bp(nn_gen_layers, 0.01f);
+			}
+			//user_nn_matrix_sub_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index), start_kernel, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
+			user_nn_matrix_cum_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index), ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->biases_matrix);
+			printf("\ncount:%d,%d", index, user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(train_lables, index)));
+			//user_nn_model_display_feature(nn_gen_layers);//ÏÔÊ¾Í¼Ïñ
+		}
+		user_nn_model_file_save_matrices("./model/kernel_data.bin", 0, train_kernel_matrces);
 	}
-	return ;
-	user_nn_model_file_save_matrices("./model/gen_data.bin",0, train_kernel_matrces);
-
-	int dist_layers[] = { 'i',1,1,'h',392,'o',10 };
-	
+	int dist_layers[] = { 'i',1,392,'h',392,'o',10 };
 	user_nn_layers *nn_dist_layers = user_nn_model_load_model(2);
 	if (nn_dist_layers == NULL) {
 		nn_dist_layers = user_nn_model_create(dist_layers);
-		for (int index = 0; index < 10000; index++) {
-			user_nn_model_load_input_feature(nn_dist_layers, user_nn_matrices_ext_matrix_index(train_kernel_matrces,index));
-			user_nn_model_load_target_feature(nn_dist_layers, user_nn_matrices_ext_matrix_index(train_lables, index+10000));
-			user_nn_model_ffp(nn_dist_layers);
-			user_nn_model_bp(nn_dist_layers, 0.01f);
-			printf("\nloss:%f",  user_nn_model_return_loss(nn_dist_layers));
+		for(;;){
+			for (int index = 0; index < 1000; index++) {
+				user_nn_model_load_input_feature(nn_dist_layers, user_nn_matrices_ext_matrix_index(train_kernel_matrces, index));
+				user_nn_model_load_target_feature(nn_dist_layers, user_nn_matrices_ext_matrix_index(train_lables, index));
+				user_nn_model_ffp(nn_dist_layers);
+				user_nn_model_bp(nn_dist_layers, 0.01f);
+				printf("\nloss:%f", user_nn_model_return_loss(nn_dist_layers));
+				if (user_nn_model_return_loss(nn_dist_layers) < 0.01f) {
+					break;
+				}
+			}
+			if (user_nn_model_return_loss(nn_dist_layers) < 0.01f) {
+				user_nn_model_save_model(nn_gen_layers, 2);
+				break;
+			}
 		}
 	}
 

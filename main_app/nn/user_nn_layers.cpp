@@ -34,6 +34,28 @@ user_nn_layers *user_nn_layers_create(user_nn_layer_type type, int index) {
 void user_nn_layers_delete(user_nn_layers *layers) {
 	if (layers != NULL) {
 		if (layers->content != NULL) {
+				if (layers->type == u_nn_layer_type_input) {
+					user_nn_matrix_delete(((user_nn_input_layers *)layers->content)->deltas_matrix);
+					user_nn_matrix_delete(((user_nn_input_layers *)layers->content)->feature_matrix);
+				}
+				else if (layers->type == u_nn_layer_type_hidden) {
+					user_nn_matrix_delete(((user_nn_hidden_layers *)layers->content)->kernel_matrix);
+					user_nn_matrix_delete(((user_nn_hidden_layers *)layers->content)->deltas_matrix);
+					user_nn_matrix_delete(((user_nn_hidden_layers *)layers->content)->feature_matrix);
+					user_nn_matrix_delete(((user_nn_hidden_layers *)layers->content)->biases_matrix);
+					user_nn_matrix_delete(((user_nn_hidden_layers *)layers->content)->deltas_biases_matrix);
+					user_nn_matrix_delete(((user_nn_hidden_layers *)layers->content)->deltas_kernel_matrix);
+				}
+				else if (layers->type == u_nn_layer_type_output) {
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->kernel_matrix);
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->deltas_matrix);
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->feature_matrix);
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->biases_matrix);
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->deltas_biases_matrix);
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->deltas_kernel_matrix);
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->error_matrix);
+					user_nn_matrix_delete(((user_nn_output_layers *)layers->content)->target_matrix);
+				}
 			free(layers->content);
 		}
 		free(layers);

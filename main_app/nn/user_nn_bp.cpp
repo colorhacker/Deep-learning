@@ -51,9 +51,11 @@ float user_nn_bp_output_back_prior(user_nn_layers *prior_layer, user_nn_layers *
 	deltas_kernel_matrix_temp = user_nn_matrix_mult_matrix(deltas_matrix, input_feature_matrix);//矩阵乘法
 	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
 	user_nn_matrix_cpy_matrix(deltas_kernel_matrix, deltas_kernel_matrix_temp);//累加权重更新值 ΔWo
+#if user_nn_use_bias	
 	//Δbo=dOh
 	deltas_biase_matrix = output_layers->deltas_biases_matrix;
 	user_nn_matrix_cpy_matrix(deltas_biase_matrix, deltas_matrix);//累加偏置参数更新值Δbo
+#endif
 	//dHh=np.dot(Wo.T,dOh)#残差返回前一层
 	output_kernel_matrix = output_layers->kernel_matrix;//获取权值参数
 	user_nn_matrix_transpose(output_kernel_matrix);//矩阵转置
@@ -107,10 +109,11 @@ void user_nn_bp_hidden_back_prior(user_nn_layers *prior_layer, user_nn_layers *h
 	deltas_kernel_matrix_temp = user_nn_matrix_mult_matrix(hidden_deltas_matrix, input_feature_matrix);//矩阵乘法
 	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
 	user_nn_matrix_cpy_matrix(deltas_kernel_matrix, deltas_kernel_matrix_temp);//累加输入层到隐含层的残差变化值
+#if user_nn_use_bias
 	//Δbh=dHh
 	deltas_biases_matrix = hidden_layers->deltas_biases_matrix;
 	user_nn_matrix_cpy_matrix(deltas_biases_matrix, hidden_deltas_matrix);//累加偏置参数残差变化值
-
+#endif
 	//dIi = np.dot(Wi.T, dHh)#残差返回前一层
 	kernel_matrix = hidden_layers->kernel_matrix;
 	user_nn_matrix_transpose(kernel_matrix);//矩阵转置
