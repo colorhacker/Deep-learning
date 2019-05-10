@@ -261,7 +261,7 @@ void user_nn_model_display_feature(user_nn_layers *layers) {
 			break;
 		case u_nn_layer_type_hidden:
 			sprintf(windows_name, "hidden%d", layers->index);
-			user_nn_model_display_matrix(windows_name, ((user_nn_hidden_layers  *)layers->content)->feature_matrix, 50 + window_count * 150, 20);//显示到指定窗口
+			user_nn_model_display_matrix(windows_name, ((user_nn_hidden_layers  *)layers->content)->kernel_matrix, 50 + window_count * 150, 20);//显示到指定窗口
 			break;
 		case u_nn_layer_type_output:
 			sprintf(windows_name, "output%d", layers->index);
