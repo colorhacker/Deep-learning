@@ -9,7 +9,7 @@ user_nn_matrix *user_nn_app_set_input(void) {
 }
 
 void train_mnist_gen_network() {
-	int gen_layers[] = { 'i',1,1,'h',392,'o',784 };
+	int gen_layers[] = { 'i',1,1,'h',392,'h',392,'o',784 };
 	user_nn_matrix *input_matirx = user_nn_matrix_create(1, 1);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
@@ -38,15 +38,15 @@ void train_mnist_gen_network() {
 		for (int index = 0; index < 1000; index++) {
 			user_nn_layers_all_delete(nn_gen_layers);//É¾³ı²ã
 			nn_gen_layers = user_nn_model_load_model(1);//¼ÓÔØÄ£ĞÍ
-			for (int count = 0; count < 50; count++) {
+			for (int count = 0; count < 40; count++) {
 				user_nn_model_load_target_feature(nn_gen_layers, user_nn_matrices_ext_matrix_index(train_images, index));
 				user_nn_model_ffp(nn_gen_layers);
 				user_nn_model_bp(nn_gen_layers, 0.01f);
 			}
-			//user_nn_matrix_sub_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index), start_kernel, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
 			user_nn_matrix_cum_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index), ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix, ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->biases_matrix);
+			//user_nn_matrix_cpy_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index), ((user_nn_hidden_layers *)user_nn_model_return_layer(nn_gen_layers, u_nn_layer_type_hidden)->content)->kernel_matrix);
 			printf("\ncount:%d,%d", index, user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(train_lables, index)));
-			//user_nn_model_display_feature(nn_gen_layers);//ÏÔÊ¾Í¼Ïñ
+			user_nn_model_display_feature(nn_gen_layers);//ÏÔÊ¾Í¼Ïñ
 		}
 		user_nn_model_file_save_matrices("./model/kernel_data.bin", 0, train_kernel_matrces);
 	}
@@ -63,6 +63,9 @@ void train_mnist_gen_network() {
 				printf("\nloss:%f", user_nn_model_return_loss(nn_dist_layers));
 				if (user_nn_model_return_loss(nn_dist_layers) < 0.01f) {
 					break;
+				}
+				if (user_nn_matrix_return_max_index(user_nn_model_return_result(nn_dist_layers)) != user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(train_lables, index))) {
+					printf("--error %d,%d", user_nn_matrix_return_max_index(user_nn_model_return_result(nn_dist_layers)), user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(train_lables, index)));
 				}
 			}
 			if (user_nn_model_return_loss(nn_dist_layers) < 0.01f) {
