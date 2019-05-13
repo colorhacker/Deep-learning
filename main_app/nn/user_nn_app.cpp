@@ -43,21 +43,21 @@ void train_mnist_gen_network() {
 			user_nn_layers_all_delete(nn_gen_layers);//É¾³ı²ã
 			nn_gen_layers = user_nn_model_load_model(1);//¼ÓÔØÄ£ĞÍ
 			user_nn_matrix_cpy_matrix(start_kernel, ((user_nn_hidden_layers *)user_nn_layers_get(nn_gen_layers, 2)->content)->kernel_matrix);
-			for (int count = 0; count < 10; count++) {
+			for (int count = 0; count < 50; count++) {
 				user_nn_model_load_input_feature(nn_gen_layers, input_matirx);
 				user_nn_model_load_target_feature(nn_gen_layers, user_nn_matrices_ext_matrix_index(train_images, index));
 				user_nn_model_ffp(nn_gen_layers);
-				user_nn_model_bp(nn_gen_layers, 0.1f);
+				user_nn_model_bp(nn_gen_layers, 0.01f);
 			}
 			user_nn_matrix_sub_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index), ((user_nn_hidden_layers *)user_nn_layers_get(nn_gen_layers, 2)->content)->kernel_matrix, start_kernel);
-			user_nn_matrix_mult_constant(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index),5);
+			//user_nn_matrix_mult_constant(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index),5);
 			//user_nn_matrix_cpy_matrix(user_nn_matrices_ext_matrix_index(train_kernel_matrces, index), ((user_nn_hidden_layers *)user_nn_layers_get(nn_gen_layers, 2)->content)->kernel_matrix);
 			printf("\ncount:%d,%d", index, user_nn_matrix_return_max_index(user_nn_matrices_ext_matrix_index(train_lables, index)));
 			user_nn_model_display_feature(nn_gen_layers);//ÏÔÊ¾Í¼Ïñ
 		}
 		user_nn_model_file_save_matrices("./model/kernel_data.bin", 0, train_kernel_matrces);
 	}
-	int dist_layers[] = { 'i',1,196,'o',10 };
+	int dist_layers[] = { 'i',1,196,'h',784,'h',196,'o',10 };
 	user_nn_layers *nn_dist_layers = user_nn_model_load_model(2);
 	if (nn_dist_layers == NULL) {
 		nn_dist_layers = user_nn_model_create(dist_layers);
