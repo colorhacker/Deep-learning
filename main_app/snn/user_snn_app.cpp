@@ -24,16 +24,15 @@ user_nn_matrix *user_snn_ffp(user_nn_matrix *input_matrix, user_nn_matrix *matri
 	float *max_data = matrix_min->data;
 	float *result_data = NULL;
 
-	result = user_nn_matrix_create(input_matrix->width, input_matrix->height);//创建新的矩阵
+	result = user_nn_matrix_create(input_matrix->width, matrix_min->height);//创建新的矩阵
 	result_data = result->data;//获取数据指针
 
 	for (int height = 0; height < result->height; height++) {
 		for (int width = 0; width < result->width; width++) {
-			input_data = input_matrix->data + height * input_matrix->width;//指向行开头
-			min_data = matrix_min->data + width;//指向列开头
-			max_data = matrix_max->data + width;//指向列开头
+			input_data = input_matrix->data + height * input_matrix->width;
+			min_data = matrix_min->data + width;
+			max_data = matrix_max->data + width;
 			for (int point = 0; point < matrix_min->height; point++) {
-				printf("\n%f", *input_data);
 				if ((*min_data <= *input_data) && (*input_data <= *max_data)) {
 					*result_data += 1.0f;
 				}
@@ -80,7 +79,7 @@ void user_snn_bp(user_nn_matrix *matrix_input, user_nn_matrix *matrix_dist,user_
 	float *max_data = matrix_min->data;
 	float *result_data = NULL;
 	float avg_value = 1.0f;
-	float step_value = 0.000001f;
+	float step_value = 0.001f;
 
 	for (int height = 0; height < matrix_dist->height; height++) {
 		for (int width = 0; width < matrix_dist->width; width++) {
@@ -139,8 +138,8 @@ void user_snn_app_train(int argc, const char** argv) {
 	user_nn_matrix *target_matrix = NULL;
 	user_nn_matrix *discriminate_matrix = NULL;
 
-	user_nn_matrix *max = user_nn_matrix_create(1, 2);
-	user_nn_matrix *min = user_nn_matrix_create(1, 2);
+	user_nn_matrix *max = user_nn_matrix_create(2, 1);
+	user_nn_matrix *min = user_nn_matrix_create(2, 1);
 	user_nn_matrix_memset(min, 0.2f);
 	user_nn_matrix_memset(max, 0.3f);
 
@@ -159,16 +158,31 @@ void user_snn_app_train(int argc, const char** argv) {
 	train_lables->matrix->next->data[0] = 0.0f;
 	train_lables->matrix->next->next->data[0] = 0.0f;
 	train_lables->matrix->next->next->next->data[0] = 0.0f;
-	for (int count=0;count < 1000;count++) {
+
+	for (int count=0;count < 100000;count++) {
 		for (int index = 0; index < 4;index++) {
 			input_matrix = user_nn_matrices_ext_matrix_index(train_images, index);
 			target_matrix = user_nn_matrices_ext_matrix_index(train_lables, index);
 
+			//min->data[0] = 0.6f; max->data[0] = 1.6f;
+			//min->data[1] = 0.2f; max->data[1] = 0.4f;
+
 			output_matrix = user_snn_ffp(input_matrix,min,max);
+
+			user_nn_matrix_printf(NULL, input_matrix);
+			user_nn_matrix_printf(NULL, min);
+			user_nn_matrix_printf(NULL, max);
+			user_nn_matrix_printf(NULL, output_matrix);
+			
 			discriminate_matrix = user_snn_dist(output_matrix, target_matrix);
+
+			user_nn_matrix_printf(NULL, discriminate_matrix);
+
 			user_snn_bp(input_matrix,discriminate_matrix,min,max);
 			user_nn_matrix_delete(output_matrix);
 			user_nn_matrix_delete(discriminate_matrix);
+
+			_getch();
 		}
 	}
 
@@ -184,8 +198,8 @@ void user_snn_app_train(int argc, const char** argv) {
 	output_matrix = user_snn_ffp(user_nn_matrices_ext_matrix_index(train_images, 3), min, max);
 	user_nn_matrix_printf(NULL, output_matrix); user_nn_matrix_delete(output_matrix);
 
-	user_nn_matrices_printf(NULL, "i", train_images);
-	user_nn_matrices_printf(NULL, "o", train_lables);
+	//user_nn_matrices_printf(NULL, "i", train_images);
+	//user_nn_matrices_printf(NULL, "o", train_lables);
 
 	system("pause");
 }
@@ -203,3 +217,112 @@ void user_snn_app_test(int argc, const char** argv) {
 	default: break;
 	}
 }
+
+/*float input_a,input_b;
+float min_a=0.1f, max_a=0.2f, min_b=0.1f, max_b=0.2f,avg=1.0f;
+float output, target;
+float step = 0.01f;
+float input_data[] = {1.5f,0.5f,0.5f,1.5f,1.0f,1.0f,1.0f,1.0f};
+float output_data[] = {1.0f,0.0f ,0.0f ,0.0f };
+
+for (int count=0;count < 100;count++) {
+for (int index = 0; index < 4; index++) {
+input_a = input_data[index*2];
+input_b = input_data[index*2+1];
+target = output_data[index];
+output = 0.0f;
+//printf("\n a:%-10.6f,b:%-10.6f,c:%-10.6f", input_a, input_b, target);
+
+if ((min_a <= input_a) && (input_a <= max_a)) {
+output += 1.0f;
+}
+if ((min_b <= input_b) && (input_b <= max_b)) {
+output += 1.0f;
+}
+
+if (output > target) {
+if (min_a < avg) {
+min_a += step;
+}
+else {
+min_a -= step;
+}
+if (max_a > input_a) {
+max_a -= step;
+}
+if (min_a > max_a) {
+max_a = min_a;
+}
+
+if (max_b < avg) {
+max_b += step;
+}
+else {
+max_b -= step;
+}
+if (min_b > input_b) {
+min_b += step;
+}
+if (min_b > max_b) {
+max_b = min_b;
+}
+}
+else if (output < target) {
+if (min_a < avg) {
+min_a += step;
+}
+else {
+min_a -= step;
+}
+
+if (max_a < input_a) {
+max_a += step;
+}
+if (min_a > max_a) {
+max_a = min_a;
+}
+
+if (max_b < avg) {
+max_b += step;
+}
+else {
+max_b -= step;
+}
+if (min_b > input_b) {
+min_b -= step;
+}
+
+if (min_b > max_b) {
+max_b = min_b;
+}
+
+}
+else {
+//printf("\n min_a:%-10.6f,max_a:%-10.6f,min_b:%-10.6f,max_b:%-10.6f", min_a, max_a, min_b, max_b);
+//printf("\n success!!");
+//break;
+}
+printf("\n min_a:%-10.6f,max_a:%-10.6f,min_b:%-10.6f,max_b:%-10.6f", min_a, max_a, min_b, max_b);
+if (output == target) {
+printf("成功");
+}
+else {
+printf("失败");
+}
+}
+}
+
+for (int index = 0; index < 4; index++) {
+input_a = input_data[index * 2];
+input_b = input_data[index * 2 + 1];
+target = output_data[index];
+output = 0.0f;
+if ((min_a <= input_a) && (input_a <= max_a)) {
+output += 1.0f;
+}
+if ((min_b <= input_b) && (input_b <= max_b)) {
+output += 1.0f;
+}
+printf("\n a:%-10.6f,b:%-10.6f,c:%-10.6f", input_a, input_b, output);
+}
+*/
