@@ -225,6 +225,7 @@
     <ClInclude Include="rnn\user_rnn_layers.h" />
     <ClInclude Include="rnn\user_rnn_model.h" />
     <ClInclude Include="rnn\user_rnn_rw_model.h" />
+    <ClInclude Include="snn\user_snn_app.h" />
     <ClInclude Include="user_config.h" />
     <ClInclude Include="user_types.h" />
     <ClInclude Include="w2c\user_pca.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="rnn\user_rnn_layers.cpp" />
     <ClCompile Include="rnn\user_rnn_model.cpp" />
     <ClCompile Include="rnn\user_rnn_rw_model.cpp" />
+    <ClCompile Include="snn\user_snn_app.cpp" />
     <ClCompile Include="w2c\user_pca.cpp" />
     <ClCompile Include="w2c\user_earth_movers_distance.cpp" />
     <ClCompile Include="w2c\user_k_means.cpp" />

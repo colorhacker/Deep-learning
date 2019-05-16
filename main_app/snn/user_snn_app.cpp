@@ -16,34 +16,68 @@ void user_snn_data_softmax(user_nn_matrix *src_matrix) {
 	//printf("%-10.6f\n", user_nn_matrix_cum_element(src_matrix));
 }
 
-user_nn_matrix *user_snn_ffp(user_nn_matrix *input_matrix, user_nn_matrix *matrix_min, user_nn_matrix *matrix_max) {
-	user_nn_matrix *result = NULL;//结果矩阵
-	int count = input_matrix->width * input_matrix->height;
-	float *input_data = input_matrix->data;
-	float *min_data = matrix_min->data;
-	float *max_data = matrix_min->data;
-	float *result_data = NULL;
+user_nn_matrix *user_snn_ffp(user_nn_matrix *src_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix) {
 
-	result = user_nn_matrix_create(input_matrix->width, matrix_min->height);//创建新的矩阵
+	user_nn_matrix *result = NULL;//结果矩阵
+	float *src_data = src_matrix->data;//
+	float *min_data = min_matrix->data;//
+	float *max_data = max_matrix->data;//
+	float *result_data = NULL;
+	//int width, height, point;//矩阵列数
+	if (src_matrix->width != min_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
+		return NULL;
+	}
+	result = user_nn_matrix_create(min_matrix->width, src_matrix->height);//创建新的矩阵
 	result_data = result->data;//获取数据指针
 
 	for (int height = 0; height < result->height; height++) {
 		for (int width = 0; width < result->width; width++) {
-			input_data = input_matrix->data + height * input_matrix->width;
-			min_data = matrix_min->data + width;
-			max_data = matrix_max->data + width;
-			for (int point = 0; point < matrix_min->height; point++) {
-				if ((*min_data <= *input_data) && (*input_data <= *max_data)) {
+			src_data = src_matrix->data + height * src_matrix->width;//指向行开头
+			min_data = min_matrix->data + width;//指向列开头
+			max_data = max_matrix->data + width;//指向列开头
+			for (int point = 0; point < min_matrix->height; point++) {
+				if ((*min_data <= *src_data) && (*src_data <= *max_data)) {
 					*result_data += 1.0f;
 				}
-				min_data += matrix_min->width;
-				max_data += matrix_max->width;
-				input_data++;
+				//*result_data += *src_data * *min_data;
+				max_data += max_matrix->width;
+				min_data += min_matrix->width;
+				src_data++;
 			}
 			result_data++;
 		}
 	}
+
+
 	return result;
+
+	//user_nn_matrix *result = NULL;//结果矩阵
+	//int count = input_matrix->width * input_matrix->height;
+	//float *input_data = input_matrix->data;
+	//float *min_data = matrix_min->data;
+	//float *max_data = matrix_min->data;
+	//float *result_data = NULL;
+
+	//result = user_nn_matrix_create(input_matrix->width, matrix_min->height);//创建新的矩阵
+	//result_data = result->data;//获取数据指针
+
+	//for (int height = 0; height < result->height; height++) {
+	//	for (int width = 0; width < result->width; width++) {
+	//		input_data = input_matrix->data + height * input_matrix->width;
+	//		min_data = matrix_min->data + width;
+	//		max_data = matrix_max->data + width;
+	//		for (int point = 0; point < matrix_min->height; point++) {
+	//			if ((*min_data <= *input_data) && (*input_data <= *max_data)) {
+	//				*result_data += 1.0f;
+	//			}
+	//			min_data += matrix_min->width;
+	//			max_data += matrix_max->width;
+	//			input_data++;
+	//		}
+	//		result_data++;
+	//	}
+	//}
+	//return result;
 }
 user_nn_matrix *user_snn_dist(user_nn_matrix *output_matrix, user_nn_matrix *target_matrix) {
 	user_nn_matrix *result = NULL;//结果矩阵

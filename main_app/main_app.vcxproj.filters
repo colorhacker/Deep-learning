@@ -61,6 +61,12 @@
     <Filter Include="源文件\memory">
       <UniqueIdentifier>{ac8ff829-f08e-4a20-b00f-38f13b969d1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\snn">
+      <UniqueIdentifier>{a7a524cf-8708-48ac-b436-5d3aff23c728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\snn">
+      <UniqueIdentifier>{ca0c19f4-490b-4f0b-934d-f2b518a5e390}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user_config.h">
@@ -174,6 +180,9 @@
     <ClInclude Include="other\user_nn_opencv.h">
       <Filter>头文件\other</Filter>
     </ClInclude>
+    <ClInclude Include="snn\user_snn_app.h">
+      <Filter>头文件\snn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -286,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="other\user_nn_opencv.cpp">
       <Filter>源文件\other</Filter>
+    </ClCompile>
+    <ClCompile Include="snn\user_snn_app.cpp">
+      <Filter>源文件\snn</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
