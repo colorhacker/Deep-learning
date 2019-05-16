@@ -3,6 +3,7 @@
 #include "matrix/user_nn_matrix.h"
 #include "matrix/user_nn_activate.h"
 
+#include "snn\user_snn_app.h"
 #include "nn\user_nn_app.h"
 #include "rnn\user_rnn_app.h"
 #include "cnn\user_cnn_app.h"
@@ -12,6 +13,8 @@
 
 
 int main(int argc, const char** argv){
+	user_snn_app_train(argc, argv);
+	return 0;
 #ifdef _OPENMP
 	omp_set_num_threads(64);
 #endif

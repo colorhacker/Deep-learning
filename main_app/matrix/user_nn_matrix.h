@@ -95,6 +95,8 @@ void user_nn_matrix_uchar_memcpy(unsigned char *save_array,user_nn_matrix *src_m
 user_nn_matrix *user_nn_matrix_sorting(user_nn_matrix *src_matrix, sorting_type type);//对矩阵数据进行排序,返回一个新的矩阵，不会删掉原来的矩阵
 
 float user_nn_matrix_cum_element(user_nn_matrix *src_matrix);//求和矩阵里面所有值 加在一起
+void user_nn_matrxi_ceil(user_nn_matrix *src_matrix);//向上取整
+void user_nn_matrxi_floor(user_nn_matrix *src_matrix);//向下取整
 void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求和两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行加法运算 结果保存在src_matrix里面
 void user_nn_matrix_sub_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求差两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行减法运算 结果保存在src_matrix里面
 void user_nn_matrix_cum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, float alpha);//求和两个矩阵 矩阵src_matrix与矩阵sub_matrix*alpha每个元素进行加法运算 结果保存在src_matrix里面

@@ -4,14 +4,14 @@
 //value：激活对象
 //type：激活类型
 //返回 ：结果
-float user_nn_activate_softmax(float value, activation_type type) {
+float user_nn_activate(float value, activation_type type) {
 	switch (type) {
 		case activation_sigmoid:
 			return 1.0f / (1.0f + exp(-value));//S生长型函数
 		case activation_tanh:
 			return tanh(value);//双曲函数
 		case activation_prelu:
-			return value >= 0.0f? value : value*0.01f;//relu激活
+			return value >= 0.0f? value : 0.0f;//relu激活
 		default:break;
 	}
 	return 0;
@@ -20,14 +20,14 @@ float user_nn_activate_softmax(float value, activation_type type) {
 //value：激活对象
 //type：激活类型
 //返回 ：结果
-float user_nn_activate_softmax_d(float value, activation_type type) {
+float user_nn_activate_d(float value, activation_type type) {
 	switch (type) {
 	case activation_sigmoid:
 		return value*(1.0f - value);//S生长型函数
 	case activation_tanh:
 		return (1.0f - value*value);//双曲函数
 	case activation_prelu:
-		return value >= 0.0f ? 1.0f : 0.01f;//relu激活
+		return value >= 0.0f ? 1.0f : 0.0f;//relu激活
 	default:break;
 	}
 	return 0;
@@ -43,7 +43,7 @@ void user_nn_activate_matrix(user_nn_matrix *dest_matrix, activation_type type) 
 #if defined _OPENMP && _USER_API_OPENMP
 #pragma omp parallel for
 	for (int index = 0; index < count; index++) {
-		dest_data[index] = user_nn_activate_softmax((float)dest_data[index], type);
+		dest_data[index] = user_nn_activate((float)dest_data[index], type);
 	}
 #else
 	while (count--) {
@@ -62,7 +62,7 @@ void user_nn_activate_matrix_d(user_nn_matrix *dest_matrix, activation_type type
 #if defined _OPENMP && _USER_API_OPENMP
 #pragma omp parallel for
 	for (int index = 0; index < count; index++) {
-		dest_data[index] = user_nn_activate_softmax_d((float)dest_data[index], type);
+		dest_data[index] = user_nn_activate_d((float)dest_data[index], type);
 	}
 #else
 	while (count--) {
@@ -86,7 +86,7 @@ void user_nn_activate_matrix_sum_constant(user_nn_matrix *save_matrix, user_nn_m
 #if defined _OPENMP && _USER_API_OPENMP
 	#pragma omp parallel for
 	for (int index = 0; index < count; index++) {
-		save_data[index] = user_nn_activate_softmax((float)src_data[index] + constant, type);
+		save_data[index] = user_nn_activate((float)src_data[index] + constant, type);
 	}
 #else
 	while (count--) {
@@ -111,7 +111,7 @@ void user_nn_activate_matrix_sum_matrix(user_nn_matrix *save_matrix, user_nn_mat
 #if defined _OPENMP && _USER_API_OPENMP
 #pragma omp parallel for
 	for (int index = 0; index < count; index++) {
-		save_data[index] = user_nn_activate_softmax(src_data[index] + sub_data[index], type);
+		save_data[index] = user_nn_activate(src_data[index] + sub_data[index], type);
 	}
 #else
 	while (count--) {
@@ -135,7 +135,7 @@ void user_nn_activate_matrix_d_mult_matrix(user_nn_matrix *save_matrix, user_nn_
 #if defined _OPENMP && _USER_API_OPENMP
 #pragma omp parallel for
 	for (int index = 0; index < count; index++) {
-		save_data[index] = src_data[index] * user_nn_activate_softmax_d(sub_data[index], type);
+		save_data[index] = src_data[index] * user_nn_activate_d(sub_data[index], type);
 	}
 #else
 	while (count--) {

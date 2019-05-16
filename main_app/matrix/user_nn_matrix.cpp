@@ -742,6 +742,44 @@ float user_nn_matrix_cum_element(user_nn_matrix *src_matrix){
 	}
 	return result;
 }
+//取整  返回大于或者等于指定表达式的最小整数
+//参数
+//src_matrix：目标矩阵 返回大于或者等于指定表达式的最小整数
+//返回 无
+void user_nn_matrxi_ceil(user_nn_matrix *src_matrix) {
+	int count = src_matrix->width * src_matrix->height;//获取矩阵数据大小
+	float *src_data = src_matrix->data;
+
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		src_data[index] = ceil(src_data[index]);
+	}
+#else
+	while (count--) {
+		*src_data++ = ceil(*src_data);
+	}
+#endif
+}
+//取整  返回比参数小的最大整数
+//参数
+//src_matrix：目标矩阵 返回比参数小的最大整数
+//返回 无
+void user_nn_matrxi_floor(user_nn_matrix *src_matrix) {
+	int count = src_matrix->width * src_matrix->height;//获取矩阵数据大小
+	float *src_data = src_matrix->data;
+
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		src_data[index] = floor(src_data[index]);
+	}
+#else
+	while (count--) {
+		*src_data++ = floor(*src_data);
+	}
+#endif
+}
 //求和两个矩阵  save_matrix = src_matrix + sub_matrix 
 //参数
 //src_matrix：目标矩阵 求和值会覆盖此矩阵

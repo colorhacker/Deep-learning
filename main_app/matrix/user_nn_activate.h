@@ -11,8 +11,8 @@ typedef enum _activation_type {
 }activation_type;
 
 
-float user_nn_activate_softmax(float value, activation_type type);//对float参数进行softmax激活
-float user_nn_activate_softmax_d(float value, activation_type type);//对float参数进行softmax求导
+float user_nn_activate(float value, activation_type type);//对float参数进行激活
+float user_nn_activate_d(float value, activation_type type);//对float参数进行求导
 
 void user_nn_activate_matrix(user_nn_matrix *dest_matrix, activation_type type);//采用激活函数对矩阵进行激活处理
 void user_nn_activate_matrix_d(user_nn_matrix *dest_matrix, activation_type type);//采用激活函数对矩阵进行求导处理
