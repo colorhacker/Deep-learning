@@ -23,12 +23,12 @@ void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix *max_matrix
 	float *max_data = max_matrix->data;
 	while (count--) {
 		*min_data = user_nn_init_normal();
-		*max_data = *min_data + user_nn_init_normal() + 0.1f;
+		*max_data = *min_data + user_nn_init_normal() + 1.0f;
 		min_data++;
 		max_data++;
 	}
-	//user_snn_data_softmax(min_matrix);
-	//user_snn_data_softmax(max_matrix);
+	user_snn_data_softmax(min_matrix);
+	user_snn_data_softmax(max_matrix);
 }
 
 //Éı½µÖµ¼ÆËã
