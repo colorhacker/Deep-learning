@@ -215,6 +215,7 @@
     <ClInclude Include="nn\user_nn_model.h" />
     <ClInclude Include="nn\user_nn_rw_model.h" />
     <ClInclude Include="other\base64.h" />
+    <ClInclude Include="other\error_info.h" />
     <ClInclude Include="other\rgb_hsl.h" />
     <ClInclude Include="other\user_nn_debug.h" />
     <ClInclude Include="other\user_nn_opencv.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="rnn\user_rnn_layers.h" />
     <ClInclude Include="rnn\user_rnn_model.h" />
     <ClInclude Include="rnn\user_rnn_rw_model.h" />
+    <ClInclude Include="snn\user_snn_layers.h" />
     <ClInclude Include="snn\user_snn_app.h" />
     <ClInclude Include="user_config.h" />
     <ClInclude Include="user_types.h" />
@@ -257,6 +259,7 @@
     <ClCompile Include="nn\user_nn_model.cpp" />
     <ClCompile Include="nn\user_nn_rw_model.cpp" />
     <ClCompile Include="other\base64.cpp" />
+    <ClCompile Include="other\error_info.cpp" />
     <ClCompile Include="other\rgb_hsl.cpp" />
     <ClCompile Include="other\user_nn_debug.cpp" />
     <ClCompile Include="other\user_nn_opencv.cpp" />
@@ -267,6 +270,7 @@
     <ClCompile Include="rnn\user_rnn_layers.cpp" />
     <ClCompile Include="rnn\user_rnn_model.cpp" />
     <ClCompile Include="rnn\user_rnn_rw_model.cpp" />
+    <ClCompile Include="snn\user_snn_layers.cpp" />
     <ClCompile Include="snn\user_snn_app.cpp" />
     <ClCompile Include="w2c\user_pca.cpp" />
     <ClCompile Include="w2c\user_earth_movers_distance.cpp" />

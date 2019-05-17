@@ -978,6 +978,7 @@ user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_m
 
 	return result;
 }
+
 //两个矩阵进行点乘操作 对应数据进行相乘
 //src_matrix：矩阵A
 //sub_matrix：矩阵B
