@@ -189,6 +189,9 @@
     <ClInclude Include="snn\user_snn_layers.h">
       <Filter>头文件\snn</Filter>
     </ClInclude>
+    <ClInclude Include="snn\user_snn_ffp_bp.h">
+      <Filter>头文件\snn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -309,6 +312,9 @@
       <Filter>源文件\other</Filter>
     </ClCompile>
     <ClCompile Include="snn\user_snn_layers.cpp">
+      <Filter>源文件\snn</Filter>
+    </ClCompile>
+    <ClCompile Include="snn\user_snn_ffp_bp.cpp">
       <Filter>源文件\snn</Filter>
     </ClCompile>
   </ItemGroup>

@@ -226,6 +226,7 @@
     <ClInclude Include="rnn\user_rnn_layers.h" />
     <ClInclude Include="rnn\user_rnn_model.h" />
     <ClInclude Include="rnn\user_rnn_rw_model.h" />
+    <ClInclude Include="snn\user_snn_ffp_bp.h" />
     <ClInclude Include="snn\user_snn_layers.h" />
     <ClInclude Include="snn\user_snn_app.h" />
     <ClInclude Include="user_config.h" />
@@ -270,6 +271,7 @@
     <ClCompile Include="rnn\user_rnn_layers.cpp" />
     <ClCompile Include="rnn\user_rnn_model.cpp" />
     <ClCompile Include="rnn\user_rnn_rw_model.cpp" />
+    <ClCompile Include="snn\user_snn_ffp_bp.cpp" />
     <ClCompile Include="snn\user_snn_layers.cpp" />
     <ClCompile Include="snn\user_snn_app.cpp" />
     <ClCompile Include="w2c\user_pca.cpp" />
