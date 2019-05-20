@@ -69,9 +69,9 @@ void user_snn_bp_output_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	user_nn_matrix_thred_process(output_layers->thred_matrix,output_layers->softmax_feature_matrix, output_layers->target_matrix);//计算出阈值变化趋势
 	user_nn_matrix_update_thred(input_softmax_feature_matrix, output_layers->thred_matrix, output_layers->min_kernel_matrix, output_layers->max_kernel_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
 
-	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
+//	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
 	input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, output_layers->thred_matrix);//矩阵乘法
-	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
+//	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
 	user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
 
 	user_nn_matrix_delete(input_thred_matrix_temp);//删除矩阵

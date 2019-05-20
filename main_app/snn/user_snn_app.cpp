@@ -1,8 +1,35 @@
 
 #include "user_snn_app.h"
 
+user_nn_matrix *user_nn_matrix_create_memset(int width, int height,float *data) {
+	user_nn_matrix *dest;
+
+	dest = (user_nn_matrix *)malloc(sizeof(user_nn_matrix));//分配保存矩阵空间的大小
+	dest->width = width;
+	dest->height = height;
+	dest->data = (float *)malloc(dest->width * dest->height * sizeof(float));//分配矩阵数据空间
+	dest->next = NULL;
+	memcpy(dest->data, data,sizeof(data)*sizeof(float));
+	return dest;
+}
 
 void user_snn_app_train(int argc, const char** argv) {
+/*
+	float src[] = { 1.0f };
+	float min[] = { 0.5f,0.1f };
+	user_nn_matrix *src_matrix = user_nn_matrix_create_memset(1, 1,src);
+	user_nn_matrix *min_matrix = user_nn_matrix_create_memset(2, 1,min);
+	user_nn_matrix *res_matrix = user_nn_matrix_mult_matrix(src_matrix, min_matrix);//
+
+	if (res_matrix != NULL) {
+		user_nn_matrix_printf(NULL, res_matrix);//打印矩阵
+	}
+	else {
+		printf("null\n");
+	}
+	printf("\nend");
+	_getch();
+	return;*/
 	/*
 	for (;;) {
 		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
@@ -26,9 +53,14 @@ void user_snn_app_train(int argc, const char** argv) {
 				snn_input->feature_matrix->data[1] = 0.5f;
 				snn_output->target_matrix->data[0] = 1.0f;
 			}
-			if (i == 2) {
+			if (i == 1) {
 				snn_input->feature_matrix->data[0] = 0.5f;
 				snn_input->feature_matrix->data[1] = 1.5f;
+				snn_output->target_matrix->data[0] = 0.0f;
+			}
+			if (i == 2) {
+				snn_input->feature_matrix->data[0] = 1.0f;
+				snn_input->feature_matrix->data[1] = 1.0f;
 				snn_output->target_matrix->data[0] = 0.0f;
 			}
 			if (i == 3) {
@@ -36,23 +68,18 @@ void user_snn_app_train(int argc, const char** argv) {
 				snn_input->feature_matrix->data[1] = 1.0f;
 				snn_output->target_matrix->data[0] = 0.0f;
 			}
-			if (i == 4) {
-				snn_input->feature_matrix->data[0] = 1.0f;
-				snn_input->feature_matrix->data[1] = 1.0f;
-				snn_output->target_matrix->data[0] = 0.0f;
-			}
-			snn_output->min_kernel_matrix->data[0] = 1.0f;
+			/*snn_output->min_kernel_matrix->data[0] = 1.0f;
 			snn_output->max_kernel_matrix->data[0] = 1.6f;
 
 			snn_output->min_kernel_matrix->data[1] = 0.1f;
-			snn_output->max_kernel_matrix->data[1] = 1.5f;
+			snn_output->max_kernel_matrix->data[1] = 1.5f;*/
 
 			user_snn_ffp_output(snn_layers->next, snn_layers->next->next);
 
 			//user_nn_matrix_printf(NULL, snn_input->feature_matrix);
 			//user_nn_matrix_printf(NULL, snn_output->min_kernel_matrix);
 			//user_nn_matrix_printf(NULL, snn_output->max_kernel_matrix);
-			user_nn_matrix_printf(NULL, snn_output->feature_matrix);
+			//user_nn_matrix_printf(NULL, snn_output->feature_matrix);
 
 			user_snn_bp_output_back_prior(snn_layers->next, snn_layers->next->next);
 
@@ -69,17 +96,17 @@ void user_snn_app_train(int argc, const char** argv) {
 			snn_input->feature_matrix->data[1] = 0.5f;
 			snn_output->target_matrix->data[0] = 1.0f;
 		}
-		if (i == 2) {
+		if (i == 1) {
 			snn_input->feature_matrix->data[0] = 0.5f;
 			snn_input->feature_matrix->data[1] = 1.5f;
 			snn_output->target_matrix->data[0] = 0.0f;
 		}
-		if (i == 3) {
+		if (i == 2) {
 			snn_input->feature_matrix->data[0] = 1.0f;
 			snn_input->feature_matrix->data[1] = 1.0f;
 			snn_output->target_matrix->data[0] = 0.0f;
 		}
-		if (i == 4) {
+		if (i == 3) {
 			snn_input->feature_matrix->data[0] = 1.0f;
 			snn_input->feature_matrix->data[1] = 1.0f;
 			snn_output->target_matrix->data[0] = 0.0f;

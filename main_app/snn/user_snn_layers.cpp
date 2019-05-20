@@ -197,21 +197,24 @@ void user_nn_matrix_thred_process(user_nn_matrix *thred_matrix,user_nn_matrix *s
 //输出 返回结果矩阵
 void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix,user_nn_matrix *output_matrix) {
 	user_nn_matrix *result = NULL;//结果矩阵
-	float *src_data = src_matrix->data;//
 	float *min_data = min_matrix->data;//
+	float *src_data = src_matrix->data;//
 	float *max_data = max_matrix->data;//
 	float *output_data = output_matrix->data;
-	//int width, height, point;//矩阵列数
-	if (src_matrix->width != min_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
-		return ;
+	if (min_matrix->width != src_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
+		return;
 	}
-#if defined _OPENMP && _USER_API_OPENMP && false
+	if ((output_matrix->width != src_matrix->width) || (output_matrix->height != min_matrix->height)) {
+		return;
+	}
+
+#if defined _OPENMP && _USER_API_OPENMP
 #pragma omp parallel for 
 	for (int height = 0; height < output_matrix->height; height++) {
 		for (int width = 0; width < output_matrix->width; width++) {
-			for (int point = 0; point < min_matrix->height; point++) {
-				output_data[height*output_matrix->width + width] = 0.0f;
-				if ((min_data[width + point*min_matrix->width] <= src_data[height * src_matrix->width + point]) && (src_data[height * src_matrix->width + point] <= max_data[width + point*max_matrix->width])) {
+			for (int point = 0; point < src_matrix->height; point++) {
+				if ((min_data[ height * min_matrix->width + point] <= src_data[width + point*src_matrix->width]) && (src_data[width + point*src_matrix->width] <= max_data[height * max_matrix->width + point])) {
+					//if ((min_data[width + point*src_matrix->width] <= src_data[height * min_matrix->width + point]) && (src_data[height * min_matrix->width + point] <= max_data[width + point*src_matrix->width])) {
 					output_data[height*output_matrix->width + width] += 1.0f;//进行满足阈值结果累加
 				}
 			}
@@ -220,21 +223,22 @@ void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_ma
 #else
 	for (int height = 0; height < output_matrix->height; height++) {
 		for (int width = 0; width < output_matrix->width; width++) {
-			src_data = src_matrix->data + height * src_matrix->width;//指向行开头
-			min_data = min_matrix->data + width;//指向列开头
-			max_data = max_matrix->data + width;//指向列开头
-			for (int point = 0; point < min_matrix->height; point++) {
+			min_data = min_matrix->data + height * min_matrix->width;//指向行开头
+			max_data = max_matrix->data + height * max_matrix->width;//指向行开头
+			src_data = src_matrix->data + width;//指向列开头
+			for (int point = 0; point < src_matrix->height; point++) {
 				if ((*min_data <= *src_data) && (*src_data <= *max_data)) {
 					*output_data += 1.0f;//进行满足阈值结果累加
 				}
-				max_data += max_matrix->width;
-				min_data += min_matrix->width;
-				src_data++;
-			}
+				src_data += src_matrix->width;
+				min_data++;
+				max_data++;
+				}
 			output_data++;
+			}
 		}
-	}
 #endif
+
 }
 
 //按高低进行阈值更新
@@ -252,15 +256,18 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *thr
 	if (src_matrix->width != min_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
 		return;
 	}
+	if ((thred_matrix->width != src_matrix->width) || (thred_matrix->width != min_matrix->height)) {
+		return;
+	}
 #if defined _OPENMP && _USER_API_OPENMP && false
 #pragma omp parallel for 
 	for (int height = 0; height < src_matrix->height; height++) {
 		for (int width = 0; width < min_matrix->width; width++) {
 			for (int point = 0; point < min_matrix->height; point++) {
-				src_data = src_matrix->data + height * src_matrix->width + point;
+				min_data = min_matrix->data + height * min_matrix->width + point;//指向行开头
+				max_data = max_matrix->data + height * max_matrix->width + point;//指向行开头
+				src_data = src_matrix->data + width + point*src_matrix->width;;//指向列开头
 				thred_data = thred_matrix->data + height*thred_matrix->width + width;
-				min_data = min_matrix->data + width + point*min_matrix->width;
-				max_data = max_matrix->data + width + point*max_matrix->width;
 
 				if (*thred_data == snn_thred_heighten) {
 					if (*src_data >= avg_value) {
@@ -291,12 +298,12 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *thr
 		}
 	}
 #else
-	for (int height = 0; height < src_matrix->height; height++) {
-		for (int width = 0; width < min_matrix->width; width++) {
-			src_data = src_matrix->data + height * src_matrix->width;//指向行开头
-			min_data = min_matrix->data + width;//指向列开头
-			max_data = max_matrix->data + width;//指向列开头
-			for (int point = 0; point < min_matrix->height; point++) {
+	for (int height = 0; height < thred_matrix->height; height++) {
+		for (int width = 0; width < thred_matrix->width; width++) {
+			min_data = min_matrix->data + height * min_matrix->width;//指向行开头
+			max_data = max_matrix->data + height * max_matrix->width;//指向行开头
+			src_data = src_matrix->data + width;//指向列开头
+			for (int point = 0; point < src_matrix->height; point++) {
 				if (*thred_data == snn_thred_heighten) {
 					if (*src_data >= avg_value) {
 						//avg_value = *src_data;
@@ -326,12 +333,34 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *thr
 				else {
 
 				}
-				max_data += max_matrix->width;
-				min_data += min_matrix->width;
-				src_data++;
+				src_data += src_matrix->width;
+				min_data++;
+				max_data++;
 			}
 			thred_data++;
 		}
 	}
 #endif
 }
+
+/*
+float min[] = { 0.5f,0.1f };
+float max[] = { 1.6f,1.0f };
+
+user_nn_matrix *src_matrix = user_nn_matrix_create_memset(1, 1, src);
+
+user_nn_matrix *min_matrix = user_nn_matrix_create_memset(1, 2, min);
+user_nn_matrix *max_matrix = user_nn_matrix_create_memset(1, 2, max);
+
+user_nn_matrix *res_matrix = user_nn_matrix_create(1, 2);
+
+user_nn_matrix_thred_acc(src_matrix, min_matrix, max_matrix, res_matrix);//
+
+if (res_matrix != NULL) {
+	user_nn_matrix_printf(NULL, res_matrix);//打印矩阵
+}
+else {
+	printf("null\n");
+}
+printf("\nend");
+*/
