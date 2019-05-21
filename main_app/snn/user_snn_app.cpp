@@ -45,47 +45,36 @@ void user_snn_app_train(int argc, const char** argv) {
 	user_snn_layers	*snn_layers = user_snn_layers_create(u_snn_layer_type_null, 0);//创建一个空层
 
 	user_snn_input_layers *snn_input = user_snn_layers_input_create(snn_layers, 1, 2);
-	user_snn_output_layers *snn_output = user_snn_layers_output_create(snn_layers,1);
+	user_snn_hidden_layers *snn_hidden = user_snn_layers_hidden_create(snn_layers, 2);
+	user_snn_output_layers *snn_output = user_snn_layers_output_create(snn_layers,2);
 	for (int count=0;count<1000;count++) {
-		for (int i = 0; i < 4;i++) {
+		for (int i = 0; i < 2;i++) {
 			if (i == 0) {
 				snn_input->feature_matrix->data[0] = 1.5f;
 				snn_input->feature_matrix->data[1] = 0.5f;
-				snn_output->target_matrix->data[0] = 1.0f;
+				snn_output->target_matrix->data[0] = 1.5f;
+				snn_output->target_matrix->data[1] = 0.5f;
 			}
 			if (i == 1) {
 				snn_input->feature_matrix->data[0] = 0.5f;
 				snn_input->feature_matrix->data[1] = 1.5f;
-				snn_output->target_matrix->data[0] = 0.0f;
+				snn_output->target_matrix->data[0] = 0.5f;
+				snn_output->target_matrix->data[1] = 1.5f;
 			}
-			if (i == 2) {
-				snn_input->feature_matrix->data[0] = 1.0f;
-				snn_input->feature_matrix->data[1] = 1.0f;
-				snn_output->target_matrix->data[0] = 0.0f;
-			}
-			if (i == 3) {
-				snn_input->feature_matrix->data[0] = 1.0f;
-				snn_input->feature_matrix->data[1] = 1.0f;
-				snn_output->target_matrix->data[0] = 0.0f;
-			}
-			/*snn_output->min_kernel_matrix->data[0] = 1.0f;
-			snn_output->max_kernel_matrix->data[0] = 1.6f;
+			user_snn_ffp_hidden(snn_layers->next, snn_layers->next->next);
+			user_snn_ffp_output(snn_layers->next->next, snn_layers->next->next->next);
 
-			snn_output->min_kernel_matrix->data[1] = 0.1f;
-			snn_output->max_kernel_matrix->data[1] = 1.5f;*/
-
-			user_snn_ffp_output(snn_layers->next, snn_layers->next->next);
+			user_snn_bp_output_back_prior(snn_layers->next->next, snn_layers->next->next->next);
+			user_snn_bp_hidden_back_prior(snn_layers->next, snn_layers->next->next);
 
 			//user_nn_matrix_printf(NULL, snn_input->feature_matrix);
 			//user_nn_matrix_printf(NULL, snn_output->min_kernel_matrix);
 			//user_nn_matrix_printf(NULL, snn_output->max_kernel_matrix);
 			//user_nn_matrix_printf(NULL, snn_output->feature_matrix);
-
-			user_snn_bp_output_back_prior(snn_layers->next, snn_layers->next->next);
-
 			//user_nn_matrix_printf(NULL, snn_output->min_kernel_matrix);
 			//user_nn_matrix_printf(NULL, snn_output->max_kernel_matrix);
 			//user_nn_matrix_printf(NULL, snn_output->thred_matrix);
+			//user_nn_matrix_printf(NULL, snn_input->thred_matrix);
 		}
 	}
 	user_nn_matrix_printf(NULL, snn_output->min_kernel_matrix);
@@ -99,16 +88,6 @@ void user_snn_app_train(int argc, const char** argv) {
 		if (i == 1) {
 			snn_input->feature_matrix->data[0] = 0.5f;
 			snn_input->feature_matrix->data[1] = 1.5f;
-			snn_output->target_matrix->data[0] = 0.0f;
-		}
-		if (i == 2) {
-			snn_input->feature_matrix->data[0] = 1.0f;
-			snn_input->feature_matrix->data[1] = 1.0f;
-			snn_output->target_matrix->data[0] = 0.0f;
-		}
-		if (i == 3) {
-			snn_input->feature_matrix->data[0] = 1.0f;
-			snn_input->feature_matrix->data[1] = 1.0f;
 			snn_output->target_matrix->data[0] = 0.0f;
 		}
 		user_snn_ffp_output(snn_layers->next, snn_layers->next->next);

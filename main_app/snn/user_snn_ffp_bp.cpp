@@ -68,10 +68,18 @@ void user_snn_bp_output_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	//**** 使用归一化处理与未归一化处理的数据进行阈值设置
 	user_nn_matrix_thred_process(output_layers->thred_matrix,output_layers->softmax_feature_matrix, output_layers->target_matrix);//计算出阈值变化趋势
 	user_nn_matrix_update_thred(input_softmax_feature_matrix, output_layers->thred_matrix, output_layers->min_kernel_matrix, output_layers->max_kernel_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
+	
+	user_nn_matrix *avg_temp = user_nn_matrix_cpy_create(output_layers->min_kernel_matrix);
+	user_nn_matrix_avg_matrix(avg_temp,output_layers->min_kernel_matrix, output_layers->max_kernel_matrix);
 
 //	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
-	input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, output_layers->thred_matrix);//矩阵乘法
+//	input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, output_layers->thred_matrix);//矩阵乘法
 //	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
+
+	user_nn_matrix_transpose(avg_temp);//矩阵转置
+	input_thred_matrix_temp = user_nn_matrix_mult_matrix(avg_temp, output_layers->thred_matrix);//矩阵乘法
+	user_nn_matrix_transpose(avg_temp);//矩阵转置
+
 	user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
 
 	user_nn_matrix_delete(input_thred_matrix_temp);//删除矩阵
@@ -100,9 +108,7 @@ void user_snn_bp_hidden_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	}
 	//hidden_layers->thred_matrix 这个是复用
 	user_nn_matrix_thred_process(hidden_layers->thred_matrix, hidden_layers->feature_matrix, hidden_layers->thred_matrix);//计算出阈值变化趋势
-
 	user_nn_matrix_update_thred(input_softmax_feature_matrix, hidden_layers->thred_matrix, hidden_layers->min_kernel_matrix, hidden_layers->max_kernel_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
-
 	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
 	input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, hidden_layers->thred_matrix);//矩阵乘法
 	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置

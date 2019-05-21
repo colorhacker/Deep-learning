@@ -100,6 +100,7 @@ void user_nn_matrxi_ceil(user_nn_matrix *src_matrix);//向上取整
 void user_nn_matrxi_floor(user_nn_matrix *src_matrix);//向下取整
 void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求和两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行加法运算 结果保存在src_matrix里面
 void user_nn_matrix_sub_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求差两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行减法运算 结果保存在src_matrix里面
+void user_nn_matrix_avg_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求两个矩阵的平均值
 void user_nn_matrix_cum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, float alpha);//求和两个矩阵 矩阵src_matrix与矩阵sub_matrix*alpha每个元素进行加法运算 结果保存在src_matrix里面
 void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix);//拷贝矩阵sub_matrix数据到矩阵src_matrix中
 void user_nn_matrix_cpy_matrix_p(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix);//指向矩阵sub_matrix数据到矩阵src_matrix中
