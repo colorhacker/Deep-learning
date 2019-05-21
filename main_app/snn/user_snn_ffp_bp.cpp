@@ -39,7 +39,7 @@ void user_snn_ffp_output(user_snn_layers *prior_layer, user_snn_layers *output_l
 	user_nn_matrix_memset(output_layers->feature_matrix,0.0f);//清空特征数据
 	user_nn_matrix_thred_acc(input_feature_matrix, output_layers->min_kernel_matrix, output_layers->max_kernel_matrix, output_layers->feature_matrix);//计算值
 	user_nn_matrix_cpy_matrix(output_layers->softmax_feature_matrix, output_layers->feature_matrix);
-	//user_snn_data_softmax(output_layers->softmax_feature_matrix);//数据归一化处理
+	user_snn_data_softmax(output_layers->softmax_feature_matrix);//数据归一化处理
 }
 
 //反向传播进行求取更新梯度值
@@ -76,11 +76,11 @@ void user_snn_bp_output_back_prior(user_snn_layers *prior_layer, user_snn_layers
 //	input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, output_layers->thred_matrix);//矩阵乘法
 //	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
 
-	user_nn_matrix_transpose(avg_temp);//矩阵转置
-	input_thred_matrix_temp = user_nn_matrix_mult_matrix(avg_temp, output_layers->thred_matrix);//矩阵乘法
-	user_nn_matrix_transpose(avg_temp);//矩阵转置
+	//user_nn_matrix_transpose(avg_temp);//矩阵转置
+	//input_thred_matrix_temp = user_nn_matrix_mult_matrix(avg_temp, output_layers->thred_matrix);//矩阵乘法
+	//user_nn_matrix_transpose(avg_temp);//矩阵转置
 
-	user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
+	//user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
 
 	user_nn_matrix_delete(input_thred_matrix_temp);//删除矩阵
 }
@@ -109,10 +109,11 @@ void user_snn_bp_hidden_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	//hidden_layers->thred_matrix 这个是复用
 	user_nn_matrix_thred_process(hidden_layers->thred_matrix, hidden_layers->feature_matrix, hidden_layers->thred_matrix);//计算出阈值变化趋势
 	user_nn_matrix_update_thred(input_softmax_feature_matrix, hidden_layers->thred_matrix, hidden_layers->min_kernel_matrix, hidden_layers->max_kernel_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
+	
 	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
-	input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, hidden_layers->thred_matrix);//矩阵乘法
+	//input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, hidden_layers->thred_matrix);//矩阵乘法
 	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
-	user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
+	//user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
 
 	user_nn_matrix_delete(input_thred_matrix_temp);//删除矩阵
 }

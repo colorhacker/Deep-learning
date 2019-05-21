@@ -253,10 +253,10 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *thr
 	float *max_data = max_matrix->data;//
 	//float avg_value = 1.0f;
 	//float step_value = 0.001f;
-	if (src_matrix->width != min_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
+	if (min_matrix->width != src_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
 		return;
 	}
-	if ((thred_matrix->width != src_matrix->width) || (thred_matrix->width != min_matrix->height)) {
+	if ((thred_matrix->width != src_matrix->width) || (thred_matrix->height != min_matrix->height)) {
 		return;
 	}
 #if defined _OPENMP && _USER_API_OPENMP && false
