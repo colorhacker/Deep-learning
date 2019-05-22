@@ -59,8 +59,8 @@ typedef struct _snn_output_layers {
 #define snn_step_vaule		0.001f
 
 #define snn_thred_none		1.0f	//不需要变化
-#define snn_thred_heighten	0.9f	//目标值大于输出值
-#define snn_thred_lower		1.1f	//目标值小于输出值
+#define snn_thred_add		0.9f	//目标值大于输出值
+#define snn_thred_acc		1.1f	//目标值小于输出值
 
 void user_snn_data_softmax(user_nn_matrix *src_matrix);
 void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix * max_matrix);

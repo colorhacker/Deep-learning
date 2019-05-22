@@ -179,9 +179,9 @@ void user_nn_matrix_thred_process(user_nn_matrix *thred_matrix,user_nn_matrix *s
 	float *thred_data = thred_matrix->data;
 	while (count--) {
 		if (*target_data > *src_data) {
-			*thred_data = snn_thred_heighten;
+			*thred_data = snn_thred_add;
 		}else if (*target_data < *src_data) {
-			*thred_data = snn_thred_lower;
+			*thred_data = snn_thred_acc;
 		}else {
 			*thred_data = snn_thred_none;
 		}
@@ -304,7 +304,7 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *thr
 			max_data = max_matrix->data + height * max_matrix->width;//指向行开头
 			src_data = src_matrix->data + width;//指向列开头
 			for (int point = 0; point < src_matrix->height; point++) {
-				if (*thred_data == snn_thred_heighten) {
+				if (*thred_data == snn_thred_add) {
 					if (*src_data >= avg_value) {
 						//avg_value = *src_data;
 						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
@@ -317,7 +317,7 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *thr
 					}
 					*max_data = *min_data > *max_data ? *min_data : *max_data;
 				}
-				else if (*thred_data == snn_thred_lower) {
+				else if (*thred_data == snn_thred_acc) {
 					if (*src_data >= avg_value) {
 						//avg_value = *src_data;
 						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;

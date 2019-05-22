@@ -48,6 +48,7 @@ void user_snn_bp_output_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	user_nn_matrix   *input_feature_matrix = NULL;//
 	user_nn_matrix   *input_softmax_feature_matrix = NULL;//
 	user_nn_matrix   *input_thred_matrix = NULL;//
+	user_nn_matrix	 *output_avg_matrix_temp = NULL;
 	user_nn_matrix   *input_thred_matrix_temp = NULL;//
 
 	user_snn_output_layers  *output_layers = (user_snn_output_layers  *)output_layer->content;//获取本层池化层数据
@@ -69,19 +70,17 @@ void user_snn_bp_output_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	user_nn_matrix_thred_process(output_layers->thred_matrix,output_layers->softmax_feature_matrix, output_layers->target_matrix);//计算出阈值变化趋势
 	user_nn_matrix_update_thred(input_softmax_feature_matrix, output_layers->thred_matrix, output_layers->min_kernel_matrix, output_layers->max_kernel_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
 	
-	user_nn_matrix *avg_temp = user_nn_matrix_cpy_create(output_layers->min_kernel_matrix);
-	user_nn_matrix_avg_matrix(avg_temp,output_layers->min_kernel_matrix, output_layers->max_kernel_matrix);
+	output_avg_matrix_temp = user_nn_matrix_cpy_create(output_layers->min_kernel_matrix);
+	user_nn_matrix_avg_matrix(output_avg_matrix_temp,output_layers->min_kernel_matrix, output_layers->max_kernel_matrix);
 
-//	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
-//	input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, output_layers->thred_matrix);//矩阵乘法
-//	user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
+	user_nn_matrix_transpose(output_avg_matrix_temp);//矩阵转置
+	input_thred_matrix_temp = user_nn_matrix_mult_matrix(output_avg_matrix_temp,output_layers->thred_matrix);//矩阵乘法
+	user_nn_matrix_transpose(output_avg_matrix_temp);//矩阵转置
 
-	//user_nn_matrix_transpose(avg_temp);//矩阵转置
-	//input_thred_matrix_temp = user_nn_matrix_mult_matrix(avg_temp, output_layers->thred_matrix);//矩阵乘法
-	//user_nn_matrix_transpose(avg_temp);//矩阵转置
-
-	//user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
-
+	user_snn_data_softmax(input_thred_matrix_temp);
+	user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
+	
+	user_nn_matrix_delete(output_avg_matrix_temp);//删除矩阵
 	user_nn_matrix_delete(input_thred_matrix_temp);//删除矩阵
 }
 
@@ -91,6 +90,7 @@ void user_snn_bp_hidden_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	user_nn_matrix	 *input_feature_matrix = NULL;
 	user_nn_matrix   *input_softmax_feature_matrix = NULL;//
 	user_nn_matrix   *input_thred_matrix = NULL;//
+	user_nn_matrix	 *hidden_avg_matrix_temp = NULL;
 	user_nn_matrix   *input_thred_matrix_temp = NULL;//
 	//提取前一层的数据
 	if (prior_layer->type == u_snn_layer_type_input) {
@@ -107,14 +107,19 @@ void user_snn_bp_hidden_back_prior(user_snn_layers *prior_layer, user_snn_layers
 		return;
 	}
 	//hidden_layers->thred_matrix 这个是复用
-	user_nn_matrix_thred_process(hidden_layers->thred_matrix, hidden_layers->feature_matrix, hidden_layers->thred_matrix);//计算出阈值变化趋势
+	user_nn_matrix_thred_process(hidden_layers->thred_matrix, hidden_layers->softmax_feature_matrix, hidden_layers->thred_matrix);//计算出阈值变化趋势
 	user_nn_matrix_update_thred(input_softmax_feature_matrix, hidden_layers->thred_matrix, hidden_layers->min_kernel_matrix, hidden_layers->max_kernel_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
 	
-	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
-	//input_thred_matrix_temp = user_nn_matrix_mult_matrix(input_feature_matrix, hidden_layers->thred_matrix);//矩阵乘法
-	//user_nn_matrix_transpose(input_feature_matrix);//矩阵转置
-	//user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
 
+	hidden_avg_matrix_temp = user_nn_matrix_cpy_create(hidden_layers->min_kernel_matrix);
+	user_nn_matrix_avg_matrix(hidden_avg_matrix_temp, hidden_layers->min_kernel_matrix, hidden_layers->max_kernel_matrix);
+
+	user_nn_matrix_transpose(hidden_avg_matrix_temp);//矩阵转置
+	input_thred_matrix_temp = user_nn_matrix_mult_matrix(hidden_avg_matrix_temp, hidden_layers->thred_matrix);//矩阵乘法
+	user_nn_matrix_transpose(hidden_avg_matrix_temp);//矩阵转置
+	user_nn_matrix_cpy_matrix(input_thred_matrix, input_thred_matrix_temp);//更新矩阵
+
+	user_nn_matrix_delete(hidden_avg_matrix_temp);//删除矩阵
 	user_nn_matrix_delete(input_thred_matrix_temp);//删除矩阵
 }
 
