@@ -229,6 +229,7 @@
     <ClInclude Include="snn\user_snn_ffp_bp.h" />
     <ClInclude Include="snn\user_snn_layers.h" />
     <ClInclude Include="snn\user_snn_app.h" />
+    <ClInclude Include="snn\user_snn_model.h" />
     <ClInclude Include="user_config.h" />
     <ClInclude Include="user_types.h" />
     <ClInclude Include="w2c\user_pca.h" />
@@ -274,6 +275,7 @@
     <ClCompile Include="snn\user_snn_ffp_bp.cpp" />
     <ClCompile Include="snn\user_snn_layers.cpp" />
     <ClCompile Include="snn\user_snn_app.cpp" />
+    <ClCompile Include="snn\user_snn_model.cpp" />
     <ClCompile Include="w2c\user_pca.cpp" />
     <ClCompile Include="w2c\user_earth_movers_distance.cpp" />
     <ClCompile Include="w2c\user_k_means.cpp" />

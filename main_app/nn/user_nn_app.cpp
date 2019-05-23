@@ -1,5 +1,6 @@
 
 #include "user_nn_app.h"
+
 #include "..\other\user_nn_opencv.h"
 
 user_nn_matrix *user_nn_app_set_input(void) {

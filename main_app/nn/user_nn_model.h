@@ -3,7 +3,9 @@
 
 #include "../user_config.h"
 #include "user_nn_layers.h"
-
+#include "user_nn_ffp.h"
+#include "user_nn_bp.h"
+#include "user_nn_grads.h"
 
 user_nn_layers *user_nn_model_create(int *layer_infor);//创建nn模型
 user_nn_layers *user_nn_model_return_layer(user_nn_layers *layers, user_nn_layer_type type);

@@ -67,7 +67,7 @@ void user_nn_matrix_thred_process(user_nn_matrix *thred_matrix, user_nn_matrix *
 void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, user_nn_matrix *output_matrix);//矩阵阈值累加
 void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src_exp_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, user_nn_matrix *thred_matrix, float avg_value, float step_value);//更新阈值
 
-
+user_snn_layers *user_snn_layers_get(user_snn_layers *dest, int index);
 user_snn_layers *user_snn_layers_create(user_snn_layer_type type, int index);
 user_snn_input_layers *user_snn_layers_input_create(user_snn_layers *nn_layers, int feature_width, int feature_height);
 user_snn_hidden_layers *user_snn_layers_hidden_create(user_snn_layers *snn_layers, int feature_number);

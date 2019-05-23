@@ -1,8 +1,5 @@
 
 #include "user_nn_model.h"
-#include "user_nn_ffp.h"
-#include "user_nn_bp.h"
-#include "user_nn_grads.h"
 
 //通过输入层的信息创建模型
 //layer_infor 网络模型参数

@@ -1,7 +1,17 @@
 
 #include "user_snn_layers.h"
 
-
+//返回指定层
+user_snn_layers *user_snn_layers_get(user_snn_layers *dest, int index) {
+	while (index--) {
+		if (dest->next != NULL) {
+			dest = dest->next;
+		}
+		else {
+		}
+	}
+	return dest;
+}
 //创建一个层
 //参数：
 //type：层类型
