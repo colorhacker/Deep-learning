@@ -52,7 +52,7 @@ void user_snn_app_train(int argc, const char** argv) {
 			if (i == 0) {
 				snn_input->feature_matrix->data[0] = 1.5f;
 				snn_input->feature_matrix->data[1] = 0.5f;
-				snn_output->target_matrix->data[0] = 2.0f;
+				snn_output->target_matrix->data[0] = 1.5f;
 				snn_output->target_matrix->data[1] = 0.0f;
 			}
 			if (i == 1) {
