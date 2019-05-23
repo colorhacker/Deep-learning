@@ -54,6 +54,7 @@ typedef struct _snn_output_layers {
 }user_snn_output_layers;//输出层
 
 #define snn_avg_vaule		1.0f
+#define snn_add_value		0.1f
 #define snn_step_vaule		0.001f
 
 #define snn_thred_none		1.0f	//不需要变化

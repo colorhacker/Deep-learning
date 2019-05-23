@@ -313,16 +313,16 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
 						//在保持本层阈值不变情况下移动输入值
-						*src_exp_data = *src_data < *min_data ? (*src_exp_data + 0.1f) : *src_exp_data;
-						*src_exp_data = *src_data > *max_data ? (*src_exp_data - 0.1f) : *src_exp_data;
+						*src_exp_data = *src_data < *min_data ? (*src_exp_data + snn_add_value) : *src_exp_data;
+						*src_exp_data = *src_data > *max_data ? (*src_exp_data - snn_add_value) : *src_exp_data;
 					}
 					else {
 						//avg_value = *src_data;
 						*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
-						*src_exp_data = *src_data < *min_data ? (*src_exp_data + 0.1f) : *src_exp_data;
-						*src_exp_data = *src_data > *max_data ? (*src_exp_data - 0.1f) : *src_exp_data;
+						*src_exp_data = *src_data < *min_data ? (*src_exp_data + snn_add_value) : *src_exp_data;
+						*src_exp_data = *src_data > *max_data ? (*src_exp_data - snn_add_value) : *src_exp_data;
 					}
 					*max_data = *min_data > *max_data ? *min_data : *max_data;
 				}
@@ -333,7 +333,7 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 						*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
 
 						if (*min_data < *src_data && *src_data < *max_data) {
-							*src_exp_data += 0.1f;
+							*src_exp_data += snn_add_value;
 						}
 					}
 					else {
@@ -342,7 +342,7 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
 						if (*min_data < *src_data && *src_data < *max_data) {
-							*src_exp_data -= 0.1f;
+							*src_exp_data -= snn_add_value;
 						}
 					}
 					*max_data = *min_data > *max_data ? *min_data : *max_data;
