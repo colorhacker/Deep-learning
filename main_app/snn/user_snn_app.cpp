@@ -48,7 +48,7 @@ void user_snn_app_train(int argc, const char** argv) {
 	user_snn_hidden_layers *snn_hidden = user_snn_layers_hidden_create(snn_layers, 2);
 	user_snn_output_layers *snn_output = user_snn_layers_output_create(snn_layers,2);
 	for (int count=0;count<1000;count++) {
-		for (int i = 0; i < 2;i++) {
+		for (int i = 0; i < 3;i++) {
 			if (i == 0) {
 				snn_input->feature_matrix->data[0] = 1.5f;
 				snn_input->feature_matrix->data[1] = 0.5f;
@@ -72,8 +72,8 @@ void user_snn_app_train(int argc, const char** argv) {
 			//user_snn_bp_output_back_prior(snn_layers->next, snn_layers->next->next);
 		}
 	}
-	//user_nn_matrix_printf(NULL, snn_hidden->min_kernel_matrix);
-	//user_nn_matrix_printf(NULL, snn_hidden->max_kernel_matrix);
+	user_nn_matrix_printf(NULL, snn_hidden->min_kernel_matrix);
+	user_nn_matrix_printf(NULL, snn_hidden->max_kernel_matrix);
 
 	user_nn_matrix_printf(NULL, snn_output->min_kernel_matrix);
 	user_nn_matrix_printf(NULL, snn_output->max_kernel_matrix);
@@ -86,7 +86,8 @@ void user_snn_app_train(int argc, const char** argv) {
 			snn_input->feature_matrix->data[0] = 0.5f;
 			snn_input->feature_matrix->data[1] = 1.5f;
 		}
-		user_snn_ffp_output(snn_layers->next, snn_layers->next->next);
+		user_snn_ffp_hidden(snn_layers->next, snn_layers->next->next);//输入层到中间层
+		user_snn_ffp_output(snn_layers->next->next, snn_layers->next->next->next);//中间层到输入层
 		user_nn_matrix_printf(NULL, snn_output->feature_matrix);
 	}
 	system("pause");

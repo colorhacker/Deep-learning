@@ -38,7 +38,6 @@ typedef struct _snn_hidden_layers {
 	user_nn_matrix		*min_kernel_matrix;//神经元w	
 	user_nn_matrix		*max_kernel_matrix;//偏置参数
 	user_nn_matrix		*feature_matrix;//存放计算后的特征数据 
-	user_nn_matrix		*softmax_feature_matrix;//存放计算后的特征数据 
 	user_nn_matrix		*thred_matrix;//保存本层的变化矩阵
 }user_snn_hidden_layers;//
 
@@ -50,7 +49,6 @@ typedef struct _snn_output_layers {
 	user_nn_matrix		*min_kernel_matrix;//神经元w	
 	user_nn_matrix		*max_kernel_matrix;//偏置参数
 	user_nn_matrix		*feature_matrix;//存放计算后的特征数据 
-	user_nn_matrix		*softmax_feature_matrix;//存放计算后的特征数据
 	user_nn_matrix		*target_matrix;//目标矩阵
 	user_nn_matrix		*thred_matrix;//保存本层的变化矩阵
 }user_snn_output_layers;//输出层
@@ -66,7 +64,7 @@ void user_snn_data_softmax(user_nn_matrix *src_matrix);
 void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix * max_matrix);
 void user_nn_matrix_thred_process(user_nn_matrix *thred_matrix, user_nn_matrix *src_matrix, user_nn_matrix *target_matrix);
 void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, user_nn_matrix *output_matrix);//矩阵阈值累加
-void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *thred_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, float avg_value, float step_value);//更新阈值
+void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src_exp_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, user_nn_matrix *thred_matrix, float avg_value, float step_value);//更新阈值
 
 
 user_snn_layers *user_snn_layers_create(user_snn_layer_type type, int index);
