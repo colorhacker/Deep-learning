@@ -305,45 +305,6 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 	if ((thred_matrix->width != src_matrix->width) || (thred_matrix->height != min_matrix->height)) {
 		return;
 	}
-#if defined _OPENMP && _USER_API_OPENMP && false
-#pragma omp parallel for 
-	for (int height = 0; height < src_matrix->height; height++) {
-		for (int width = 0; width < min_matrix->width; width++) {
-			for (int point = 0; point < min_matrix->height; point++) {
-				min_data = min_matrix->data + height * min_matrix->width + point;//指向行开头
-				max_data = max_matrix->data + height * max_matrix->width + point;//指向行开头
-				src_data = src_matrix->data + width + point*src_matrix->width;;//指向列开头
-				thred_data = thred_matrix->data + height*thred_matrix->width + width;
-
-				if (*thred_data == snn_thred_heighten) {
-					if (*src_data >= avg_value) {
-						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
-						*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
-					}
-					else {
-						*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
-						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
-					}
-					*max_data = *min_data > *max_data ? *min_data : *max_data;
-				}
-				else if (*thred_data == snn_thred_lower) {
-					if (*src_data >= avg_value) {
-						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
-						*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
-					}
-					else {
-						*min_data = *min_data > *src_data ? *min_data : (*min_data + step_value);
-						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
-					}
-					*max_data = *min_data > *max_data ? *min_data : *max_data;
-				}
-				else {
-
-				}
-			}
-		}
-	}
-#else
 	for (int height = 0; height < thred_matrix->height; height++) {
 		for (int width = 0; width < thred_matrix->width; width++) {
 			min_data = min_matrix->data + height * min_matrix->width;//指向行开头
@@ -403,7 +364,6 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 			thred_data++;
 		}
 	}
-#endif
 }
 
 /*
