@@ -35,9 +35,8 @@ user_snn_layers *user_snn_model_create(int *layer_infor) {
 //返回 无
 void user_snn_model_load_input_feature(user_snn_layers *layers, user_nn_matrix *src_matrix) {
 	user_snn_layers *snn_input_layer = user_snn_layers_get(layers, 1);//获取输入层
-	//user_nn_matrix_cpy_matrix(((user_nn_input_layers *)nn_input_layer->content)->feature_matrix, src_matrix);
 	user_nn_matrix_memcpy(((user_snn_input_layers *)snn_input_layer->content)->feature_matrix, src_matrix->data);
-	//((user_nn_input_layers *)nn_input_layer->content)->feature_matrix = src_matrix;
+	user_snn_data_softmax(((user_snn_input_layers *)snn_input_layer->content)->feature_matrix);//特征处理
 }
 //加载特征数据到指定到期望特征数据中
 //layers 加载对象层
@@ -45,9 +44,8 @@ void user_snn_model_load_input_feature(user_snn_layers *layers, user_nn_matrix *
 //返回 无
 void user_snn_model_load_target_feature(user_snn_layers *layers, user_nn_matrix *src_matrix) {
 	user_snn_layers *snn_output_layer = user_snn_model_return_layer(layers, u_snn_layer_type_output);//获取输入层
-	//user_nn_matrix_cpy_matrix(((user_nn_output_layers *)nn_output_layer->content)->target_matrix, src_matrix);
 	user_nn_matrix_memcpy(((user_snn_output_layers *)snn_output_layer->content)->target_matrix, src_matrix->data);
-	//((user_nn_output_layers *)nn_output_layer->content)->target_matrix = src_matrix;
+	user_snn_data_softmax(((user_snn_input_layers *)snn_output_layer->content)->feature_matrix);//特征处理
 }
 //正向执行一次迭代
 //layers 所创建的层
@@ -82,7 +80,7 @@ void user_snn_model_ffp(user_snn_layers *layers) {
 //index：当前标签位置
 //alpha：更新系数
 //返回值：无
-void user_snn_model_bp(user_snn_layers *layers, float alpha) {
+void user_snn_model_bp(user_snn_layers *layers) {
 	//取得指向最后一层数据指针
 	while (layers->next != NULL) {
 		layers = layers->next;

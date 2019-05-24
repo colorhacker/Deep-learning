@@ -56,4 +56,10 @@
 #define		user_nn_model_nn_content_addr	 0x800		//保存层对象的基地址
 #define		user_nn_model_nn_data_addr		 0x1000		//保存数据的基地址
 //NN配置结束
+//SNN配置开始
+#define		user_nn_model_snn_file_name		"./model/snn_model"
+#define		user_nn_model_snn_layer_addr		 0x0		//保存层的基地址
+#define		user_nn_model_snn_content_addr	 0x800		//保存层对象的基地址
+#define		user_nn_model_snn_data_addr		 0x1000		//保存数据的基地址
+//SNN配置结束
 #endif

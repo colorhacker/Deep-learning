@@ -2,7 +2,8 @@
 #define _user_snn_app_H
 
 #include "user_snn_layers.h"
-#include "user_snn_ffp_bp.h"
+#include "user_snn_model.h"
+#include "user_snn_rw_model.h"
 
 #include "..\matrix\user_nn_initialization.h"
 #include "..\matrix\user_nn_matrix_file.h"

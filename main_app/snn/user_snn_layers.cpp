@@ -29,7 +29,42 @@ user_snn_layers *user_snn_layers_create(user_snn_layer_type type, int index) {
 
 	return snn_layers;
 }
-
+//删除层
+void user_snn_layers_delete(user_snn_layers *layers) {
+	if (layers != NULL) {
+		if (layers->content != NULL) {
+			if (layers->type == u_snn_layer_type_input) {
+				user_nn_matrix_delete(((user_snn_input_layers *)layers->content)->thred_matrix);
+				user_nn_matrix_delete(((user_snn_input_layers *)layers->content)->feature_matrix);
+			}
+			else if (layers->type == u_snn_layer_type_hidden) {
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->min_kernel_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->max_kernel_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->feature_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->thred_matrix);
+			}
+			else if (layers->type == u_snn_layer_type_output) {
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->min_kernel_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->max_kernel_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->feature_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->feature_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->thred_matrix);
+			}
+			free(layers->content);
+		}
+		free(layers);
+	}
+}
+//删除层所有
+void user_snn_layers_all_delete(user_snn_layers *layers) {
+	user_snn_layers *layer = layers;
+	user_snn_layers *layer_next = NULL;
+	while (layer != NULL) {
+		layer_next = layer->next;
+		user_snn_layers_delete(layer);//删除当前矩阵
+		layer = layer_next;//更新矩阵
+	}
+}
 //创建输入层
 //参数
 //feature_width：输入数据的宽度

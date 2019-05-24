@@ -11,7 +11,7 @@ void user_snn_model_info_layer(user_snn_layers *layers);//ÏÔÊ¾²ãĞÅÏ¢
 void user_snn_model_load_input_feature(user_snn_layers *layers, user_nn_matrix *src_matrix);
 void user_snn_model_load_target_feature(user_snn_layers *layers, user_nn_matrix *src_matrix);
 void user_snn_model_ffp(user_snn_layers *layers);
-void user_snn_model_bp(user_snn_layers *layers, float alpha);
+void user_snn_model_bp(user_snn_layers *layers);
 float user_snn_model_return_loss(user_snn_layers *layers);
 user_nn_matrix *user_snn_model_return_result(user_snn_layers *layers);
 void user_snn_model_display_feature(user_snn_layers *layers);
