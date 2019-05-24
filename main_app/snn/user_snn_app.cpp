@@ -14,9 +14,11 @@ user_nn_matrix *user_nn_matrix_create_memset(int width, int height,float *data) 
 }
 
 void user_snn_app_train(int argc, const char** argv) {
+	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int user_layers[] = {
 		'i', 1, 784, //输入层 特征（宽度、高度）
 		'h', 392, //隐含层 特征 （高度）
+		'h', 196, //隐含层 特征 （高度）
 		'o', 10 //输出层 特征 （高度）
 	};
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
@@ -32,20 +34,19 @@ void user_snn_app_train(int argc, const char** argv) {
 	}
 	int info = 0;
 	clock_t start_time = clock();
-	for (;;) {
+	for (int count = 0; count < 1; count++) {
 		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
 			user_snn_model_load_input_feature(snn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index));//加载输入数据
 			user_snn_model_load_target_feature(snn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标数据	
 			user_snn_model_ffp(snn_layers);
 			user_snn_model_bp(snn_layers);
-			if (info++ > 1000) {
+			if (info++ >= 1000) {
 				info = 0;
-				printf("\n%d", train_index);
+				printf("\n--->:%d", train_index);
 			}
 		}
-		break;
 	}
-	printf("\ntime:%d", (clock() - start_time) / 1000);
+	printf("\ntime:%ds", (clock() - start_time) / 1000);
 	start_time = clock();
 	float success = 0;
 	for (;;) {
@@ -63,7 +64,7 @@ void user_snn_app_train(int argc, const char** argv) {
 		}
 		break;
 	}
-	printf("\nsuccess:%.4f,time:%d\n", 100 * success /(float)(test_images->height * test_images->width), (clock() - start_time) / 1000);
+	printf("\nsuccess:%.4f%%,time:%ds\n", 100 * success /(float)(test_images->height * test_images->width), (clock() - start_time) / 1000);
 	system("pause");
 }
 void user_snn_app_ident(int argc, const char** argv) {
