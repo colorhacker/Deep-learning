@@ -13,7 +13,7 @@
 
 
 int main(int argc, const char** argv){
-	user_snn_app_train(argc, argv);
+	user_snn_app_test(argc,argv);
 	return 0;
 #ifdef _OPENMP
 	omp_set_num_threads(64);
