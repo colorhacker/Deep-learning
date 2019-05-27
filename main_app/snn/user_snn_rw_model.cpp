@@ -41,6 +41,26 @@ static long user_snn_model_read_input(FILE *file, long offset, user_snn_input_la
 	fread(input, sizeof(user_snn_input_layers), 1, file);//写入层
 	return ftell(file);
 }
+
+//file 文件对象
+//offset 偏移地址
+//conv 保存的对象
+//返回 文件指针位置
+static long user_snn_model_save_flat(FILE *file, long offset, user_snn_flat_layers *hidden) {
+	fseek(file, offset, SEEK_SET);
+	fwrite(hidden, sizeof(user_snn_flat_layers), 1, file);//写入层
+	return ftell(file);
+}
+
+//file 文件对象
+//offset 偏移地址
+//conv 保存的对象
+//返回 文件指针位置
+static long user_snn_model_read_flat(FILE *file, long offset, user_snn_flat_layers *hidden) {
+	fseek(file, offset, SEEK_SET);
+	fread(hidden, sizeof(user_snn_flat_layers), 1, file);//写入层
+	return ftell(file);
+}
 //保存卷积层
 //file 文件对象
 //offset 偏移地址
@@ -89,16 +109,17 @@ bool user_snn_model_save_model(user_snn_layers *layers, int id){
 	char full_path[MAX_PATH] = "";
 	FILE *model_file = NULL;
 	user_snn_input_layers	*input_infor = NULL;
+	user_snn_flat_layers	*flat_infor = NULL;
 	user_snn_hidden_layers	*hidden_infor = NULL;
 	user_snn_output_layers  *output_infor = NULL;
 	long layers_offset = user_nn_model_snn_layer_addr;//层保存位置
 	long infor_offset = user_nn_model_snn_content_addr;//信息描述位置
 	long data_offset = user_nn_model_snn_data_addr;//数据对象位置
 	if (id == 0) {
-		sprintf(full_path, "%s.bin", user_nn_model_nn_file_name);
+		sprintf(full_path, "%s.bin", user_nn_model_snn_file_name);
 	}
 	else {
-		sprintf(full_path, "%s_%d.bin", user_nn_model_nn_file_name, id);
+		sprintf(full_path, "%s_%d.bin", user_nn_model_snn_file_name, id);
 	}
 	fopen_s(&model_file, full_path, "wb+");//打开模型文件
 	if (model_file == NULL)return false;
@@ -112,6 +133,13 @@ bool user_snn_model_save_model(user_snn_layers *layers, int id){
 			input_infor = (user_snn_input_layers *)layers->content;
 			layers_offset = user_snn_model_save_layer(model_file, layers_offset, layers);//保存层信息
 			infor_offset = user_snn_model_save_input(model_file, infor_offset, input_infor);
+			break;
+		case u_snn_layer_type_flat:
+			flat_infor = (user_snn_flat_layers *)layers->content;//
+			layers_offset = user_snn_model_save_layer(model_file, layers_offset, layers);//保存层信息
+			infor_offset = user_snn_model_save_flat(model_file, infor_offset, flat_infor);//保存卷积层数据
+			data_offset = user_nn_model_save_matrix(model_file, data_offset, flat_infor->min_kernel_matrix);//保存偏置参数
+			data_offset = user_nn_model_save_matrix(model_file, data_offset, flat_infor->max_kernel_matrix);//保存偏置参数
 			break;
 		case u_snn_layer_type_hidden:
 			hidden_infor = (user_snn_hidden_layers *)layers->content;//
@@ -151,6 +179,7 @@ user_snn_layers	*user_snn_model_load_model(int id){
 	long data_offset = user_nn_model_snn_data_addr;//数据对象位置
 	user_snn_layers			*nn_layers = NULL, *temp_cnn_layers = NULL;
 	user_snn_input_layers	*input_infor = NULL, *temp_input_infor = NULL;
+	user_snn_flat_layers	*flat_infor = NULL, *temp_flat_infor = NULL;
 	user_snn_hidden_layers	*hidden_infor = NULL, *temp_hidden_infor = NULL;
 	user_snn_output_layers  *output_infor = NULL, *temp_output_infor = NULL;
 	if (id == 0) {
@@ -175,10 +204,18 @@ user_snn_layers	*user_snn_model_load_model(int id){
 			input_infor = user_snn_layers_input_create(nn_layers, temp_input_infor->feature_width, temp_input_infor->feature_height);//创建输入层
 			free(temp_input_infor);//释放空间
 			break;
+		case u_snn_layer_type_flat:
+			temp_flat_infor = (user_snn_flat_layers *)malloc(sizeof(user_snn_flat_layers));//分配层空间
+			infor_offset = user_snn_model_read_flat(model_file, infor_offset, temp_flat_infor);//读取输入层信息
+			flat_infor = user_snn_layers_flat_create(nn_layers);//创建层
+			data_offset = user_nn_model_read_matrix(model_file, data_offset, flat_infor->min_kernel_matrix);//载入偏置参数
+			data_offset = user_nn_model_read_matrix(model_file, data_offset, flat_infor->max_kernel_matrix);//载入偏置参数
+			free(temp_flat_infor);//释放空间
+			break;
 		case u_snn_layer_type_hidden:
 			temp_hidden_infor = (user_snn_hidden_layers *)malloc(sizeof(user_snn_hidden_layers));//分配层空间
 			infor_offset = user_snn_model_read_hidden(model_file, infor_offset, temp_hidden_infor);//读取输入层信息
-			hidden_infor = user_snn_layers_hidden_create(nn_layers, temp_hidden_infor->feature_height);//创建卷积层
+			hidden_infor = user_snn_layers_hidden_create(nn_layers, temp_hidden_infor->feature_height);//创建层
 			data_offset = user_nn_model_read_matrix(model_file, data_offset, hidden_infor->min_kernel_matrix);//载入偏置参数
 			data_offset = user_nn_model_read_matrix(model_file, data_offset, hidden_infor->max_kernel_matrix);//载入偏置参数
 			free(temp_hidden_infor);//释放空间

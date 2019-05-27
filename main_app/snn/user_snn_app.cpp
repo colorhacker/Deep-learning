@@ -14,10 +14,20 @@ user_nn_matrix *user_nn_matrix_create_memset(int width, int height,float *data) 
 }
 
 void user_snn_app_train(int argc, const char** argv) {
+	
+	//user_nn_matrix *matrix = user_nn_matrix_create(6, 6);//创建3*3大小的二维矩阵
+	//matrix->data[0] = 2.0f;
+	//matrix->data[1] = 1.0f;
+	//user_snn_data_softmax(matrix);
+	//user_nn_matrix_printf(NULL, matrix);//打印矩阵
+
+	//getchar();
+	//return ;
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int user_layers[] = {
 		'i', 1, 784, //输入层 特征（宽度、高度）
-		'h', 1568, //隐含层 特征 （高度）
+		'h', 784, //隐含层 特征 （高度）
+		'f',
 		'o', 10 //输出层 特征 （高度）
 	};
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
@@ -43,8 +53,10 @@ void user_snn_app_train(int argc, const char** argv) {
 				info = 0;
 				printf("\n--->:%d", train_index);
 			}
+			//user_snn_model_display_feature(snn_layers);
 		}
 	}
+	//user_snn_model_save_model(snn_layers,0);//
 	printf("\ntime:%ds", (clock() - start_time) / 1000);
 	start_time = clock();
 	float success = 0;
@@ -56,10 +68,6 @@ void user_snn_app_train(int argc, const char** argv) {
 			if (*user_nn_matrix_return_max_addr(user_snn_model_return_result(snn_layers)) == *user_nn_matrix_return_max_addr(user_nn_matrices_ext_matrix_index(test_lables, test_index))) {
 				success++;
 			}
-			if (info++ > 1000) {
-				info = 0;
-				//printf("\n%d", test_index);
-			}
 		}
 		break;
 	}
@@ -67,7 +75,28 @@ void user_snn_app_train(int argc, const char** argv) {
 	system("pause");
 }
 void user_snn_app_ident(int argc, const char** argv) {
+	float success = 0;
+	clock_t start_time = clock();
+	user_nn_list_matrix *test_lables = user_nn_model_file_read_matrices("./mnist/files/t10k-labels.idx1-ubyte.bx", 0);
+	user_nn_list_matrix *test_images = user_nn_model_file_read_matrices("./mnist/files/t10k-images.idx3-ubyte.bx", 0);
 
+	user_snn_layers *snn_layers = user_snn_model_load_model(0);//载入模型
+	if (snn_layers == NULL) {
+		return;
+	}
+	for (;;) {
+		for (int test_index = 0; test_index < test_images->height * test_images->width; test_index++) {
+			user_snn_model_load_input_feature(snn_layers, user_nn_matrices_ext_matrix_index(test_images, test_index));//加载输入数据
+			user_snn_model_load_target_feature(snn_layers, user_nn_matrices_ext_matrix_index(test_lables, test_index));//加载目标数据	
+			user_snn_model_ffp(snn_layers);
+			if (*user_nn_matrix_return_max_addr(user_snn_model_return_result(snn_layers)) == *user_nn_matrix_return_max_addr(user_nn_matrices_ext_matrix_index(test_lables, test_index))) {
+				success++;
+			}
+		}
+		break;
+	}
+	printf("\nsuccess:%.4f%%,time:%ds\n", 100 * success / (float)(test_images->height * test_images->width), (clock() - start_time) / 1000);
+	system("pause");
 }
 void user_snn_app_test(int argc, const char** argv) {
 	printf("\n-----功能选择-----\n");

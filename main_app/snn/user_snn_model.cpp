@@ -14,6 +14,10 @@ user_snn_layers *user_snn_model_create(int *layer_infor) {
 			user_snn_layers_input_create(snn_layers, *(layer_infor + 1), *(layer_infor + 2));	//输入层
 			layer_infor += 3;
 			break;
+		case 'f':
+			user_snn_layers_flat_create(snn_layers);//flat
+			layer_infor += 1;
+			break;
 		case 'h':
 			user_snn_layers_hidden_create(snn_layers, *(layer_infor + 1));//隐含层
 			layer_infor += 2;
@@ -57,6 +61,9 @@ void user_snn_model_ffp(user_snn_layers *layers) {
 			break;
 		case u_snn_layer_type_input:
 			break;
+		case u_snn_layer_type_flat:
+			user_snn_ffp_flat(layers->prior, layers);//子采样处理
+			break;
 		case u_snn_layer_type_hidden:
 			user_snn_ffp_hidden(layers->prior, layers);//子采样处理
 			break;
@@ -91,6 +98,9 @@ void user_snn_model_bp(user_snn_layers *layers) {
 		case u_snn_layer_type_null:
 			break;
 		case u_snn_layer_type_input:
+			break;
+		case u_snn_layer_type_flat:
+			user_snn_bp_flat_back_prior(layers->prior, layers);
 			break;
 		case u_snn_layer_type_hidden:
 			user_snn_bp_hidden_back_prior(layers->prior, layers);
@@ -140,6 +150,7 @@ user_snn_layers *user_snn_model_return_layer(user_snn_layers *layers, user_snn_l
 //返回 结果对象层
 void user_snn_model_info_layer(user_snn_layers *layers) {
 	user_snn_input_layers	*input_infor = NULL;
+	user_snn_flat_layers	*flat_infor = NULL;
 	user_snn_hidden_layers	*hidden_infor = NULL;
 	user_snn_output_layers  *output_infor = NULL;
 	printf("\n\n-----NN神经网络层信息-----\n");
@@ -150,6 +161,10 @@ void user_snn_model_info_layer(user_snn_layers *layers) {
 			case u_snn_layer_type_input:
 				input_infor = (user_snn_input_layers *)layers->content;
 				printf("\n第%d层,输入数据(%d,%d).", layers->index, input_infor->feature_width, input_infor->feature_height);
+				break;
+			case u_snn_layer_type_flat:
+				flat_infor = (user_snn_flat_layers *)layers->content;
+				printf("\n第%d层,神经元大小(%d,%d).", layers->index, flat_infor->feature_width, flat_infor->feature_height);
 				break;
 			case u_snn_layer_type_hidden:
 				hidden_infor = (user_snn_hidden_layers *)layers->content;
@@ -213,6 +228,10 @@ void user_snn_model_display_feature(user_snn_layers *layers) {
 		case u_snn_layer_type_input:
 			sprintf(windows_name, "input%d", layers->index);
 			user_snn_model_display_matrix(windows_name, ((user_snn_input_layers  *)layers->content)->feature_matrix, 50 + window_count * 150,20);//显示到指定窗口
+			break;
+		case u_snn_layer_type_flat:
+			sprintf(windows_name, "flat%d", layers->index);
+			user_snn_model_display_matrix(windows_name, ((user_snn_flat_layers  *)layers->content)->feature_matrix, 50 + window_count * 150, 20);//显示到指定窗口
 			break;
 		case u_snn_layer_type_hidden:
 			sprintf(windows_name, "hidden%d", layers->index);
