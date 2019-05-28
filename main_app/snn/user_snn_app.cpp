@@ -17,9 +17,10 @@ void user_snn_app_train(int argc, const char** argv) {
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int user_layers[] = {
 		'i', 1, 784, //输入层 特征（宽度、高度）
-		'f',
-		'h', 784, //隐含层 特征 （高度）
-		'f',
+		//'f',
+		//'f',
+		//'h', 369, //隐含层 特征 （高度）
+		//'f',
 		'o', 10 //输出层 特征 （高度）
 	};
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
