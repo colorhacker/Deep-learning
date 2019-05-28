@@ -265,12 +265,10 @@ void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix *max_matrix
 	float *max_data = max_matrix->data;
 	while (count--) {
 		*min_data = user_nn_init_normal();
-		*max_data = *min_data + user_nn_init_normal() + 1.0f;
+		*max_data = *min_data + user_nn_init_normal() + 3.0f;
 		min_data++;
 		max_data++;
 	}
-	//user_snn_data_softmax(min_matrix);
-	//user_snn_data_softmax(max_matrix);
 }
 
 //升降值计算
@@ -284,11 +282,11 @@ void user_nn_matrix_thred_process(user_nn_matrix *thred_matrix,user_nn_matrix *s
 	float *thred_data = thred_matrix->data;
 	while (count--) {
 		if (*target_data > *src_data) {
-			*thred_data = snn_thred_add;
+			*thred_data = user_nn_snn_thred_add;
 		}else if (*target_data < *src_data) {
-			*thred_data = snn_thred_acc;
+			*thred_data = user_nn_snn_thred_acc;
 		}else {
-			*thred_data = snn_thred_none;
+			*thred_data = user_nn_snn_thred_none;
 		}
 		src_data++;
 		target_data++;
@@ -379,34 +377,34 @@ void user_nn_matrix_update_flat(user_nn_matrix *src_matrix, user_nn_matrix *src_
 	float *max_data = max_matrix->data;//
 	
 	for (int count = 0; count < src_matrix->height * src_matrix->width; count++) {
-		if (*thred_data == snn_thred_add) {
+		if (*thred_data == user_nn_snn_thred_add) {
 			if (*src_data >= avg_value) {
 				//avg_value = *src_data;
 				//在保持前一层数据输入情况不变下移动阈值
 				*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 				*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
 				//在保持本层阈值不变情况下移动输入值
-				*src_exp_data = *src_data < *min_data ? (*src_exp_data + snn_add_value) : *src_exp_data;
-				*src_exp_data = *src_data > *max_data ? (*src_exp_data - snn_add_value) : *src_exp_data;
+				*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
+				*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 			}
 			else {
 				//avg_value = *src_data;
 				*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
 				*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
-				*src_exp_data = *src_data < *min_data ? (*src_exp_data + snn_add_value) : *src_exp_data;
-				*src_exp_data = *src_data > *max_data ? (*src_exp_data - snn_add_value) : *src_exp_data;
+				*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
+				*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 			}
 			*max_data = *min_data > *max_data ? *min_data : *max_data;
 		}
-		else if (*thred_data == snn_thred_acc) {
+		else if (*thred_data == user_nn_snn_thred_acc) {
 			if (*src_data >= avg_value) {
 				//avg_value = *src_data;
 				*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 				*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
 
 				if (*min_data < *src_data && *src_data < *max_data) {
-					*src_exp_data += snn_add_value;
+					*src_exp_data += user_nn_snn_add_value;
 				}
 			}
 			else {
@@ -415,7 +413,7 @@ void user_nn_matrix_update_flat(user_nn_matrix *src_matrix, user_nn_matrix *src_
 				*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
 				if (*min_data < *src_data && *src_data < *max_data) {
-					*src_exp_data -= snn_add_value;
+					*src_exp_data -= user_nn_snn_add_value;
 				}
 			}
 			*max_data = *min_data > *max_data ? *min_data : *max_data;
@@ -460,34 +458,34 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 			src_data = src_matrix->data + width;//指向列开头
 			src_exp_data = src_exp_matrix->data + width;
 			for (int point = 0; point < src_matrix->height; point++) {
-				if (*thred_data == snn_thred_add) {
+				if (*thred_data == user_nn_snn_thred_add) {
 					if (*src_data >= avg_value) {
 						//avg_value = *src_data;
 						//在保持前一层数据输入情况不变下移动阈值
 						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
 						//在保持本层阈值不变情况下移动输入值
-						*src_exp_data = *src_data < *min_data ? (*src_exp_data + snn_add_value) : *src_exp_data;
-						*src_exp_data = *src_data > *max_data ? (*src_exp_data - snn_add_value) : *src_exp_data;
+						*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
+						*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 					}
 					else {
 						//avg_value = *src_data;
 						*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
-						*src_exp_data = *src_data < *min_data ? (*src_exp_data + snn_add_value) : *src_exp_data;
-						*src_exp_data = *src_data > *max_data ? (*src_exp_data - snn_add_value) : *src_exp_data;
+						*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
+						*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 					}
 					*max_data = *min_data > *max_data ? *min_data : *max_data;
 				}
-				else if (*thred_data == snn_thred_acc) {
+				else if (*thred_data == user_nn_snn_thred_acc) {
 					if (*src_data >= avg_value) {
 						//avg_value = *src_data;
 						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
 
 						if (*min_data < *src_data && *src_data < *max_data) {
-							*src_exp_data += snn_add_value;
+							*src_exp_data += user_nn_snn_add_value;
 						}
 					}
 					else {
@@ -496,7 +494,7 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
 						if (*min_data < *src_data && *src_data < *max_data) {
-							*src_exp_data -= snn_add_value;
+							*src_exp_data -= user_nn_snn_add_value;
 						}
 					}
 					*max_data = *min_data > *max_data ? *min_data : *max_data;

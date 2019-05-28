@@ -90,7 +90,7 @@ void user_snn_bp_output_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	//
 	//**** 使用归一化处理与未归一化处理的数据进行阈值设置
 	user_nn_matrix_thred_process(output_layers->thred_matrix,output_layers->feature_matrix, output_layers->target_matrix);//计算出阈值变化趋势
-	user_nn_matrix_update_thred(input_feature_matrix, input_thred_matrix, output_layers->min_kernel_matrix, output_layers->max_kernel_matrix, output_layers->thred_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
+	user_nn_matrix_update_thred(input_feature_matrix, input_thred_matrix, output_layers->min_kernel_matrix, output_layers->max_kernel_matrix, output_layers->thred_matrix, user_nn_snn_avg_vaule, user_nn_snn_step_vaule);//更新阈值
 	user_snn_data_softmax(input_thred_matrix);
 	user_nn_matrix_thred_process(input_thred_matrix, input_feature_matrix, input_thred_matrix);//计算出前一层阈值变化趋势
 }
@@ -118,7 +118,7 @@ void user_snn_bp_hidden_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	}
 	user_nn_matrix_cpy_matrix(input_thred_matrix, input_feature_matrix);//拷贝值
 	//user_nn_matrix_memset(input_thred_matrix, 0.0f);
-	user_nn_matrix_update_thred(input_feature_matrix, input_thred_matrix, hidden_layers->min_kernel_matrix, hidden_layers->max_kernel_matrix, hidden_layers->thred_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
+	user_nn_matrix_update_thred(input_feature_matrix, input_thred_matrix, hidden_layers->min_kernel_matrix, hidden_layers->max_kernel_matrix, hidden_layers->thred_matrix, user_nn_snn_avg_vaule, user_nn_snn_step_vaule);//更新阈值
 	user_snn_data_softmax(input_thred_matrix);
 	user_nn_matrix_thred_process(input_thred_matrix, input_feature_matrix, input_thred_matrix);//计算出阈值变化趋势
 }
@@ -145,7 +145,7 @@ void user_snn_bp_flat_back_prior(user_snn_layers *prior_layer, user_snn_layers *
 	}
 	user_nn_matrix_cpy_matrix(input_thred_matrix, input_feature_matrix);//拷贝值
 	//user_nn_matrix_memset(input_thred_matrix, 0.0f);
-	user_nn_matrix_update_thred(input_feature_matrix, input_thred_matrix, flat_layers->min_kernel_matrix, flat_layers->max_kernel_matrix, flat_layers->thred_matrix, snn_avg_vaule, snn_step_vaule);//更新阈值
+	user_nn_matrix_update_thred(input_feature_matrix, input_thred_matrix, flat_layers->min_kernel_matrix, flat_layers->max_kernel_matrix, flat_layers->thred_matrix, user_nn_snn_avg_vaule, user_nn_snn_step_vaule);//更新阈值
 	user_snn_data_softmax(input_thred_matrix);
 	user_nn_matrix_thred_process(input_thred_matrix, input_feature_matrix, input_thred_matrix);//计算出阈值变化趋势
 }

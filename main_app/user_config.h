@@ -57,13 +57,13 @@
 #define		user_nn_model_nn_data_addr		 0x1000		//保存数据的基地址
 //NN配置结束
 //SNN配置开始
-#define		snn_avg_vaule					1.0f	//数据均值
-#define		snn_add_value					0.1f	//前反馈 变化值
-#define		snn_step_vaule					0.001f	//每一步移动的值
+#define		user_nn_snn_avg_vaule			1.0f	//数据均值
+#define		user_nn_snn_add_value			0.1f	//前反馈 变化值
+#define		user_nn_snn_step_vaule			0.00001f	//每一步移动的值
 
-#define		snn_thred_none					1.0f	//不需要变化
-#define		snn_thred_add					0.9f	//目标值大于输出值
-#define		snn_thred_acc					1.1f	//目标值小于输出值
+#define		user_nn_snn_thred_none			1.0f	//不需要变化
+#define		user_nn_snn_thred_add			0.9f	//目标值大于输出值
+#define		user_nn_snn_thred_acc			1.1f	//目标值小于输出值
 
 #define		user_nn_model_snn_file_name		"./model/snn_model"
 #define		user_nn_model_snn_layer_addr	 0x0		//保存层的基地址
