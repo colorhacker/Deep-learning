@@ -56,7 +56,7 @@ void user_snn_app_train(int argc, const char** argv) {
 			//user_snn_model_display_feature(snn_layers);
 		}
 	}
-	//user_snn_model_save_model(snn_layers,0);//
+	user_snn_model_save_model(snn_layers,0);//
 	printf("\ntime:%ds", (clock() - start_time) / 1000);
 	start_time = clock();
 	float success = 0;
