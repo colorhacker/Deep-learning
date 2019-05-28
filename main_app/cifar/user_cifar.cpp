@@ -6,10 +6,12 @@ void cifar_conv_list_matrix(char *file_name) {
 	float *matrix_data = NULL;
 	FILE *file_handle = NULL;
 	user_cifar_header *cifar_header = NULL;
-	user_nn_list_matrix *mnist_data_list = NULL;//创建连续矩阵
+	user_nn_list_matrix *cifar_data_list = NULL;//创建连续矩阵
+	user_nn_list_matrix *cifar_lable_list = NULL;//创建连续矩阵
 	cifar_header = (user_cifar_header *)malloc(sizeof(user_cifar_header));//分配空间
 	
 	fopen_s(&file_handle, file_name, "rb");
+
 
 	for (int count = 0; count < 10000; count++) {
 		fread(cifar_header, sizeof(user_cifar_header), 1, file_handle);//
