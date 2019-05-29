@@ -58,7 +58,7 @@
 //NN配置结束
 //SNN配置开始
 #define		user_nn_snn_avg_vaule			1.0f	//数据均值
-#define		user_nn_snn_add_value			0.001f	//前反馈 变化值
+#define		user_nn_snn_add_value			0.01f	//前反馈 变化值
 #define		user_nn_snn_step_vaule			0.001f	//每一步移动的值
 
 #define		user_nn_snn_thred_none			1.0f	//不需要变化
