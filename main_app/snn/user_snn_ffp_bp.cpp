@@ -89,7 +89,7 @@ void user_snn_bp_output_back_prior(user_snn_layers *prior_layer, user_snn_layers
 	//user_nn_matrix_memset(input_thred_matrix,0.0f);
 	
 	//复用output_layers->thred_matrix
-	user_nn_matrix_sub_matrix(output_layers->thred_matrix, output_layers->feature_matrix, output_layers->target_matrix);//减法
+	user_nn_matrix_sub_matrix(output_layers->thred_matrix, output_layers->target_matrix, output_layers->feature_matrix);//减法
 	output_layers->loss_function = user_nn_matrix_get_rmse(output_layers->thred_matrix);//获取均方根误差
 
 	//**** 使用归一化处理与未归一化处理的数据进行阈值设置
