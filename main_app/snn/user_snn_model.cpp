@@ -49,7 +49,7 @@ void user_snn_model_load_input_feature(user_snn_layers *layers, user_nn_matrix *
 void user_snn_model_load_target_feature(user_snn_layers *layers, user_nn_matrix *src_matrix) {
 	user_snn_layers *snn_output_layer = user_snn_model_return_layer(layers, u_snn_layer_type_output);//获取输入层
 	user_nn_matrix_memcpy(((user_snn_output_layers *)snn_output_layer->content)->target_matrix, src_matrix->data);
-	user_snn_data_softmax(((user_snn_output_layers *)snn_output_layer->content)->target_matrix);//特征处理
+	//user_snn_data_softmax(((user_snn_output_layers *)snn_output_layer->content)->target_matrix);//特征处理
 }
 //正向执行一次迭代
 //layers 所创建的层
