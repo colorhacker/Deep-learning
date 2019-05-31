@@ -6,7 +6,7 @@ void user_snn_app_train(int argc, const char** argv) {
 	int layers[] = {
 		'i', 1, 2, 
 		//'f',
-		'h', 4,
+		'h', 2,
 		//'f',
 		'o', 2
 	};
@@ -35,10 +35,10 @@ void user_snn_app_train(int argc, const char** argv) {
 		user_snn_model_load_target_feature(layer, output2);//加载目标数据
 		user_snn_model_ffp(layer);
 		user_snn_model_bp(layer);
-		user_snn_model_load_input_feature(layer, input3);//加载输入数据
-		user_snn_model_load_target_feature(layer, output3);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
+		//user_snn_model_load_input_feature(layer, input3);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output3);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
 		//user_snn_model_load_input_feature(layer, input4);//加载输入数据
 		//user_snn_model_load_target_feature(layer, output4);//加载目标数据
 		//user_snn_model_ffp(layer);
