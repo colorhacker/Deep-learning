@@ -19,7 +19,7 @@ void user_snn_app_train(int argc, const char** argv) {
 	user_nn_matrix *input3 = user_nn_matrix_create_memset(1, 2, input[2]);
 	user_nn_matrix *input4 = user_nn_matrix_create_memset(1, 2, input[3]);
 
-	float output[][2] = { { 0,1 },{ 0,1 } ,{ 1,0 },{ 1,0 } };
+	float output[][2] = { { 1,2 },{ 2,3 } ,{ 3,4 },{ 4,5 } };
 	user_nn_matrix *output1 = user_nn_matrix_create_memset(1, 2, output[0]);
 	user_nn_matrix *output2 = user_nn_matrix_create_memset(1, 2, output[1]);
 	user_nn_matrix *output3 = user_nn_matrix_create_memset(1, 2, output[2]);
@@ -27,10 +27,10 @@ void user_snn_app_train(int argc, const char** argv) {
 
 
 	for (int count = 0; count < 500000; count++) {
-		user_snn_model_load_input_feature(layer, input1);//加载输入数据
-		user_snn_model_load_target_feature(layer, output1);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
+		//user_snn_model_load_input_feature(layer, input1);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output1);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
 		user_snn_model_load_input_feature(layer, input2);//加载输入数据
 		user_snn_model_load_target_feature(layer, output2);//加载目标数据
 		user_snn_model_ffp(layer);
@@ -39,10 +39,10 @@ void user_snn_app_train(int argc, const char** argv) {
 		user_snn_model_load_target_feature(layer, output3);//加载目标数据
 		user_snn_model_ffp(layer);
 		user_snn_model_bp(layer);
-		user_snn_model_load_input_feature(layer, input4);//加载输入数据
-		user_snn_model_load_target_feature(layer, output4);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
+		//user_snn_model_load_input_feature(layer, input4);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output4);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
 
 			if (io++ >= 1000) {
 				io = 0;
