@@ -44,7 +44,7 @@ void user_snn_app_train(int argc, const char** argv) {
 			user_snn_model_bp(snn_layers);
 			if (info++ >= 1000) {
 				info = 0;
-				printf("\n--->:%d", train_index);
+				printf("\n--->:%d,%f", train_index, user_snn_model_return_loss(snn_layers));
 			}
 			//user_snn_model_display_feature(snn_layers);
 		}

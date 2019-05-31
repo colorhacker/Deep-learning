@@ -227,7 +227,7 @@ user_snn_output_layers *user_snn_layers_output_create(user_snn_layers *nn_layers
 	output_layers->feature_width = intput_featrue_width;
 	output_layers->feature_height = feature_number;
 
-
+	output_layers->loss_function = 0.0f;
 	output_layers->min_kernel_matrix = user_nn_matrix_create(intput_feature_height, output_layers->feature_height);//神经元矩阵
 	output_layers->max_kernel_matrix = user_nn_matrix_create(intput_feature_height, output_layers->feature_height);//神经元矩阵
 

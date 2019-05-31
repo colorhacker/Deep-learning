@@ -49,7 +49,7 @@ void user_snn_model_load_input_feature(user_snn_layers *layers, user_nn_matrix *
 void user_snn_model_load_target_feature(user_snn_layers *layers, user_nn_matrix *src_matrix) {
 	user_snn_layers *snn_output_layer = user_snn_model_return_layer(layers, u_snn_layer_type_output);//获取输入层
 	user_nn_matrix_memcpy(((user_snn_output_layers *)snn_output_layer->content)->target_matrix, src_matrix->data);
-	user_snn_data_softmax(((user_snn_input_layers *)snn_output_layer->content)->feature_matrix);//特征处理
+	user_snn_data_softmax(((user_snn_output_layers *)snn_output_layer->content)->target_matrix);//特征处理
 }
 //正向执行一次迭代
 //layers 所创建的层
@@ -123,7 +123,24 @@ void user_snn_model_bp(user_snn_layers *layers) {
 //layers 获取对象层
 //返回 损失值的大小
 float user_snn_model_return_loss(user_snn_layers *layers) {
-	return 0.0f;
+	static float loss_function = 0;//全局变量的loss值
+	while (1) {
+		if (layers->type == u_snn_layer_type_output) {
+			if (loss_function == 0.0f) {
+				loss_function = ((user_snn_output_layers *)layers->content)->loss_function;
+			}
+			else {
+				loss_function = (float)0.99f * loss_function + 0.01f * ((user_snn_output_layers *)layers->content)->loss_function;
+			}
+		}
+		if (layers->next == NULL) {
+			break;
+		}
+		else {
+			layers = layers->next;
+		}
+	}
+	return loss_function;
 }
 
 //从整个网络中获取一个指定层 按顺序查找

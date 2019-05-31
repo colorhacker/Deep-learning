@@ -56,6 +56,7 @@ typedef struct _snn_hidden_layers {
 typedef struct _snn_output_layers {
 	int feature_width;//数据宽度 特征数据的宽度
 	int feature_height;//数据高度 特征数据的高度
+	float loss_function;//损失函数
 
 	user_nn_matrix		*min_kernel_matrix;//神经元w	
 	user_nn_matrix		*max_kernel_matrix;//偏置参数
