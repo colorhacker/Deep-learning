@@ -1,26 +1,64 @@
 
 #include "user_snn_app.h"
 
-user_nn_matrix *user_nn_matrix_create_memset(int width, int height,float *data) {
-	user_nn_matrix *dest;
-
-	dest = (user_nn_matrix *)malloc(sizeof(user_nn_matrix));//分配保存矩阵空间的大小
-	dest->width = width;
-	dest->height = height;
-	dest->data = (float *)malloc(dest->width * dest->height * sizeof(float));//分配矩阵数据空间
-	dest->next = NULL;
-	memcpy(dest->data, data,sizeof(data)*sizeof(float));
-	return dest;
-}
-
 void user_snn_app_train(int argc, const char** argv) {
+	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
+	int layers[] = {
+		'i', 1, 2, 
+		//'f',
+		'h', 4,
+		//'f',
+		'o', 2
+	};
+	int io = 0;
+	user_snn_layers *layer = user_snn_model_create(layers);//创建模型
+
+	float input[][2] = { { 1,2 },{ 2,3 } ,{ 3,4 },{ 4,5 } };
+	user_nn_matrix *input1 = user_nn_matrix_create_memset(1, 2, input[0]);
+	user_nn_matrix *input2 = user_nn_matrix_create_memset(1, 2, input[1]);
+	user_nn_matrix *input3 = user_nn_matrix_create_memset(1, 2, input[2]);
+	user_nn_matrix *input4 = user_nn_matrix_create_memset(1, 2, input[3]);
+
+	float output[][2] = { { 0,1 },{ 0,1 } ,{ 1,0 },{ 1,0 } };
+	user_nn_matrix *output1 = user_nn_matrix_create_memset(1, 2, output[0]);
+	user_nn_matrix *output2 = user_nn_matrix_create_memset(1, 2, output[1]);
+	user_nn_matrix *output3 = user_nn_matrix_create_memset(1, 2, output[2]);
+	user_nn_matrix *output4 = user_nn_matrix_create_memset(1, 2, output[3]);
+
+
+	for (int count = 0; count < 500000; count++) {
+		user_snn_model_load_input_feature(layer, input1);//加载输入数据
+		user_snn_model_load_target_feature(layer, output1);//加载目标数据
+		user_snn_model_ffp(layer);
+		user_snn_model_bp(layer);
+		user_snn_model_load_input_feature(layer, input2);//加载输入数据
+		user_snn_model_load_target_feature(layer, output2);//加载目标数据
+		user_snn_model_ffp(layer);
+		user_snn_model_bp(layer);
+		user_snn_model_load_input_feature(layer, input3);//加载输入数据
+		user_snn_model_load_target_feature(layer, output3);//加载目标数据
+		user_snn_model_ffp(layer);
+		user_snn_model_bp(layer);
+		user_snn_model_load_input_feature(layer, input4);//加载输入数据
+		user_snn_model_load_target_feature(layer, output4);//加载目标数据
+		user_snn_model_ffp(layer);
+		user_snn_model_bp(layer);
+
+			if (io++ >= 1000) {
+				io = 0;
+				printf("\n--->:%f",  user_snn_model_return_loss(layer));
+			}
+			//user_snn_model_display_feature(snn_layers);
+		
+	}
+	system("pause");
+	return;
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int user_layers[] = {
 		'i', 1, 784, //输入层 特征（宽度、高度）
 		//'f',
+		'h', 128, //隐含层 特征 （高度）
 		//'f',
-		//'h', 784, //隐含层 特征 （高度）
-		'f',
 		'o', 10 //输出层 特征 （高度）
 	};
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
@@ -36,7 +74,7 @@ void user_snn_app_train(int argc, const char** argv) {
 	}
 	int info = 0;
 	clock_t start_time = clock();
-	for (int count = 0; count < 1; count++) {
+	for (int count = 0; count < 5; count++) {
 		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
 			user_snn_model_load_input_feature(snn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index));//加载输入数据
 			user_snn_model_load_target_feature(snn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标数据	

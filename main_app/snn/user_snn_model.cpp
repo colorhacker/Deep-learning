@@ -38,7 +38,7 @@ user_snn_layers *user_snn_model_create(int *layer_infor) {
 //src_matrix 目标数据
 //返回 无
 void user_snn_model_load_input_feature(user_snn_layers *layers, user_nn_matrix *src_matrix) {
-	user_snn_layers *snn_input_layer = user_snn_layers_get(layers, 1);//获取输入层
+	user_snn_layers *snn_input_layer = user_snn_model_return_layer(layers, u_snn_layer_type_input);//获取输入层
 	user_nn_matrix_memcpy(((user_snn_input_layers *)snn_input_layer->content)->feature_matrix, src_matrix->data);
 	user_snn_data_softmax(((user_snn_input_layers *)snn_input_layer->content)->feature_matrix);//特征处理
 }

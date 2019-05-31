@@ -38,6 +38,18 @@ user_nn_matrix *user_nn_matrix_cpy_create(user_nn_matrix *dest_matrix){
 
 	return result;
 }
+//从内存中创建矩阵
+//
+//
+user_nn_matrix *user_nn_matrix_create_memset(int width, int height, float *data) {
+	user_nn_matrix *dest = (user_nn_matrix *)malloc(sizeof(user_nn_matrix));//分配保存矩阵空间的大小
+	dest->width = width;
+	dest->height = height;
+	dest->data = (float *)malloc(dest->width * dest->height * sizeof(float));//分配矩阵数据空间
+	dest->next = NULL;
+	memcpy(dest->data, data, sizeof(data) * sizeof(float));
+	return dest;
+}
 //矩阵转置 交换矩阵的width height包括数据
 void user_nn_matrix_transpose(user_nn_matrix *src_matrix){
 	user_nn_matrix *temp_matrix = NULL;

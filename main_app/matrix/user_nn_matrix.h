@@ -56,6 +56,7 @@ typedef enum _eigs_type {
 
 user_nn_matrix *user_nn_matrix_create(int width, int height);//创建一个宽度为width 高度为height的矩阵
 user_nn_matrix *user_nn_matrix_cpy_create(user_nn_matrix *dest_matrix);//复制一个矩阵，返回新的矩阵
+user_nn_matrix *user_nn_matrix_create_memset(int width, int height, float *data);//从内存中创建矩阵
 void user_nn_matrix_transpose(user_nn_matrix *src_matrix);//矩阵转置 交换一个矩阵的长度和宽度大小并且交换数据
 float *user_nn_matrix_ext_value_index(user_nn_matrix *dest, int post_index);//获取矩阵中的一个值的指针，按照一维矩阵的方式来获取
 float *user_nn_matrix_ext_value(user_nn_matrix *dest, int postx, int posty);//获取矩阵中的一个值的指针，按照二维矩阵的方式来获取
