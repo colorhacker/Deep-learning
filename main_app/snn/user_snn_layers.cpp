@@ -243,18 +243,8 @@ user_snn_output_layers *user_snn_layers_output_create(user_snn_layers *nn_layers
 
 //数据中值处理
 void user_snn_data_softmax(user_nn_matrix *src_matrix) {
-	float count = (float)(src_matrix->height * src_matrix->width);
-	float *src_data = src_matrix->data;
-	float *max_value = user_nn_matrix_return_max_addr(src_matrix);
-	if (*max_value > 1.0f) {
-		user_nn_matrix_divi_constant(src_matrix, *max_value);//归一
-	}
-	user_nn_matrix_sum_constant(src_matrix, (count - user_nn_matrix_cum_element(src_matrix)) / count);//平均值设置为1.0f
-	//user_nn_matrix_divi_constant(src_matrix, 0.0001f);//除法
-	//user_nn_matrxi_floor(src_matrix);//取整
-	//user_nn_matrix_mult_constant(src_matrix, 0.0001f);//乘法
-	//*max_value += count - user_nn_matrix_cum_element(src_matrix);
-	//printf("%-10.6f\n", user_nn_matrix_cum_element(src_matrix));
+	float ave_value = user_nn_matrix_cum_element(src_matrix) / (float)(src_matrix->height * src_matrix->width);
+	user_nn_matrix_sub_constant(src_matrix, ave_value);//平均值设置为0.0f
 }
 //初始化阈值矩阵
 //输入矩阵 最小最大矩阵
@@ -264,10 +254,8 @@ void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix *max_matrix
 	float *min_data = min_matrix->data;
 	float *max_data = max_matrix->data;
 	while (count--) {
-		*min_data = user_nn_init_normal();
-		*max_data = *min_data + user_nn_init_normal() + 3.0f;
-		min_data++;
-		max_data++;
+		*min_data = user_nn_init_uniform();
+		*max_data++ = *min_data++ + user_nn_init_uniform() +2.0f;
 	}
 }
 
@@ -307,7 +295,8 @@ void user_nn_matrix_thred_flat(user_nn_matrix *src_matrix, user_nn_matrix *min_m
 
 	for (int count = 0; count < src_matrix->height * src_matrix->width; count++) {
 		if ((*min_data <= *src_data) && (*src_data <= *max_data)) {
-			*output_data += 1.0f;//进行满足阈值结果累加
+			//*output_data += 1.0f;//进行满足阈值结果累加
+			*output_data = *src_data >= 0 ? *output_data + 1.0f : *output_data - 1.0f;
 		}
 		src_data++;
 		min_data++;
@@ -339,7 +328,8 @@ void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_ma
 			for (int point = 0; point < src_matrix->height; point++) {
 				if ((min_data[ height * min_matrix->width + point] <= src_data[width + point*src_matrix->width]) && (src_data[width + point*src_matrix->width] <= max_data[height * max_matrix->width + point])) {
 					//if ((min_data[width + point*src_matrix->width] <= src_data[height * min_matrix->width + point]) && (src_data[height * min_matrix->width + point] <= max_data[width + point*src_matrix->width])) {
-					output_data[height*output_matrix->width + width] += 1.0f;//进行满足阈值结果累加
+					//output_data[height*output_matrix->width + width] += 1.0f;//进行满足阈值结果累加
+					output_data[height*output_matrix->width + width] = src_data[width + point*src_matrix->width] >= 0 ? output_data[height*output_matrix->width + width] + 1.0f : output_data[height*output_matrix->width + width] - 1.0f;
 				}
 			}
 		}
@@ -352,7 +342,8 @@ void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_ma
 			src_data = src_matrix->data + width;//指向列开头
 			for (int point = 0; point < src_matrix->height; point++) {
 				if ((*min_data <= *src_data) && (*src_data <= *max_data)) {
-					*output_data += 1.0f;//进行满足阈值结果累加
+					//*output_data += 1.0f;//进行满足阈值结果累加
+					*output_data = *src_data >= 0 ? *output_data + 1.0f : *output_data - 1.0f;
 				}
 				src_data += src_matrix->width;
 				min_data++;

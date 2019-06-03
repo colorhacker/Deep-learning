@@ -718,6 +718,14 @@ void user_nn_matrix_sum_constant(user_nn_matrix *src_matrix, float constant){
 		*src_data++ = *src_data + constant;
 	}
 }
+void user_nn_matrix_sub_constant(user_nn_matrix *src_matrix, float constant) {
+	int count = src_matrix->width * src_matrix->height;//获取矩阵数据大小
+	float *src_data = src_matrix->data;
+
+	while (count--) {
+		*src_data++ = *src_data - constant;
+	}
+}
 //矩阵save_matrix求和矩阵src_matrix与alpha的乘积 save_matrix=save_matrix+src_matrix*alpha
 //参数
 //save_matrix：目标矩阵 求和值会覆盖此矩阵

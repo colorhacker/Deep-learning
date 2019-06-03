@@ -88,6 +88,7 @@ user_nn_matrix *user_nn_matrix_mult_matrix_t(user_nn_matrix *src_matrix, user_nn
 void user_nn_matrix_mult_constant(user_nn_matrix *src_matrix, float constant);//矩阵src_matrix*v  结果保存在src_matrix里面
 void user_nn_matrix_divi_constant(user_nn_matrix *src_matrix, float constant);//矩阵src_matrix/v 结果保存在src_matrix里面
 void user_nn_matrix_sum_constant(user_nn_matrix *src_matrix, float constant);//矩阵src_matrix的每个数据加上constant
+void user_nn_matrix_sub_constant(user_nn_matrix *src_matrix, float constant);//矩阵src_matrix的每个数据减去constant
 void user_nn_matrix_sum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, float alpha);//矩阵save_matrix求和矩阵src_matrix与alpha的乘积
 void user_nn_matrix_memset(user_nn_matrix *save_matrix, float constant);//设置矩阵src_matrix的值 结果保存在src_matrix里面
 void user_nn_matrix_memcpy(user_nn_matrix *save_matrix, float *data);//拷贝数据至矩阵 大小大于等于矩阵大小

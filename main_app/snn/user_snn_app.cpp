@@ -2,6 +2,12 @@
 #include "user_snn_app.h"
 
 void user_snn_app_train(int argc, const char** argv) {
+	//float data[] = { 1,0,0,0,0,0,0,0,0,0};
+	//user_nn_matrix *matrix = user_nn_matrix_create_memset(1, sizeof(data)/ sizeof(float), data);
+	//user_snn_data_softmax(matrix);
+	//user_nn_matrix_printf(NULL, matrix);
+	//system("pause");
+	//return;
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int layers[] = {
 		'i', 1, 2, 
