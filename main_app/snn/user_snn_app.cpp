@@ -2,8 +2,32 @@
 #include "user_snn_app.h"
 
 void user_snn_app_train(int argc, const char** argv) {
-	//float data[] = { 1,0,0,0,0,0,0,0,0,0};
+	//float src[] = { -0.5f };
+	//float min[] = { -0.5f,0.1f };
+	//float max[] = { 1.6f,1.0f };
+
+	//user_nn_matrix *src_matrix = user_nn_matrix_create_memset(1, 1, src);
+
+	//user_nn_matrix *min_matrix = user_nn_matrix_create_memset(1, 2, min);
+	//user_nn_matrix *max_matrix = user_nn_matrix_create_memset(1, 2, max);
+
+	//user_nn_matrix *res_matrix = user_nn_matrix_create(1, 2);
+
+	//user_nn_matrix_thred_acc(src_matrix, min_matrix, max_matrix, res_matrix);//
+
+	//if (res_matrix != NULL) {
+	//	user_nn_matrix_printf(NULL, res_matrix);//打印矩阵
+	//}
+	//else {
+	//	printf("null\n");
+	//}
+	//printf("\nend");
+	//system("pause");
+	//return;
+	//float data[] = { -1.0f,0.9f};
 	//user_nn_matrix *matrix = user_nn_matrix_create_memset(1, sizeof(data)/ sizeof(float), data);
+	//user_snn_data_softmax(matrix);
+	//user_snn_data_softmax(matrix);
 	//user_snn_data_softmax(matrix);
 	//user_nn_matrix_printf(NULL, matrix);
 	//system("pause");
@@ -12,7 +36,7 @@ void user_snn_app_train(int argc, const char** argv) {
 	int layers[] = {
 		'i', 1, 2, 
 		//'f',
-		'h', 2,
+		//'h', 2,
 		//'f',
 		'o', 2
 	};
@@ -32,23 +56,23 @@ void user_snn_app_train(int argc, const char** argv) {
 
 	//user_snn_data_softmax(output4);//特征处理
 	//user_nn_matrix_printf(NULL, output4);
-	for (int count = 0; count < 5000; count++) {
+	for (int count = 0; count < 50000; count++) {
 		user_snn_model_load_input_feature(layer, input1);//加载输入数据
 		user_snn_model_load_target_feature(layer, output1);//加载目标数据
 		user_snn_model_ffp(layer);
 		user_snn_model_bp(layer);
-		user_snn_model_load_input_feature(layer, input2);//加载输入数据
-		user_snn_model_load_target_feature(layer, output2);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
-		user_snn_model_load_input_feature(layer, input3);//加载输入数据
-		user_snn_model_load_target_feature(layer, output3);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
-		user_snn_model_load_input_feature(layer, input4);//加载输入数据
-		user_snn_model_load_target_feature(layer, output4);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
+		//user_snn_model_load_input_feature(layer, input2);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output2);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
+		//user_snn_model_load_input_feature(layer, input3);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output3);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
+		//user_snn_model_load_input_feature(layer, input4);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output4);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
 
 		if (io++ >= 1000) {
 			io = 0;
@@ -57,6 +81,8 @@ void user_snn_app_train(int argc, const char** argv) {
 		//user_snn_model_display_feature(snn_layers);
 		
 	}
+	
+	
 	user_snn_model_load_input_feature(layer, input1);//加载输入数据
 	user_snn_model_load_target_feature(layer, output1);//加载目标数据
 	user_snn_model_ffp(layer);
@@ -74,6 +100,8 @@ void user_snn_app_train(int argc, const char** argv) {
 	user_snn_model_ffp(layer);
 	user_nn_matrix_printf(NULL, user_snn_model_return_result(layer));
 
+	user_nn_matrix_printf(NULL, (((user_snn_output_layers *)user_snn_model_return_layer(layer, u_snn_layer_type_output)->content)->min_kernel_matrix));
+	user_nn_matrix_printf(NULL, (((user_snn_output_layers *)user_snn_model_return_layer(layer, u_snn_layer_type_output)->content)->max_kernel_matrix));
 	user_nn_matrix_delete(input1);
 	user_nn_matrix_delete(input2);
 	user_nn_matrix_delete(input3);

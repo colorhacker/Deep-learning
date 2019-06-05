@@ -298,6 +298,12 @@ void user_nn_matrix_thred_flat(user_nn_matrix *src_matrix, user_nn_matrix *min_m
 			//*output_data += 1.0f;//进行满足阈值结果累加
 			*output_data = *src_data >= 0 ? *output_data + 1.0f : *output_data - 1.0f;
 		}
+		//if (*src_data >= 0) {
+
+		//}else {
+
+		//}
+
 		src_data++;
 		min_data++;
 		max_data++;
