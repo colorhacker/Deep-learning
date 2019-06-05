@@ -47,7 +47,7 @@ user_nn_matrix *user_nn_matrix_create_memset(int width, int height, float *data)
 	dest->height = height;
 	dest->data = (float *)malloc(dest->width * dest->height * sizeof(float));//分配矩阵数据空间
 	dest->next = NULL;
-	memcpy(dest->data, data, sizeof(data) * sizeof(float));
+	memcpy(dest->data, data, dest->width * dest->height * sizeof(float));
 	return dest;
 }
 //矩阵转置 交换矩阵的width height包括数据

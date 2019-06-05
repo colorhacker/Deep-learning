@@ -11,21 +11,20 @@ void user_snn_app_train(int argc, const char** argv) {
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int layers[] = {
 		'i', 1, 2, 
-		'f',
+		//'f',
 		'h', 2,
-		'f',
+		//'f',
 		'o', 2
 	};
 	int io = 0;
 	user_snn_layers *layer = user_snn_model_create(layers);//创建模型
 
-	float input[][2] = { { 1,2 },{ 2,3 } ,{ 3,4 },{ 4,5 } };
+	float input[][2] = { { 0.1f,0.2f },{ 0.2f,0.4f } ,{ 0.3f,0.6f },{ 0.4f,0.8f } };
+	float output[][2] = { { 1.0f,2.0f },{ 2.0f,4.0f } ,{ 3.0f,6.0f },{ 4.0f,8.0f } };
 	user_nn_matrix *input1 = user_nn_matrix_create_memset(1, 2, input[0]);
 	user_nn_matrix *input2 = user_nn_matrix_create_memset(1, 2, input[1]);
 	user_nn_matrix *input3 = user_nn_matrix_create_memset(1, 2, input[2]);
 	user_nn_matrix *input4 = user_nn_matrix_create_memset(1, 2, input[3]);
-
-	float output[][2] = { { 1,2 },{ 2,3 } ,{ 3,4 },{ 0.5,1.5 } };
 	user_nn_matrix *output1 = user_nn_matrix_create_memset(1, 2, output[0]);
 	user_nn_matrix *output2 = user_nn_matrix_create_memset(1, 2, output[1]);
 	user_nn_matrix *output3 = user_nn_matrix_create_memset(1, 2, output[2]);
@@ -33,31 +32,56 @@ void user_snn_app_train(int argc, const char** argv) {
 
 	//user_snn_data_softmax(output4);//特征处理
 	//user_nn_matrix_printf(NULL, output4);
-	for (int count = 0; count < 500000; count++) {
-		//user_snn_model_load_input_feature(layer, input1);//加载输入数据
-		//user_snn_model_load_target_feature(layer, output1);//加载目标数据
-		//user_snn_model_ffp(layer);
-		//user_snn_model_bp(layer);
-		//user_snn_model_load_input_feature(layer, input2);//加载输入数据
-		//user_snn_model_load_target_feature(layer, output2);//加载目标数据
-		//user_snn_model_ffp(layer);
-		//user_snn_model_bp(layer);
-		//user_snn_model_load_input_feature(layer, input3);//加载输入数据
-		//user_snn_model_load_target_feature(layer, output3);//加载目标数据
-		//user_snn_model_ffp(layer);
-		//user_snn_model_bp(layer);
+	for (int count = 0; count < 5000; count++) {
+		user_snn_model_load_input_feature(layer, input1);//加载输入数据
+		user_snn_model_load_target_feature(layer, output1);//加载目标数据
+		user_snn_model_ffp(layer);
+		user_snn_model_bp(layer);
+		user_snn_model_load_input_feature(layer, input2);//加载输入数据
+		user_snn_model_load_target_feature(layer, output2);//加载目标数据
+		user_snn_model_ffp(layer);
+		user_snn_model_bp(layer);
+		user_snn_model_load_input_feature(layer, input3);//加载输入数据
+		user_snn_model_load_target_feature(layer, output3);//加载目标数据
+		user_snn_model_ffp(layer);
+		user_snn_model_bp(layer);
 		user_snn_model_load_input_feature(layer, input4);//加载输入数据
 		user_snn_model_load_target_feature(layer, output4);//加载目标数据
 		user_snn_model_ffp(layer);
 		user_snn_model_bp(layer);
 
-			if (io++ >= 1000) {
-				io = 0;
-				printf("\n--->:%f",  user_snn_model_return_loss(layer));
-			}
-			//user_snn_model_display_feature(snn_layers);
+		if (io++ >= 1000) {
+			io = 0;
+			printf("\n--->:%f",  user_snn_model_return_loss(layer));
+		}
+		//user_snn_model_display_feature(snn_layers);
 		
 	}
+	user_snn_model_load_input_feature(layer, input1);//加载输入数据
+	user_snn_model_load_target_feature(layer, output1);//加载目标数据
+	user_snn_model_ffp(layer);
+	user_nn_matrix_printf(NULL, user_snn_model_return_result(layer));
+	user_snn_model_load_input_feature(layer, input2);//加载输入数据
+	user_snn_model_load_target_feature(layer, output2);//加载目标数据
+	user_snn_model_ffp(layer);
+	user_nn_matrix_printf(NULL, user_snn_model_return_result(layer));
+	user_snn_model_load_input_feature(layer, input3);//加载输入数据
+	user_snn_model_load_target_feature(layer, output3);//加载目标数据
+	user_snn_model_ffp(layer);
+	user_nn_matrix_printf(NULL, user_snn_model_return_result(layer));
+	user_snn_model_load_input_feature(layer, input4);//加载输入数据
+	user_snn_model_load_target_feature(layer, output4);//加载目标数据
+	user_snn_model_ffp(layer);
+	user_nn_matrix_printf(NULL, user_snn_model_return_result(layer));
+
+	user_nn_matrix_delete(input1);
+	user_nn_matrix_delete(input2);
+	user_nn_matrix_delete(input3);
+	user_nn_matrix_delete(input4);
+	user_nn_matrix_delete(output1);
+	user_nn_matrix_delete(output2);
+	user_nn_matrix_delete(output3);
+	user_nn_matrix_delete(output4);
 	system("pause");
 	return;
 	srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
