@@ -19,8 +19,8 @@ void user_snn_app_train(int argc, const char** argv) {
 	int io = 0;
 	user_snn_layers *layer = user_snn_model_create(layers);//创建模型
 
-	float input[][2] = { { 0.1f,0.2f },{ 0.2f,0.4f } ,{ 0.3f,0.6f },{ 0.4f,0.8f } };
-	float output[][2] = { { 1.0f,2.0f },{ 2.0f,4.0f } ,{ 3.0f,6.0f },{ 4.0f,8.0f } };
+	float input[][2] = { { -0.1f,0.1f },{ -0.15f,0.15f } ,{ -0.2f,0.2f },{ -0.3f,0.3f } };
+	float output[][2] = { { -1.0f,1.0f },{ -1.5f,1.5f } ,{ -2.0f,2.0f },{ -3.0f,3.0f } };
 	user_nn_matrix *input1 = user_nn_matrix_create_memset(1, 2, input[0]);
 	user_nn_matrix *input2 = user_nn_matrix_create_memset(1, 2, input[1]);
 	user_nn_matrix *input3 = user_nn_matrix_create_memset(1, 2, input[2]);
