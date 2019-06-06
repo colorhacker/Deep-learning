@@ -60,7 +60,7 @@
 #define		user_nn_snn_avg_vaule			0.0f	//数据均值
 #define		user_nn_snn_add_value			0.1f	//前反馈 变化值
 #define		user_nn_snn_step_vaule			0.001f	//每一步移动的值
-
+//
 #define		user_nn_snn_thred_none			0.0f	//不需要变化
 #define		user_nn_snn_thred_add			-1.0f	//目标值大于输出值
 #define		user_nn_snn_thred_acc			1.0f	//目标值小于输出值
