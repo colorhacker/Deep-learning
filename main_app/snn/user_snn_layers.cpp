@@ -254,8 +254,8 @@ void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix *max_matrix
 	float *min_data = min_matrix->data;
 	float *max_data = max_matrix->data;
 	while (count--) {
-		*min_data++ = -2.0f - user_nn_init_normal();
-		*max_data++ = 2.0f + user_nn_init_normal();
+		*min_data++ = -1.0f - user_nn_init_normal();
+		*max_data++ = 1.0f + user_nn_init_normal();
 	}
 }
 
