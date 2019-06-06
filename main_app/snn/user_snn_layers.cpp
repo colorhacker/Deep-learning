@@ -298,12 +298,6 @@ void user_nn_matrix_thred_flat(user_nn_matrix *src_matrix, user_nn_matrix *min_m
 			//*output_data += 1.0f;//进行满足阈值结果累加
 			*output_data = *src_data >= 0 ? *output_data + 1.0f : *output_data - 1.0f;
 		}
-		//if (*src_data >= 0) {
-
-		//}else {
-
-		//}
-
 		src_data++;
 		min_data++;
 		max_data++;
@@ -381,16 +375,14 @@ void user_nn_matrix_update_flat(user_nn_matrix *src_matrix, user_nn_matrix *src_
 				*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 				*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
 				//在保持本层阈值不变情况下移动输入值
-				*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
 				*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 			}
 			else {
 				//avg_value = *src_data;
-				*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
+				*min_data = *min_data > *src_data ? *min_data : (*min_data + step_value);
 				*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
-				*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
-				*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
+				*src_exp_data = *src_data < *min_data ? *src_exp_data : (*src_exp_data - user_nn_snn_add_value);
 			}
 			*max_data = *min_data > *max_data ? *min_data : *max_data;
 		}
@@ -400,18 +392,14 @@ void user_nn_matrix_update_flat(user_nn_matrix *src_matrix, user_nn_matrix *src_
 				*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 				*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
 
-				if (*min_data < *src_data && *src_data < *max_data) {
-					*src_exp_data += user_nn_snn_add_value;
-				}
+				*src_exp_data = *src_data < *max_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
 			}
 			else {
 				//avg_value = *src_data;
-				*min_data = *min_data > *src_data ? *min_data : (*min_data + step_value);
+				*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
 				*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
-				if (*min_data < *src_data && *src_data < *max_data) {
-					*src_exp_data -= user_nn_snn_add_value;
-				}
+				*src_exp_data = *src_data < *min_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
 			}
 			*max_data = *min_data > *max_data ? *min_data : *max_data;
 		}
@@ -462,16 +450,14 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
 						//在保持本层阈值不变情况下移动输入值
-						*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
 						*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 					}
 					else {
 						//avg_value = *src_data;
-						*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
+						*min_data = *min_data > *src_data ?  *min_data: (*min_data + step_value);
 						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
-						*src_exp_data = *src_data < *min_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
-						*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
+						*src_exp_data = *src_data < *min_data ? *src_exp_data: (*src_exp_data - user_nn_snn_add_value);
 					}
 					*max_data = *min_data > *max_data ? *min_data : *max_data;
 				}
@@ -481,18 +467,14 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
 
-						if (*min_data < *src_data && *src_data < *max_data) {
-							*src_exp_data += user_nn_snn_add_value;
-						}
+						*src_exp_data = *src_data < *max_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
 					}
 					else {
 						//avg_value = *src_data;
-						*min_data = *min_data > *src_data ? *min_data : (*min_data + step_value);
+						*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
 						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
 
-						if (*min_data < *src_data && *src_data < *max_data) {
-							*src_exp_data -= user_nn_snn_add_value;
-						}
+						*src_exp_data = *src_data < *min_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
 					}
 					*max_data = *min_data > *max_data ? *min_data : *max_data;
 				}
