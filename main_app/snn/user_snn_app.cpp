@@ -37,11 +37,11 @@ void user_snn_app_train(int argc, const char** argv) {
 				printf("\n--->:%d,%f", train_index, user_snn_model_return_loss(snn_layers));
 			}
 			//user_snn_model_display_feature(snn_layers);
-			if (user_snn_model_return_loss(snn_layers) <= 0.001f) {
+			if (user_snn_model_return_loss(snn_layers) <= 0.0001f) {
 				break;
 			}
 		}
-		if (user_snn_model_return_loss(snn_layers) <= 0.001f) {
+		if (user_snn_model_return_loss(snn_layers) <= 0.0001f) {
 			break;
 		}
 	}
