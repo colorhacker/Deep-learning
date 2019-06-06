@@ -254,8 +254,8 @@ void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix *max_matrix
 	float *min_data = min_matrix->data;
 	float *max_data = max_matrix->data;
 	while (count--) {
-		*min_data = user_nn_init_uniform();
-		*max_data++ = *min_data++ + user_nn_init_uniform() +2.0f;
+		*min_data++ = -1.0f - user_nn_init_normal();
+		*max_data++ = 1.0f + user_nn_init_normal();
 	}
 }
 
@@ -490,25 +490,3 @@ void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src
 		}
 	}
 }
-
-/*
-float min[] = { 0.5f,0.1f };
-float max[] = { 1.6f,1.0f };
-
-user_nn_matrix *src_matrix = user_nn_matrix_create_memset(1, 1, src);
-
-user_nn_matrix *min_matrix = user_nn_matrix_create_memset(1, 2, min);
-user_nn_matrix *max_matrix = user_nn_matrix_create_memset(1, 2, max);
-
-user_nn_matrix *res_matrix = user_nn_matrix_create(1, 2);
-
-user_nn_matrix_thred_acc(src_matrix, min_matrix, max_matrix, res_matrix);//
-
-if (res_matrix != NULL) {
-	user_nn_matrix_printf(NULL, res_matrix);//¥Ú”°æÿ’Û
-}
-else {
-	printf("null\n");
-}
-printf("\nend");
-*/
