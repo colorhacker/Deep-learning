@@ -7,7 +7,8 @@ void user_snn_app_train(int argc, const char** argv) {
 	int user_layers[] = {
 		'i', 1, 784, //输入层 特征（宽度、高度）
 		//'f',
-		'h', 1568, //隐含层 特征 （高度）
+		'h', 3136, //隐含层 特征 （高度）
+		'h', 392, //隐含层 特征 （高度）
 		//'f',
 		'o', 10 //输出层 特征 （高度）
 	};
@@ -25,12 +26,13 @@ void user_snn_app_train(int argc, const char** argv) {
 	int info = 0;
 	clock_t start_time = clock();
 	for (;;) {
-		for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
+		//for (int train_index = 0; train_index < train_images->height * train_images->width; train_index++) {
+		for (int train_index = 0; train_index < 10; train_index++) {
 			user_snn_model_load_input_feature(snn_layers, user_nn_matrices_ext_matrix_index(train_images, train_index));//加载输入数据
 			user_snn_model_load_target_feature(snn_layers, user_nn_matrices_ext_matrix_index(train_lables, train_index));//加载目标数据	
 			user_snn_model_ffp(snn_layers);
 			user_snn_model_bp(snn_layers);
-			if (info++ >= 1000) {
+			if (info++ >= 5) {
 				info = 0;
 				printf("\n--->:%d,%f", train_index, user_snn_model_return_loss(snn_layers));
 			}
