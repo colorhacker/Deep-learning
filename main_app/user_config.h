@@ -57,7 +57,6 @@
 #define		user_nn_model_nn_data_addr		 0x1000		//保存数据的基地址
 //NN配置结束
 //SNN配置开始
-#define		user_nn_snn_avg_vaule			0.0f	//数据均值
 #define		user_nn_snn_add_value			0.1f	//前反馈 变化值
 #define		user_nn_snn_step_vaule			0.001f	//每一步移动的值
 //

@@ -38,20 +38,17 @@ void user_snn_layers_delete(user_snn_layers *layers) {
 				user_nn_matrix_delete(((user_snn_input_layers *)layers->content)->feature_matrix);
 			}
 			else if (layers->type == u_snn_layer_type_flat) {
-				user_nn_matrix_delete(((user_snn_flat_layers *)layers->content)->min_kernel_matrix);
-				user_nn_matrix_delete(((user_snn_flat_layers *)layers->content)->max_kernel_matrix);
+				user_nn_matrix_delete(((user_snn_flat_layers *)layers->content)->thred_kernel_matrix);
 				user_nn_matrix_delete(((user_snn_flat_layers *)layers->content)->feature_matrix);
 				user_nn_matrix_delete(((user_snn_flat_layers *)layers->content)->thred_matrix);
 			}
 			else if (layers->type == u_snn_layer_type_hidden) {
-				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->min_kernel_matrix);
-				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->max_kernel_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->thred_kernel_matrix);
 				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->feature_matrix);
 				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->thred_matrix);
 			}
 			else if (layers->type == u_snn_layer_type_output) {
-				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->min_kernel_matrix);
-				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->max_kernel_matrix);
+				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->thred_kernel_matrix);
 				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->feature_matrix);
 				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->feature_matrix);
 				user_nn_matrix_delete(((user_snn_hidden_layers *)layers->content)->thred_matrix);
@@ -134,13 +131,12 @@ user_snn_flat_layers *user_snn_layers_flat_create(user_snn_layers *snn_layers) {
 	flat_layers->feature_width = intput_featrue_width;
 	flat_layers->feature_height = intput_feature_height;
 
-	flat_layers->min_kernel_matrix = user_nn_matrix_create(flat_layers->feature_width, flat_layers->feature_height);//神经元矩阵
-	flat_layers->max_kernel_matrix = user_nn_matrix_create(flat_layers->feature_width, flat_layers->feature_height);//神经元矩阵
+	flat_layers->thred_kernel_matrix = user_nn_matrix_create(flat_layers->feature_width, flat_layers->feature_height);//神经元矩阵
 
 	flat_layers->feature_matrix = user_nn_matrix_create(flat_layers->feature_width, flat_layers->feature_height);//创建输出矩阵
 	flat_layers->thred_matrix = user_nn_matrix_create(flat_layers->feature_width, flat_layers->feature_height);//创建变化矩阵
 
-	user_snn_init_matrix(flat_layers->min_kernel_matrix, flat_layers->max_kernel_matrix);//初始化矩阵
+	user_snn_init_matrix(flat_layers->thred_kernel_matrix);//初始化矩阵
 
 	return flat_layers;
 }
@@ -181,13 +177,12 @@ user_snn_hidden_layers *user_snn_layers_hidden_create(user_snn_layers *snn_layer
 	hidden_layers->feature_width = intput_featrue_width;
 	hidden_layers->feature_height = feature_number;
 
-	hidden_layers->min_kernel_matrix = user_nn_matrix_create(intput_feature_height, hidden_layers->feature_height);//神经元矩阵
-	hidden_layers->max_kernel_matrix = user_nn_matrix_create(intput_feature_height, hidden_layers->feature_height);//神经元矩阵
+	hidden_layers->thred_kernel_matrix = user_nn_matrix_create(intput_feature_height, hidden_layers->feature_height);//神经元矩阵
 
 	hidden_layers->feature_matrix = user_nn_matrix_create(hidden_layers->feature_width, hidden_layers->feature_height);//创建输出矩阵
 	hidden_layers->thred_matrix = user_nn_matrix_create(hidden_layers->feature_width, hidden_layers->feature_height);//创建变化矩阵
 
-	user_snn_init_matrix(hidden_layers->min_kernel_matrix, hidden_layers->max_kernel_matrix);//初始化矩阵
+	user_snn_init_matrix(hidden_layers->thred_kernel_matrix);//初始化矩阵
 
 	return hidden_layers;
 }
@@ -228,14 +223,13 @@ user_snn_output_layers *user_snn_layers_output_create(user_snn_layers *nn_layers
 	output_layers->feature_height = feature_number;
 
 	output_layers->loss_function = 0.0f;
-	output_layers->min_kernel_matrix = user_nn_matrix_create(intput_feature_height, output_layers->feature_height);//神经元矩阵
-	output_layers->max_kernel_matrix = user_nn_matrix_create(intput_feature_height, output_layers->feature_height);//神经元矩阵
+	output_layers->thred_kernel_matrix = user_nn_matrix_create(intput_feature_height, output_layers->feature_height);//神经元矩阵
 
 	output_layers->feature_matrix = user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//创建输出矩阵
 	output_layers->thred_matrix = user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//创建变化矩阵
 	output_layers->target_matrix = user_nn_matrix_create(output_layers->feature_width, output_layers->feature_height);//创建目标矩阵
 
-	user_snn_init_matrix(output_layers->min_kernel_matrix, output_layers->max_kernel_matrix);//初始化矩阵
+	user_snn_init_matrix(output_layers->thred_kernel_matrix);//初始化矩阵
 
 	return output_layers;
 }
@@ -249,13 +243,11 @@ void user_snn_data_softmax(user_nn_matrix *src_matrix) {
 //初始化阈值矩阵
 //输入矩阵 最小最大矩阵
 //输出 无
-void user_snn_init_matrix(user_nn_matrix *min_matrix, user_nn_matrix *max_matrix) {
-	int count = min_matrix->height * min_matrix->width;
-	float *min_data = min_matrix->data;
-	float *max_data = max_matrix->data;
+void user_snn_init_matrix(user_nn_matrix *thred_matrix) {
+	int count = thred_matrix->height * thred_matrix->width;
+	float *thred_data = thred_matrix->data;
 	while (count--) {
-		*min_data++ = -2.0f - user_nn_init_normal();
-		*max_data++ = 2.0f + user_nn_init_normal();
+		*thred_data++ = user_nn_init_uniform();
 	}
 }
 
@@ -287,20 +279,20 @@ void user_nn_matrix_thred_process(user_nn_matrix *thred_matrix,user_nn_matrix *s
 //min_matrix 低阈值
 //max_matrix 高阈值
 //输出 返回结果矩阵
-void user_nn_matrix_thred_flat(user_nn_matrix *src_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, user_nn_matrix *output_matrix) {
+void user_nn_matrix_thred_flat(user_nn_matrix *src_matrix, user_nn_matrix *thred_matrix, user_nn_matrix *output_matrix) {
 	float *src_data = src_matrix->data;//
-	float *min_data = min_matrix->data;//
-	float *max_data = max_matrix->data;//
+	float *thred_data = thred_matrix->data;//
 	float *output_data = output_matrix->data;
 
 	for (int count = 0; count < src_matrix->height * src_matrix->width; count++) {
-		if ((*min_data <= *src_data) && (*src_data <= *max_data)) {
-			//*output_data += 1.0f;//进行满足阈值结果累加
-			*output_data = *src_data >= 0 ? *output_data + 1.0f : *output_data - 1.0f;
+		if ((0.0f < *src_data) && (*src_data <= *thred_data)) {
+			*output_data += 1.0f;
+		}
+		if ((*thred_data <= *src_data) && (*src_data < 0.0f)) {
+			*output_data -= 1.0f;
 		}
 		src_data++;
-		min_data++;
-		max_data++;
+		thred_data++;
 		output_data++;
 	}
 }
@@ -309,15 +301,14 @@ void user_nn_matrix_thred_flat(user_nn_matrix *src_matrix, user_nn_matrix *min_m
 //min_matrix 低阈值
 //max_matrix 高阈值
 //输出 返回结果矩阵
-void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix,user_nn_matrix *output_matrix) {
+void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *thred_matrix,user_nn_matrix *output_matrix) {
 	float *src_data = src_matrix->data;//
-	float *min_data = min_matrix->data;//
-	float *max_data = max_matrix->data;//
+	float *thred_data = thred_matrix->data;//
 	float *output_data = output_matrix->data;
-	if (min_matrix->width != src_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
+	if (thred_matrix->width != src_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
 		return;
 	}
-	if ((output_matrix->width != src_matrix->width) || (output_matrix->height != min_matrix->height)) {
+	if ((output_matrix->width != src_matrix->width) || (output_matrix->height != thred_matrix->height)) {
 		return;
 	}
 
@@ -326,11 +317,13 @@ void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_ma
 	for (int height = 0; height < output_matrix->height; height++) {
 		for (int width = 0; width < output_matrix->width; width++) {
 			for (int point = 0; point < src_matrix->height; point++) {
-				if ((min_data[ height * min_matrix->width + point] <= src_data[width + point*src_matrix->width]) && (src_data[width + point*src_matrix->width] <= max_data[height * max_matrix->width + point])) {
-					//if ((min_data[width + point*src_matrix->width] <= src_data[height * min_matrix->width + point]) && (src_data[height * min_matrix->width + point] <= max_data[width + point*src_matrix->width])) {
-					//output_data[height*output_matrix->width + width] += 1.0f;//进行满足阈值结果累加
-					output_data[height*output_matrix->width + width] = src_data[width + point*src_matrix->width] >= 0 ? output_data[height*output_matrix->width + width] + 1.0f : output_data[height*output_matrix->width + width] - 1.0f;
+				if ((0.0f < src_data[width + point*src_matrix->width]) && (src_data[width + point*src_matrix->width] <= thred_data[height * thred_matrix->width + point])) {
+					output_data[height*output_matrix->width + width] += 1.0f;
 				}
+				if ((thred_data[height * thred_matrix->width + point] <= src_data[width + point*src_matrix->width]) && (src_data[width + point*src_matrix->width] < 0.0f)) {
+					output_data[height*output_matrix->width + width] -= 1.0f;
+				}
+
 			}
 		}
 	}
@@ -341,13 +334,15 @@ void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_ma
 			max_data = max_matrix->data + height * max_matrix->width;//指向行开头
 			src_data = src_matrix->data + width;//指向列开头
 			for (int point = 0; point < src_matrix->height; point++) {
-				if ((*min_data <= *src_data) && (*src_data <= *max_data)) {
-					//*output_data += 1.0f;//进行满足阈值结果累加
-					*output_data = *src_data >= 0 ? *output_data + 1.0f : *output_data - 1.0f;
+				if ((0.0f < *src_data) && (*src_data <= *thred_data)) {
+					*output_data += 1.0f;
+				}
+				if ((*thred_data <= *src_data) && (*src_data < 0.0f)) {
+					*output_data -= 1.0f;
 				}
 				src_data += src_matrix->width;
-				min_data++;
-				max_data++;
+				thred_data++;
+				output_data++;
 				}
 			output_data++;
 			}
@@ -360,56 +355,39 @@ void user_nn_matrix_thred_acc(user_nn_matrix *src_matrix, user_nn_matrix *min_ma
 //min_matrix 低阈值
 //max_matrix 高阈值
 //输出 返回结果矩阵
-void user_nn_matrix_update_flat(user_nn_matrix *src_matrix, user_nn_matrix *src_exp_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, user_nn_matrix *thred_matrix, float avg_value, float step_value){
+void user_nn_matrix_update_flat(user_nn_matrix *src_matrix, user_nn_matrix *src_exp_matrix, user_nn_matrix *thred_matrix,user_nn_matrix *target_matrix ,float step_value){
 	float *src_exp_data = src_exp_matrix->data;
 	float *src_data = src_matrix->data;//
 	float *thred_data = thred_matrix->data;//
-	float *min_data = min_matrix->data;//
-	float *max_data = max_matrix->data;//
+	float *target_data = target_matrix->data;//
 	
 	for (int count = 0; count < src_matrix->height * src_matrix->width; count++) {
-		if (*thred_data == user_nn_snn_thred_add) {
-			if (*src_data >= avg_value) {
-				//avg_value = *src_data;
-				//在保持前一层数据输入情况不变下移动阈值
-				*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
-				*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
-				//在保持本层阈值不变情况下移动输入值
-				*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
+		if (*target_data == user_nn_snn_thred_add) {//增加输出值
+			if ((0.0f < *thred_data) && (*thred_data < *src_data)) {
+				*thred_data += step_value;
+				*src_exp_data = *src_data <= *thred_data ? *src_exp_data : (*src_exp_data - user_nn_snn_add_value);
 			}
-			else {
-				//avg_value = *src_data;
-				*min_data = *min_data > *src_data ? *min_data : (*min_data + step_value);
-				*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
-
-				*src_exp_data = *src_data < *min_data ? *src_exp_data : (*src_exp_data - user_nn_snn_add_value);
+			if ((*thred_data < *src_data) && (*src_data < 0.0f)) {
+				*thred_data += step_value;
+				*src_exp_data = *src_data >= *thred_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 			}
-			*max_data = *min_data > *max_data ? *min_data : *max_data;
 		}
-		else if (*thred_data == user_nn_snn_thred_acc) {
-			if (*src_data >= avg_value) {
-				//avg_value = *src_data;
-				*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
-				*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
-
-				*src_exp_data = *src_data < *max_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
+		else if (*target_data == user_nn_snn_thred_acc) {//减少输出值
+			if ((0.0f < *src_data) && (*src_data < *thred_data)) {
+				*thred_data -= step_value;
+				*src_exp_data = *src_data <= *thred_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
 			}
-			else {
-				//avg_value = *src_data;
-				*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
-				*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
-
-				*src_exp_data = *src_data < *min_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
+			if ((*src_data < *thred_data) && (*thred_data < 0.0f)) {
+				*thred_data -= step_value;
+				*src_exp_data = *src_data >= *thred_data ? *src_exp_data : (*src_exp_data + user_nn_snn_add_value);
 			}
-			*max_data = *min_data > *max_data ? *min_data : *max_data;
 		}
 		else {
 
 		}
 		src_data++;
 		src_exp_data++;
-		min_data++;
-		max_data++;
+		target_data++;
 		thred_data++;
 	}
 }
@@ -421,70 +399,52 @@ void user_nn_matrix_update_flat(user_nn_matrix *src_matrix, user_nn_matrix *src_
 //max_matrix 神经元高阈值
 //thred_matrix 本层输出值需要改变的目标值量化
 //输出 无
-void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src_exp_matrix, user_nn_matrix *min_matrix, user_nn_matrix *max_matrix, user_nn_matrix *thred_matrix, float avg_value, float step_value) {
+void user_nn_matrix_update_thred(user_nn_matrix *src_matrix, user_nn_matrix *src_exp_matrix, user_nn_matrix *thred_matrix, user_nn_matrix *target_matrix, float step_value) {
 	float *src_exp_data = src_exp_matrix->data;
 	float *src_data = src_matrix->data;//
+	float *target_data = target_matrix->data;//
 	float *thred_data = thred_matrix->data;//
-	float *min_data = min_matrix->data;//
-	float *max_data = max_matrix->data;//
 	
 	//float avg_value = 1.0f;
 	//float step_value = 0.001f;
-	if (min_matrix->width != src_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
+	if (thred_matrix->width != src_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
 		return;
 	}
-	if ((thred_matrix->width != src_matrix->width) || (thred_matrix->height != min_matrix->height)) {
+	if ((target_matrix->width != src_matrix->width) || (target_matrix->height != thred_matrix->height)) {
 		return;
 	}
-	for (int height = 0; height < thred_matrix->height; height++) {
-		for (int width = 0; width < thred_matrix->width; width++) {
-			min_data = min_matrix->data + height * min_matrix->width;//指向行开头
-			max_data = max_matrix->data + height * max_matrix->width;//指向行开头
+	for (int height = 0; height < target_matrix->height; height++) {
+		for (int width = 0; width < target_matrix->width; width++) {
+			thred_data = thred_matrix->data + height * thred_matrix->width;//指向行开头
 			src_data = src_matrix->data + width;//指向列开头
 			src_exp_data = src_exp_matrix->data + width;
 			for (int point = 0; point < src_matrix->height; point++) {
-				if (*thred_data == user_nn_snn_thred_add) {
-					if (*src_data >= avg_value) {
-						//avg_value = *src_data;
-						//在保持前一层数据输入情况不变下移动阈值
-						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
-						*max_data = *max_data > *src_data ? *max_data : (*max_data + step_value);
-						//在保持本层阈值不变情况下移动输入值
-						*src_exp_data = *src_data > *max_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
+				if (*target_data == user_nn_snn_thred_add) {//增加输出值
+					if ((0.0f < *thred_data) && (*thred_data < *src_data)) {
+						*thred_data += step_value;
+						*src_exp_data = *src_data <= *thred_data ? *src_exp_data : (*src_exp_data - user_nn_snn_add_value);
 					}
-					else {
-						//avg_value = *src_data;
-						*min_data = *min_data > *src_data ?  *min_data: (*min_data + step_value);
-						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
-
-						*src_exp_data = *src_data < *min_data ? *src_exp_data: (*src_exp_data - user_nn_snn_add_value);
+					if ((*thred_data < *src_data) && (*src_data < 0.0f)) {
+						*thred_data += step_value;
+						*src_exp_data = *src_data >= *thred_data ? (*src_exp_data - user_nn_snn_add_value) : *src_exp_data;
 					}
-					*max_data = *min_data > *max_data ? *min_data : *max_data;
 				}
-				else if (*thred_data == user_nn_snn_thred_acc) {
-					if (*src_data >= avg_value) {
-						//avg_value = *src_data;
-						*min_data = *min_data > avg_value ? (*min_data - step_value) : *min_data;
-						*max_data = *max_data > *src_data ? (*max_data - step_value) : *max_data;
-
-						*src_exp_data = *src_data < *max_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
+				else if (*target_data == user_nn_snn_thred_acc) {//减少输出值
+					if ((0.0f < *src_data) && (*src_data < *thred_data)) {
+						*thred_data -= step_value;
+						*src_exp_data = *src_data <= *thred_data ? (*src_exp_data + user_nn_snn_add_value) : *src_exp_data;
 					}
-					else {
-						//avg_value = *src_data;
-						*min_data = *min_data > *src_data ? (*min_data - step_value) : *min_data;
-						*max_data = *max_data > avg_value ? *max_data : (*max_data + step_value);
-
-						*src_exp_data = *src_data < *min_data ? *src_exp_data + user_nn_snn_add_value : *src_exp_data;
+					if ((*src_data < *thred_data) && (*thred_data < 0.0f)) {
+						*thred_data -= step_value;
+						*src_exp_data = *src_data >= *thred_data ? *src_exp_data : (*src_exp_data + user_nn_snn_add_value);
 					}
-					*max_data = *min_data > *max_data ? *min_data : *max_data;
 				}
 				else {
 
 				}
 				src_data += src_matrix->width;
 				src_exp_data += src_exp_matrix->width;
-				min_data++;
-				max_data++;
+				thred_data++;
 			}
 			thred_data++;
 		}

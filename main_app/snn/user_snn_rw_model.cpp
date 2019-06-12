@@ -138,22 +138,19 @@ bool user_snn_model_save_model(user_snn_layers *layers, int id){
 			flat_infor = (user_snn_flat_layers *)layers->content;//
 			layers_offset = user_snn_model_save_layer(model_file, layers_offset, layers);//保存层信息
 			infor_offset = user_snn_model_save_flat(model_file, infor_offset, flat_infor);//保存卷积层数据
-			data_offset = user_nn_model_save_matrix(model_file, data_offset, flat_infor->min_kernel_matrix);//保存偏置参数
-			data_offset = user_nn_model_save_matrix(model_file, data_offset, flat_infor->max_kernel_matrix);//保存偏置参数
+			data_offset = user_nn_model_save_matrix(model_file, data_offset, flat_infor->thred_kernel_matrix);//保存偏置参数
 			break;
 		case u_snn_layer_type_hidden:
 			hidden_infor = (user_snn_hidden_layers *)layers->content;//
 			layers_offset = user_snn_model_save_layer(model_file, layers_offset, layers);//保存层信息
 			infor_offset = user_snn_model_save_hidden(model_file, infor_offset, hidden_infor);//保存卷积层数据
-			data_offset = user_nn_model_save_matrix(model_file, data_offset, hidden_infor->min_kernel_matrix);//保存偏置参数
-			data_offset = user_nn_model_save_matrix(model_file, data_offset, hidden_infor->max_kernel_matrix);//保存偏置参数
+			data_offset = user_nn_model_save_matrix(model_file, data_offset, hidden_infor->thred_kernel_matrix);//保存偏置参数
 			break;
 		case u_snn_layer_type_output:
 			output_infor = (user_snn_output_layers *)layers->content;//
 			layers_offset = user_snn_model_save_layer(model_file, layers_offset, layers);//保存层信息
 			infor_offset = user_snn_model_save_output(model_file, infor_offset, output_infor);//
-			data_offset = user_nn_model_save_matrix(model_file, data_offset, output_infor->min_kernel_matrix);//保存偏置参数
-			data_offset = user_nn_model_save_matrix(model_file, data_offset, output_infor->max_kernel_matrix);//保存偏置参数
+			data_offset = user_nn_model_save_matrix(model_file, data_offset, output_infor->thred_kernel_matrix);//保存偏置参数
 			break;
 		default:
 			break;
@@ -208,24 +205,21 @@ user_snn_layers	*user_snn_model_load_model(int id){
 			temp_flat_infor = (user_snn_flat_layers *)malloc(sizeof(user_snn_flat_layers));//分配层空间
 			infor_offset = user_snn_model_read_flat(model_file, infor_offset, temp_flat_infor);//读取输入层信息
 			flat_infor = user_snn_layers_flat_create(nn_layers);//创建层
-			data_offset = user_nn_model_read_matrix(model_file, data_offset, flat_infor->min_kernel_matrix);//载入偏置参数
-			data_offset = user_nn_model_read_matrix(model_file, data_offset, flat_infor->max_kernel_matrix);//载入偏置参数
+			data_offset = user_nn_model_read_matrix(model_file, data_offset, flat_infor->thred_kernel_matrix);//载入偏置参数
 			free(temp_flat_infor);//释放空间
 			break;
 		case u_snn_layer_type_hidden:
 			temp_hidden_infor = (user_snn_hidden_layers *)malloc(sizeof(user_snn_hidden_layers));//分配层空间
 			infor_offset = user_snn_model_read_hidden(model_file, infor_offset, temp_hidden_infor);//读取输入层信息
 			hidden_infor = user_snn_layers_hidden_create(nn_layers, temp_hidden_infor->feature_height);//创建层
-			data_offset = user_nn_model_read_matrix(model_file, data_offset, hidden_infor->min_kernel_matrix);//载入偏置参数
-			data_offset = user_nn_model_read_matrix(model_file, data_offset, hidden_infor->max_kernel_matrix);//载入偏置参数
+			data_offset = user_nn_model_read_matrix(model_file, data_offset, hidden_infor->thred_kernel_matrix);//载入偏置参数
 			free(temp_hidden_infor);//释放空间
 			break;
 		case u_snn_layer_type_output:
 			temp_output_infor = (user_snn_output_layers *)malloc(sizeof(user_snn_output_layers));//分配层空间
 			infor_offset = user_snn_model_read_output(model_file, infor_offset, temp_output_infor);//读取输入层信息
 			output_infor = user_snn_layers_output_create(nn_layers, temp_output_infor->feature_height);//创建输出层
-			data_offset = user_nn_model_read_matrix(model_file, data_offset, output_infor->min_kernel_matrix);//载入偏置参数
-			data_offset = user_nn_model_read_matrix(model_file, data_offset, output_infor->max_kernel_matrix);//载入偏置参数
+			data_offset = user_nn_model_read_matrix(model_file, data_offset, output_infor->thred_kernel_matrix);//载入偏置参数
 			free(temp_output_infor);//释放空间
 			fclose(model_file);//关闭文件
 			user_snn_layers_all_delete(temp_cnn_layers);

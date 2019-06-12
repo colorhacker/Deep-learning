@@ -70,8 +70,7 @@ void user_snn_app_train(int argc, const char** argv) {
 	user_snn_model_ffp(layer);
 	user_nn_matrix_printf(NULL, user_snn_model_return_result(layer));
 
-	user_nn_matrix_printf(NULL, (((user_snn_output_layers *)user_snn_model_return_layer(layer, u_snn_layer_type_output)->content)->min_kernel_matrix));
-	user_nn_matrix_printf(NULL, (((user_snn_output_layers *)user_snn_model_return_layer(layer, u_snn_layer_type_output)->content)->max_kernel_matrix));
+	user_nn_matrix_printf(NULL, (((user_snn_output_layers *)user_snn_model_return_layer(layer, u_snn_layer_type_output)->content)->thred_kernel_matrix));
 	user_nn_matrix_delete(input1);
 	user_nn_matrix_delete(input2);
 	user_nn_matrix_delete(input3);
