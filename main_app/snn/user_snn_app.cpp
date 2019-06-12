@@ -6,7 +6,7 @@ void user_snn_app_train(int argc, const char** argv) {
 	int layers[] = {
 		'i', 1, 2,
 		//'f',
-		'h', 100,
+		'h', 10,
 		//'f',
 		'o', 2
 	};
@@ -26,15 +26,15 @@ void user_snn_app_train(int argc, const char** argv) {
 
 	//user_snn_data_softmax(output4);//特征处理
 	//user_nn_matrix_printf(NULL, output4);
-	for (int count = 0; count < 500000; count++) {
-		user_snn_model_load_input_feature(layer, input1);//加载输入数据
-		user_snn_model_load_target_feature(layer, output1);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
-		user_snn_model_load_input_feature(layer, input2);//加载输入数据
-		user_snn_model_load_target_feature(layer, output2);//加载目标数据
-		user_snn_model_ffp(layer);
-		user_snn_model_bp(layer);
+	for (int count = 0; count < 5000; count++) {
+		//user_snn_model_load_input_feature(layer, input1);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output1);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
+		//user_snn_model_load_input_feature(layer, input2);//加载输入数据
+		//user_snn_model_load_target_feature(layer, output2);//加载目标数据
+		//user_snn_model_ffp(layer);
+		//user_snn_model_bp(layer);
 		user_snn_model_load_input_feature(layer, input3);//加载输入数据
 		user_snn_model_load_target_feature(layer, output3);//加载目标数据
 		user_snn_model_ffp(layer);

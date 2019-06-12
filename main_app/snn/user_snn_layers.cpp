@@ -247,6 +247,7 @@ void user_snn_init_matrix(user_nn_matrix *thred_matrix) {
 	int count = thred_matrix->height * thred_matrix->width;
 	float *thred_data = thred_matrix->data;
 	while (count--) {
+		//*thred_data++ = count % 2 == 0 ? user_nn_init_normal() : (user_nn_init_normal()-1);
 		*thred_data++ = user_nn_init_uniform();
 	}
 }
