@@ -100,6 +100,7 @@ user_nn_matrix *user_nn_matrix_sorting(user_nn_matrix *src_matrix, sorting_type 
 float user_nn_matrix_cum_element(user_nn_matrix *src_matrix);//求和矩阵里面所有值 加在一起
 void user_nn_matrxi_ceil(user_nn_matrix *src_matrix);//向上取整
 void user_nn_matrxi_floor(user_nn_matrix *src_matrix);//向下取整
+void user_nn_y_ax_b_matrix(user_nn_matrix *y_matrix, user_nn_matrix *a_matrix, user_nn_matrix *x_matrix, user_nn_matrix *b_matrix);//y=a*x+b
 void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求和两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行加法运算 结果保存在src_matrix里面
 void user_nn_matrix_sub_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求差两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行减法运算 结果保存在src_matrix里面
 void user_nn_matrix_avg_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求两个矩阵的平均值

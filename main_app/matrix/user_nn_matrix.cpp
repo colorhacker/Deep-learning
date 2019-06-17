@@ -800,6 +800,30 @@ void user_nn_matrxi_floor(user_nn_matrix *src_matrix) {
 	}
 #endif
 }
+
+//y=ax+b 
+//参数
+//返回 无
+void user_nn_y_ax_b_matrix(user_nn_matrix *y_matrix, user_nn_matrix *a_matrix, user_nn_matrix *x_matrix, user_nn_matrix *b_matrix) {
+	int count = y_matrix->width * y_matrix->height;//获取矩阵数据大小
+	float *y_data = y_matrix->data;
+	float *a_data = a_matrix->data;
+	float *x_data = x_matrix->data;
+	float *b_data = b_matrix->data;
+
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		y_data[index] = a_data[index] * x_data[index] + b_data[index];
+	}
+#else
+	while (count--) {
+		*y_data++ = *a_data++ * *x_data++ + *b_data++;
+	}
+#endif
+
+}
+
 //求和两个矩阵  save_matrix = src_matrix + sub_matrix 
 //参数
 //src_matrix：目标矩阵 求和值会覆盖此矩阵
