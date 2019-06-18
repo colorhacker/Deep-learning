@@ -1052,6 +1052,55 @@ user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_m
 //2.矩阵C的行数等于矩阵A的行数，C的列数等于B的列数。
 //3.乘积C的第m行第n列的元素等于矩阵A的第m行的元素与矩阵B的第n列对应元素乘积之和。
 //参数
+//src_matrix：矩阵A
+//sub_matrix：矩阵B
+//返回值 无
+
+user_nn_matrix *user_nn_matrix_mult_matrix_sub_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, user_nn_matrix *baise_matrix) {
+	user_nn_matrix *result = NULL;//结果矩阵
+	float *src_data = src_matrix->data;//
+	float *sub_data = sub_matrix->data;//
+	float *baise_data = baise_matrix->data;//
+
+	float *result_data = NULL;
+	//int width, height, point;//矩阵列数
+	if (src_matrix->width != sub_matrix->height) {//矩阵乘积只有当第一个矩阵的列数=第二个矩阵的行数才有意义
+		return NULL;
+	}
+	result = user_nn_matrix_create(sub_matrix->width, src_matrix->height);//创建新的矩阵
+	result_data = result->data;//获取数据指针
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for 
+	for (int height = 0; height < result->height; height++) {
+		for (int width = 0; width < result->width; width++) {
+			for (int point = 0; point < sub_matrix->height; point++) {
+				result_data[height*result->width + width] += src_data[height * src_matrix->width + point] * sub_data[width + point*sub_matrix->width];
+			}
+			result_data[height*result->width + width] += *baise_data++;
+		}
+	}
+#else
+	for (int height = 0; height < result->height; height++) {
+		for (int width = 0; width < result->width; width++) {
+			src_data = src_matrix->data + height * src_matrix->width;//指向行开头
+			sub_data = sub_matrix->data + width;//指向列开头
+			for (int point = 0; point < sub_matrix->height; point++) {
+				*result_data += *src_data * *sub_data;
+				sub_data += sub_matrix->width;
+				src_data++;
+			}
+			*result_data += *baise_data++;
+			result_data++;
+		}
+	}
+#endif
+	return result;
+}
+//矩阵乘法
+//1.当矩阵A的列数等于矩阵B的行数时，A与B可以相乘。
+//2.矩阵C的行数等于矩阵A的行数，C的列数等于B的列数。
+//3.乘积C的第m行第n列的元素等于矩阵A的第m行的元素与矩阵B的第n列对应元素乘积之和。
+//参数
 //src_matrix：矩阵B
 //sub_matrix：矩阵A
 //返回值 无

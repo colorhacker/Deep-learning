@@ -84,6 +84,7 @@ user_nn_matrix *user_nn_matrix_expand(user_nn_matrix *src_matrix, int above, int
 user_nn_matrix *user_nn_matrix_rotate180(user_nn_matrix *src_matrix);//矩阵src_matrix旋转180°
 void user_nn_matrix_poit_mult_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//矩阵src_matrix.*sub_matrix 结果保存在src_matrix里面
 user_nn_matrix *user_nn_matrix_mult_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//矩阵src_matrix*sub_matrix 返回乘积后的矩阵
+user_nn_matrix *user_nn_matrix_mult_matrix_sub_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, user_nn_matrix *baise_matrix);//矩阵乘法之后加上偏置参数
 user_nn_matrix *user_nn_matrix_mult_matrix_t(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//矩阵src_matrix*sub_matrix 返回乘积后的矩阵
 void user_nn_matrix_mult_constant(user_nn_matrix *src_matrix, float constant);//矩阵src_matrix*v  结果保存在src_matrix里面
 void user_nn_matrix_divi_constant(user_nn_matrix *src_matrix, float constant);//矩阵src_matrix/v 结果保存在src_matrix里面
