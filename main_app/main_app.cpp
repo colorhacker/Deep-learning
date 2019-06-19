@@ -13,6 +13,18 @@
 
 
 int main(int argc, const char** argv){
+
+	user_nn_list_matrix *test_lables = user_nn_model_file_read_matrices("./mnist/files/t10k-labels.idx1-ubyte.bx", 0);
+	user_nn_list_matrix *test_images = user_nn_model_file_read_matrices("./mnist/files/t10k-images.idx3-ubyte.bx", 0);
+	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
+	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
+
+	for (int index = 0; index < 20; index++) {
+		user_nn_matrix_printf(NULL, user_nn_matrices_ext_matrix_index(train_lables, index));
+		user_opencv_show_matrix("test_image:0", user_nn_matrices_ext_matrix_index(train_images, index),100,100,1);
+		getchar();
+	}
+	return 0;
 	user_snn_app_test(argc,argv);
 	return 0;
 #ifdef _OPENMP
