@@ -29,6 +29,28 @@ user_nn_list_matrix *user_nn_matrix_generate_feature(user_nn_matrix *src_matrix,
 }
 
 int main(int argc, const char** argv){
+
+	int class_number = 30;//分类个数
+	user_w2v_words_vector *model = load_words_vector_model("word2vec_model.bin");//加载模型
+	user_w2v_words_vector *class_center = user_k_means_create_n_class(model, class_number);
+
+	while (user_k_means_mark_data(model, class_center, euclidean) == false) {
+		user_w2v_words_vector *nc = class_center;
+		printf("\n ");
+		while (nc != NULL) {
+			printf("%d ", nc->class_id);
+			nc = nc->next;
+		}
+		user_k_means_compute_class(model, class_center);//重新计算中心值
+	}
+	user_k_means_class_fprintf("k-means.txt", model, class_number);
+	printf("\n k-means class compute complete!!");
+	user_w2v_words_vector_all_delete(model);//删除模型
+	user_w2v_words_vector_all_delete(class_center);//删除分类中心点
+	getchar();
+	return 0;
+
+
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 

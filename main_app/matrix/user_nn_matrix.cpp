@@ -1710,6 +1710,67 @@ user_nn_matrix *user_nn_matrix_cut_vector(user_nn_matrix *src_matrix, user_nn_ma
 	result = user_nn_matrix_ext_matrix(src_matrix,0,0, total_width, src_matrix->height);
 	return result;
 }
+
+//计算COS夹角 cosine angle
+//公式：cos(ai,bi)=向量a*向量b/|向量a|*|向量b|=(a1*b1+a2*b2+...+ai*bi)/(sqrt(a1*a1+a2*a2+...ai*ai)*sqrt(b1*b1+b2*b2+...bi*bi))
+float user_nn_matrix_cos_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix) {
+	float num = 0, dena = 0, denb = 0;
+	int n = a_matrix->height * a_matrix->width;
+	float *a = a_matrix->data;
+	float *b = b_matrix->data;
+	while (n--) {
+		num += *a * *b;//num = (a1*b1+a2*b2+...+ai*bi)
+		dena += *a * *a;//dena = sqrt(a1*a1+a2*a2+...ai*ai)
+		denb += *b * *b;//denb = sqrt(a1*a1+a2*a2+...ai*ai)
+		a++; b++;
+	}
+	dena = (float)sqrt(dena);
+	denb = (float)sqrt(denb);
+
+	return (float)(num / (dena*denb));//cos(ai,bi)=num/(dena*denb)
+}
+//欧式距离 euclidean metric
+//公式：dist(a,b)=sqrt((a1-b1)*(a1-b1)+(a2-b2)*(a1-b2)+...+(ai-bi)*(ai-bi))
+float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix) {
+	float dest = 0;
+	int n = a_matrix->height * a_matrix->width;
+	float *a = a_matrix->data;
+	float *b = b_matrix->data;
+	while (n--) {
+		dest += (*a - *b)*(*a - *b);//
+		a++; b++;
+	}
+	return (float)sqrt(dest);
+}
+
+
+extern void user_nn_matrices_init_vaule(user_nn_list_matrix *list_matrix, int input, int output);//引入初始化值
+user_nn_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices,int n_class) {
+	user_nn_matrix *class_matrix = user_nn_matrix_create(1, src_matrices->height*src_matrices->width);
+	user_nn_list_matrix *class_center_matrix = user_nn_matrices_create(1, n_class, src_matrices->matrix->height,src_matrices->matrix->width);//聚类中心矩阵
+	//初始化聚类中心
+	user_nn_matrices_init_vaule(class_center_matrix,3,3);//初始化聚类中心
+	//归内数据
+	float distance_max = FLT_MAX;
+	float distance_temp = 0.0f;
+	int   class_type_temp = 0;
+	for (int index_d = 0; index_d < src_matrices->height*src_matrices->width; index_d++) {
+		distance_max = FLT_MAX;
+		for (int class_t = 0; class_t < class_matrix->height*class_matrix->width; class_t++) {
+			distance_temp = user_nn_matrix_cos_dist(user_nn_matrices_ext_matrix_index(src_matrices, index_d), user_nn_matrices_ext_matrix_index(class_center_matrix, class_t));
+			if (distance_max > distance_temp) {
+				distance_max = distance_temp;
+				class_type_temp = class_t;
+			}
+		}
+		class_matrix->data[index_d] = class_type_temp;
+	}
+	//重新计算聚类中心
+	//归内数据
+
+}
+
+
 //画一个点
 //src_matrix 
 //x 左上角坐标起点
