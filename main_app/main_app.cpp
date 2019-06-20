@@ -22,49 +22,46 @@ user_nn_list_matrix *user_nn_matrix_generate_feature(user_nn_matrix *src_matrix,
 	for (int height = 0; height < src_matrix->height - f_height + 1; height+= step) {
 		for (int width = 0; width < src_matrix->width - f_width + 1; width+= step) {
 			user_nn_matrices_add_matrix(featrue_list, user_nn_matrix_ext_matrix(src_matrix, width, height, f_width, f_height));
-			printf("\n x:%d,y:%d,w:%d,h:%d", width, height, f_width, f_height);
+			//printf("\n x:%d,y:%d,w:%d,h:%d", width, height, f_width, f_height);
 		}
 	}
 	return featrue_list;
 }
 
 int main(int argc, const char** argv){
+	user_nn_matrix *matrix = NULL;
+	user_nn_matrix *dest = NULL;
 
-	int class_number = 30;//分类个数
-	user_w2v_words_vector *model = load_words_vector_model("word2vec_model.bin");//加载模型
-	user_w2v_words_vector *class_center = user_k_means_create_n_class(model, class_number);
+	matrix = user_nn_matrix_create(1, 5);//创建2*2大小的二维矩阵
+	matrix->data[0] = 1.0f;
+	matrix->data[1] = 2.0f;
+	matrix->data[2] = 3.0f;
+	matrix->data[3] = 4.0f;
+	matrix->data[4] = 5.0f;
 
-	while (user_k_means_mark_data(model, class_center, euclidean) == false) {
-		user_w2v_words_vector *nc = class_center;
-		printf("\n ");
-		while (nc != NULL) {
-			printf("%d ", nc->class_id);
-			nc = nc->next;
-		}
-		user_k_means_compute_class(model, class_center);//重新计算中心值
-	}
-	user_k_means_class_fprintf("k-means.txt", model, class_number);
-	printf("\n k-means class compute complete!!");
-	user_w2v_words_vector_all_delete(model);//删除模型
-	user_w2v_words_vector_all_delete(class_center);//删除分类中心点
-	getchar();
+	dest = user_nn_matrix_create(1, 5);//创建2*2大小的二维矩阵
+	dest->data[0] = 0.1f;
+	dest->data[1] = 0.2f;
+	dest->data[2] = 0.3f;
+	dest->data[3] = 0.4f;
+	dest->data[4] = 0.5f;
+
+	printf("%f\n", user_nn_matrix_cc_dist(matrix, dest));
+	_getch();
 	return 0;
-
-
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 
 	//user_opencv_show_matrix("test_image:0", user_nn_matrices_ext_matrix_index(train_images, 0), 100, 100, 1);
 	user_nn_matrix *data_matrix = user_nn_matrices_ext_matrix_index(train_images, 1);
 
-	user_nn_list_matrix *featrue_list = user_nn_matrix_generate_feature(data_matrix,8,8,2);
+	user_nn_list_matrix *featrue_list = user_nn_matrix_generate_feature(data_matrix,8,8,2);//分割图像
+	user_nn_list_matrix *k_class_matrices = user_nn_matrix_k_means(featrue_list,8);//
 
-	for (int index = 0; index < featrue_list->height*featrue_list->width;index++) {
-		user_opencv_show_matrix("f:0", user_nn_matrices_ext_matrix_index(featrue_list, index), 100, 100, 1);
-		printf("\n i:%d,t:%d", index, featrue_list->height*featrue_list->width);
+	for (int index = 0; index < k_class_matrices->height*k_class_matrices->width;index++) {
+		user_opencv_show_matrix("f:0", user_nn_matrices_ext_matrix_index(k_class_matrices, index), 100, 100, 1);
 		_getch();
 	}
-	
 	return 0;
 	user_snn_app_test(argc,argv);
 	return 0;

@@ -76,6 +76,7 @@ user_nn_matrix *user_nn_matrices_ext_matrix_index(user_nn_list_matrix *list_matr
 void user_nn_matrices_to_matrix(user_nn_matrix *src_matrix, user_nn_list_matrix *sub_matrices);//把一个连续矩阵转化为一个矩阵，其中的值为连续矩阵的所有值，此转化后的矩阵的宽度为1，高度为数据个数总和
 void user_nn_matrix_to_matrices(user_nn_list_matrix *src_matrices, user_nn_matrix *sub_matrix);//把矩阵src_matrix转化为src_matrices的连续矩阵
 void user_nn_matrices_cpy_matrices(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices);//拷贝连续矩阵dest_matrices到连续矩阵src_matrices中
+void user_nn_matrices_cpy_matrices_n(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices, int n);//拷贝n个连续矩阵dest_matrices到连续矩阵src_matrices中
 bool user_nn_matrix_cpy_array(float *dest_data,user_nn_matrix *src_matrix, int startx, int starty, int width, int height); //拷贝src_matrix矩阵(x,y)起点大小为width*height的数据至dest_data,其中，返回失败或成功
 bool user_nn_matrix_cpy_array_mult_constant(float *dest_data, user_nn_matrix *src_matrix, int startx, int starty, int width, int height, float constant); //拷贝src_matrix*constant矩阵(x,y)起点大小为width*height的数据至dest_data,其中，返回失败或成功
 user_nn_matrix *user_nn_matrix_expand_mult_constant(user_nn_matrix *src_matrix, int width, int height, float constant);//扩充矩阵src_matrix， 每个像素按照给定扩大width和height倍 扩充之后乘以系数bias
@@ -98,12 +99,16 @@ void user_nn_matrix_memcpy_uchar_mult_constant(user_nn_matrix *save_matrix, unsi
 void user_nn_matrix_uchar_memcpy(unsigned char *save_array,user_nn_matrix *src_matrix);//拷贝数据至矩阵 大小大于等于矩阵大小
 user_nn_matrix *user_nn_matrix_sorting(user_nn_matrix *src_matrix, sorting_type type);//对矩阵数据进行排序,返回一个新的矩阵，不会删掉原来的矩阵
 
+void user_nn_matrices_memset(user_nn_list_matrix *save_matrix, float constant);//设置矩阵src_matrix的值 结果保存在src_matrix里面
+
 float user_nn_matrix_cum_element(user_nn_matrix *src_matrix);//求和矩阵里面所有值 加在一起
 void user_nn_matrxi_ceil(user_nn_matrix *src_matrix);//向上取整
 void user_nn_matrxi_floor(user_nn_matrix *src_matrix);//向下取整
 void user_nn_y_ax_b_matrix(user_nn_matrix *y_matrix, user_nn_matrix *a_matrix, user_nn_matrix *x_matrix, user_nn_matrix *b_matrix);//y=a*x+b
-void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求和两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行加法运算 结果保存在src_matrix里面
-void user_nn_matrix_sub_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求差两个矩阵 矩阵src_matrix与矩阵sub_matrix每个元素进行减法运算 结果保存在src_matrix里面
+void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求和两个矩阵a=b+c 矩阵src_matrix与矩阵sub_matrix每个元素进行加法运算 结果保存在save_matrix里面
+void user_nn_matrix_cum_matrix_s(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求和矩阵结果保存src中
+void user_nn_matrix_sub_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求差两个矩阵a=b-c 矩阵src_matrix与矩阵sub_matrix每个元素进行减法运算 结果保存在save_matrix里面
+void user_nn_matrix_sub_matrix_s(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求差两个矩阵
 void user_nn_matrix_avg_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//求两个矩阵的平均值
 void user_nn_matrix_cum_matrix_mult_alpha(user_nn_matrix *save_matrix, user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, float alpha);//求和两个矩阵 矩阵src_matrix与矩阵sub_matrix*alpha每个元素进行加法运算 结果保存在src_matrix里面
 void user_nn_matrix_cpy_matrix(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix);//拷贝矩阵sub_matrix数据到矩阵src_matrix中
@@ -136,6 +141,11 @@ user_nn_matrix *user_nn_matrix_diag(user_nn_matrix *src_matrix);//返回对角线元素
 float user_nn_matrix_norm(user_nn_matrix *src_matrix);//求解矩阵的范数 2D
 user_nn_matrix *user_nn_matrix_outer(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//计算两个矩阵向量的outer值
 user_nn_matrix *user_nn_matrix_cut_vector(user_nn_matrix *src_matrix, user_nn_matrix *diag_matrix,float epsilon);//通过对角矩阵的排序来获取新的矩阵
+
+float user_nn_matrix_cos_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);
+float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);
+float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);//计算皮尔逊相关系数 correlation coefficient
+user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices, int n_class);//k_means 分类列表矩阵
 
 void user_nn_matrix_paint_p(user_nn_matrix *src_matrix, int x, int y, float value);//画一个点
 void user_nn_matrix_paint_hl(user_nn_matrix *src_matrix, int x, int y, int length, float value);//画一个横线

@@ -488,6 +488,17 @@ void user_nn_matrices_cpy_matrices(user_nn_list_matrix *src_matrices, user_nn_li
 		dest_m = dest_m->next;
 	}
 }
+
+//拷贝n一个连续的矩阵到另外一个连续矩阵中
+void user_nn_matrices_cpy_matrices_n(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices,int n) {
+	user_nn_matrix *src_m = src_matrices->matrix;
+	user_nn_matrix *dest_m = dest_matrices->matrix;
+	while (n--) {
+		user_nn_matrix_cpy_matrix(src_m, dest_m);
+		src_m = src_m->next;
+		dest_m = dest_m->next;
+	}
+}
 //
 //拷贝src_matrix矩阵(x,y)起点大小为width*height的数据至dest_data,其中，返回失败或成功
 //参数
@@ -704,7 +715,18 @@ user_nn_matrix *user_nn_matrix_sorting(user_nn_matrix *src_matrix, sorting_type 
 
 	return result;
 }
-
+//设置矩阵值
+//参数
+//src_matrix：目标矩阵 求和值会覆盖此矩阵
+//v：设置的值
+//返回 无
+void user_nn_matrices_memset(user_nn_list_matrix *save_matrix, float constant) {
+	user_nn_matrix *src_matrix = save_matrix->matrix;
+	while ( src_matrix != NULL) {
+		user_nn_matrix_memset(src_matrix, constant);
+		src_matrix = src_matrix->next;
+	}
+}
 //求和矩阵与常数
 //参数
 //src_matrix：目标矩阵 求和值会覆盖此矩阵
@@ -850,6 +872,31 @@ void user_nn_matrix_cum_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_
 #endif
 
 }
+//求和两个矩阵  src_matrix += sub_matrix 
+//参数
+//src_matrix：目标矩阵 求和值会覆盖此矩阵
+//sub_matrix：被求和矩阵
+//返回 无
+void user_nn_matrix_cum_matrix_s(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix) {
+	int count = sub_matrix->width * sub_matrix->height;//获取矩阵数据大小
+	float *src_data = src_matrix->data;
+	float *sub_data = sub_matrix->data;
+
+	if ((src_matrix->width != sub_matrix->width) || (src_matrix->height != sub_matrix->height)) {
+		return;
+	}
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		src_data[index] += sub_data[index];
+	}
+#else
+	while (count--) {
+		*src_data++ += *sub_data++;
+	}
+#endif
+
+}
 //求差两个矩阵  save_matrix = src_matrix - sub_matrix 
 //参数
 //src_matrix：目标矩阵 求和值会覆盖此矩阵
@@ -874,7 +921,30 @@ void user_nn_matrix_sub_matrix(user_nn_matrix *save_matrix, user_nn_matrix *src_
 		*save_data++ = *src_data++ - *sub_data++;
 	}
 #endif
+}
+//求差两个矩阵  src_matrix -= sub_matrix 
+//参数
+//src_matrix：目标矩阵 求和值会覆盖此矩阵
+//sub_matrix：被求和矩阵
+//返回 无
+void user_nn_matrix_sub_matrix_s( user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix) {
+	int count = sub_matrix->width * sub_matrix->height;//获取矩阵数据大小
+	float *src_data = src_matrix->data;
+	float *sub_data = sub_matrix->data;
 
+	if ((src_matrix->width != sub_matrix->width) || (src_matrix->height != sub_matrix->height)) {
+		return;
+	}
+#if defined _OPENMP && _USER_API_OPENMP
+#pragma omp parallel for
+	for (int index = 0; index < count; index++) {
+		src_data[index] -= sub_data[index];
+	}
+#else
+	while (count--) {
+		*src_data++ -= *sub_data++;
+	}
+#endif
 }
 //求两个矩阵平均值  save_matrix = (src_matrix + sub_matrix )/2
 //参数
@@ -1714,60 +1784,111 @@ user_nn_matrix *user_nn_matrix_cut_vector(user_nn_matrix *src_matrix, user_nn_ma
 //计算COS夹角 cosine angle
 //公式：cos(ai,bi)=向量a*向量b/|向量a|*|向量b|=(a1*b1+a2*b2+...+ai*bi)/(sqrt(a1*a1+a2*a2+...ai*ai)*sqrt(b1*b1+b2*b2+...bi*bi))
 float user_nn_matrix_cos_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix) {
-	float num = 0, dena = 0, denb = 0;
-	int n = a_matrix->height * a_matrix->width;
-	float *a = a_matrix->data;
-	float *b = b_matrix->data;
-	while (n--) {
-		num += *a * *b;//num = (a1*b1+a2*b2+...+ai*bi)
-		dena += *a * *a;//dena = sqrt(a1*a1+a2*a2+...ai*ai)
-		denb += *b * *b;//denb = sqrt(a1*a1+a2*a2+...ai*ai)
-		a++; b++;
-	}
-	dena = (float)sqrt(dena);
-	denb = (float)sqrt(denb);
+	user_nn_matrix *temp_matrix = user_nn_matrix_cpy_create(a_matrix);
+	user_nn_matrix *temp_a_matrix = user_nn_matrix_cpy_create(a_matrix);
+	user_nn_matrix *temp_b_matrix = user_nn_matrix_cpy_create(b_matrix);
+	
+	user_nn_matrix_poit_mult_matrix(temp_matrix, a_matrix, b_matrix);
+	user_nn_matrix_poit_mult_matrix(temp_a_matrix, a_matrix, a_matrix);
+	user_nn_matrix_poit_mult_matrix(temp_b_matrix, b_matrix, b_matrix);
 
-	return (float)(num / (dena*denb));//cos(ai,bi)=num/(dena*denb)
+	user_nn_matrix_delete(temp_matrix);
+	user_nn_matrix_delete(temp_a_matrix);
+	user_nn_matrix_delete(temp_b_matrix);
+
+	float a_baise = user_nn_matrix_cum_element(temp_a_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_a_matrix));
+	float b_baise = user_nn_matrix_cum_element(temp_b_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_b_matrix));
+
+	return user_nn_matrix_cum_element(temp_matrix) /(a_baise*b_baise);
 }
 //欧式距离 euclidean metric
 //公式：dist(a,b)=sqrt((a1-b1)*(a1-b1)+(a2-b2)*(a1-b2)+...+(ai-bi)*(ai-bi))
 float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix) {
-	float dest = 0;
-	int n = a_matrix->height * a_matrix->width;
-	float *a = a_matrix->data;
-	float *b = b_matrix->data;
-	while (n--) {
-		dest += (*a - *b)*(*a - *b);//
-		a++; b++;
-	}
-	return (float)sqrt(dest);
+	user_nn_matrix *temp_matrix = user_nn_matrix_cpy_create(a_matrix);
+	user_nn_matrix_sub_matrix_s(temp_matrix, b_matrix);
+	user_nn_matrix_poit_mult_matrix(temp_matrix, temp_matrix, temp_matrix);
+	user_nn_matrix_delete(temp_matrix);
+
+	return user_nn_matrix_cum_element(temp_matrix)==0?0:sqrt(user_nn_matrix_cum_element(temp_matrix));
 }
+//皮尔逊相关系数 correlation coefficient
+//公式：dist(a,b)=E((A-Aavg)*(B-Bavg))/(sqrt(E(A-Aavg)^2)*sqrt(E(B-Bavg)^2))
+float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix) {
+	user_nn_matrix *temp_a_matrix = user_nn_matrix_cpy_create(a_matrix);
+	user_nn_matrix *temp_b_matrix = user_nn_matrix_cpy_create(b_matrix);
 
+	float a_avg, b_avg, molecular, denominator;
 
-extern void user_nn_matrices_init_vaule(user_nn_list_matrix *list_matrix, int input, int output);//引入初始化值
-user_nn_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices,int n_class) {
-	user_nn_matrix *class_matrix = user_nn_matrix_create(1, src_matrices->height*src_matrices->width);
-	user_nn_list_matrix *class_center_matrix = user_nn_matrices_create(1, n_class, src_matrices->matrix->height,src_matrices->matrix->width);//聚类中心矩阵
-	//初始化聚类中心
-	user_nn_matrices_init_vaule(class_center_matrix,3,3);//初始化聚类中心
-	//归内数据
-	float distance_max = FLT_MAX;
-	float distance_temp = 0.0f;
-	int   class_type_temp = 0;
-	for (int index_d = 0; index_d < src_matrices->height*src_matrices->width; index_d++) {
-		distance_max = FLT_MAX;
-		for (int class_t = 0; class_t < class_matrix->height*class_matrix->width; class_t++) {
-			distance_temp = user_nn_matrix_cos_dist(user_nn_matrices_ext_matrix_index(src_matrices, index_d), user_nn_matrices_ext_matrix_index(class_center_matrix, class_t));
-			if (distance_max > distance_temp) {
-				distance_max = distance_temp;
-				class_type_temp = class_t;
+	a_avg = user_nn_matrix_cum_element(temp_a_matrix) / (a_matrix->width*a_matrix->height);
+	b_avg = user_nn_matrix_cum_element(temp_b_matrix) / (b_matrix->width*b_matrix->height);
+	user_nn_matrix_sub_constant(temp_a_matrix, a_avg);
+	user_nn_matrix_sub_constant(temp_b_matrix, b_avg);
+	user_nn_matrix_poit_mult_matrix(temp_a_matrix, temp_a_matrix, temp_b_matrix);
+	molecular = user_nn_matrix_cum_element(temp_a_matrix);
+
+	user_nn_matrix_cpy_matrix(temp_a_matrix, a_matrix);
+	user_nn_matrix_cpy_matrix(temp_b_matrix, b_matrix);
+	user_nn_matrix_sub_constant(temp_a_matrix, a_avg);
+	user_nn_matrix_sub_constant(temp_b_matrix, b_avg);
+
+	user_nn_matrix_poit_mult_matrix(temp_a_matrix, temp_a_matrix, temp_a_matrix);
+	user_nn_matrix_poit_mult_matrix(temp_b_matrix, temp_b_matrix, temp_b_matrix);
+	float a_baise = user_nn_matrix_cum_element(temp_a_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_a_matrix));
+	float b_baise = user_nn_matrix_cum_element(temp_b_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_b_matrix));
+
+	denominator = a_baise * b_baise;
+
+	user_nn_matrix_delete(temp_a_matrix);
+	user_nn_matrix_delete(temp_b_matrix);
+
+	return molecular / denominator;
+}
+//对链矩阵进行k-means聚类
+//src_matrices 需要被分类的链表矩阵
+//n_class 需要聚类的个数
+//return 返回聚类的中心矩阵值
+user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices,int n_class) {
+	user_nn_list_matrix *class_center_matrix = user_nn_matrices_create(1, n_class, src_matrices->matrix->height, src_matrices->matrix->width);//创建聚类中心矩阵
+	int *count_array = (int*)malloc(n_class * sizeof(int));//创建用于保存每类的数量数组 寻址 0~n_class-1
+	int *class_array = (int*)malloc(src_matrices->height*src_matrices->width * sizeof(int));//创建对应矩阵序号的类别 寻址 0~n_class-1
+	float distance_max = FLT_MAX, distance_temp;
+	int new_class = 0;
+	bool flage = true;//是否需要继续迭代 false 不需要 true需要
+	user_nn_matrices_cpy_matrices_n(class_center_matrix, src_matrices, n_class);//初始化聚类中心
+	while (flage) {
+		flage = false;
+		//分类所有数据
+		for (int index = 0; index < src_matrices->height*src_matrices->width; index++) {//历遍所有数据
+			distance_max = FLT_MAX;
+			new_class = class_array[index];//记录ID
+			for (int class_index = 0; class_index < n_class; class_index++) {//历遍所有分类的中心矩阵
+				//计算数据矩阵与分类矩阵的距离
+				distance_temp = user_nn_matrix_eu_dist(user_nn_matrices_ext_matrix_index(src_matrices, index), user_nn_matrices_ext_matrix_index(class_center_matrix, class_index));
+				if (distance_temp < distance_max) {
+					distance_max = distance_temp;
+					new_class = class_index;//记录最小距离的中心矩阵类别
+				}
+			}
+			if (new_class != class_array[index]) {
+				class_array[index]= new_class;
+				flage = true;
 			}
 		}
-		class_matrix->data[index_d] = class_type_temp;
+		//按照分类后的数据计算中心矩阵
+		memset(count_array, 0, n_class * sizeof(int));//设置为0
+		//user_nn_matrices_memset(class_center_matrix, 0.0f);//中心值设置为0
+		for (int index = 0; index < src_matrices->height*src_matrices->width; index++) {//历遍所有数据
+			user_nn_matrix_cum_matrix_s(user_nn_matrices_ext_matrix_index(class_center_matrix, class_array[index]), user_nn_matrices_ext_matrix_index(src_matrices, index));//累加到相应的聚类中心
+			count_array[class_array[index]]++;
+		}
+		for (int class_index = 0; class_index < n_class; class_index++) {//历遍分类
+			user_nn_matrix_divi_constant(user_nn_matrices_ext_matrix_index(class_center_matrix, class_index), ((float)count_array[class_index] + 1.0f));//均值分类中心数据
+		}
 	}
-	//重新计算聚类中心
-	//归内数据
 
+	free(count_array);
+	free(class_array);
+	return class_center_matrix;
 }
 
 
