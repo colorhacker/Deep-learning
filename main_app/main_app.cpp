@@ -37,10 +37,11 @@ int main(int argc, const char** argv){
 
 	//for (int count = 0; count < train_images->width*train_images->height; count++) {
 	for (int count = 0; count < 100; count++) {
-		featrue_list = user_nn_matrix_generate_feature(featrue_list, user_nn_matrices_ext_matrix_index(train_images, count), 7, 7, 2);//分割图像
+		featrue_list = user_nn_matrix_generate_feature(NULL, user_nn_matrices_ext_matrix_index(train_images, count), 7, 7, 2);//分割图像
+		k_class_matrices = user_nn_matrix_k_means(k_class_matrices, featrue_list, 20, 500);//
+		user_nn_matrices_delete(featrue_list);
 	}
 	printf("\nk_means:\n");
-	k_class_matrices = user_nn_matrix_k_means(NULL, featrue_list, 20, 1000);//
 	for (int index = 0; index < k_class_matrices->height*k_class_matrices->width;index++) {
 		user_opencv_show_matrix("f:0", user_nn_matrices_ext_matrix_index(k_class_matrices, index), 100, 100, 1);
 		_getch();
