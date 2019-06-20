@@ -1792,14 +1792,18 @@ float user_nn_matrix_cos_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix
 	user_nn_matrix_poit_mult_matrix(temp_a_matrix, a_matrix, a_matrix);
 	user_nn_matrix_poit_mult_matrix(temp_b_matrix, b_matrix, b_matrix);
 
+	float a_baise = user_nn_matrix_cum_element(temp_a_matrix);
+	float b_baise = user_nn_matrix_cum_element(temp_b_matrix);
+	float t_baise = user_nn_matrix_cum_element(temp_matrix);
+
+	a_baise = a_baise == 0 ? 0 : sqrt(a_baise);
+	b_baise = b_baise == 0 ? 0 : sqrt(b_baise);
+	
 	user_nn_matrix_delete(temp_matrix);
 	user_nn_matrix_delete(temp_a_matrix);
 	user_nn_matrix_delete(temp_b_matrix);
 
-	float a_baise = user_nn_matrix_cum_element(temp_a_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_a_matrix));
-	float b_baise = user_nn_matrix_cum_element(temp_b_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_b_matrix));
-
-	return user_nn_matrix_cum_element(temp_matrix) /(a_baise*b_baise);
+	return t_baise /(a_baise*b_baise);
 }
 //欧式距离 euclidean metric
 //公式：dist(a,b)=sqrt((a1-b1)*(a1-b1)+(a2-b2)*(a1-b2)+...+(ai-bi)*(ai-bi))
@@ -1809,7 +1813,7 @@ float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 	user_nn_matrix_poit_mult_matrix(temp_matrix, temp_matrix, temp_matrix);
 	user_nn_matrix_delete(temp_matrix);
 
-	return user_nn_matrix_cum_element(temp_matrix)==0?0:sqrt(user_nn_matrix_cum_element(temp_matrix));
+	return user_nn_matrix_cum_element(temp_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_matrix));
 }
 //皮尔逊相关系数 correlation coefficient
 //公式：dist(a,b)=E((A-Aavg)*(B-Bavg))/(sqrt(E(A-Aavg)^2)*sqrt(E(B-Bavg)^2))
@@ -1833,8 +1837,9 @@ float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 
 	user_nn_matrix_poit_mult_matrix(temp_a_matrix, temp_a_matrix, temp_a_matrix);
 	user_nn_matrix_poit_mult_matrix(temp_b_matrix, temp_b_matrix, temp_b_matrix);
-	float a_baise = user_nn_matrix_cum_element(temp_a_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_a_matrix));
-	float b_baise = user_nn_matrix_cum_element(temp_b_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_b_matrix));
+
+	float a_baise = user_nn_matrix_cum_element(temp_a_matrix) <= 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_a_matrix));
+	float b_baise = user_nn_matrix_cum_element(temp_b_matrix) <= 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_b_matrix));
 
 	denominator = a_baise * b_baise;
 
@@ -1863,7 +1868,7 @@ user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices,in
 			new_class = class_array[index];//记录ID
 			for (int class_index = 0; class_index < n_class; class_index++) {//历遍所有分类的中心矩阵
 				//计算数据矩阵与分类矩阵的距离
-				distance_temp = user_nn_matrix_eu_dist(user_nn_matrices_ext_matrix_index(src_matrices, index), user_nn_matrices_ext_matrix_index(class_center_matrix, class_index));
+				distance_temp = user_nn_matrix_cos_dist(user_nn_matrices_ext_matrix_index(src_matrices, index), user_nn_matrices_ext_matrix_index(class_center_matrix, class_index));
 				if (distance_temp < distance_max) {
 					distance_max = distance_temp;
 					new_class = class_index;//记录最小距离的中心矩阵类别

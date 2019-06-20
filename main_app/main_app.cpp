@@ -29,17 +29,17 @@ user_nn_list_matrix *user_nn_matrix_generate_feature(user_nn_matrix *src_matrix,
 }
 
 int main(int argc, const char** argv){
-	user_nn_matrix *matrix = NULL;
+	/*user_nn_matrix *matrix = NULL;
 	user_nn_matrix *dest = NULL;
 
-	matrix = user_nn_matrix_create(1, 5);//创建2*2大小的二维矩阵
+	matrix = user_nn_matrix_create(1, 3);//创建2*2大小的二维矩阵
 	matrix->data[0] = 1.0f;
 	matrix->data[1] = 2.0f;
 	matrix->data[2] = 3.0f;
 	matrix->data[3] = 4.0f;
 	matrix->data[4] = 5.0f;
 
-	dest = user_nn_matrix_create(1, 5);//创建2*2大小的二维矩阵
+	dest = user_nn_matrix_create(1, 3);//创建2*2大小的二维矩阵
 	dest->data[0] = 0.1f;
 	dest->data[1] = 0.2f;
 	dest->data[2] = 0.3f;
@@ -48,7 +48,7 @@ int main(int argc, const char** argv){
 
 	printf("%f\n", user_nn_matrix_cc_dist(matrix, dest));
 	_getch();
-	return 0;
+	return 0;*/
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 
