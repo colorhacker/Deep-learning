@@ -145,7 +145,7 @@ user_nn_matrix *user_nn_matrix_cut_vector(user_nn_matrix *src_matrix, user_nn_ma
 float user_nn_matrix_cos_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);
 float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);
 float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);//计算皮尔逊相关系数 correlation coefficient
-user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices, int n_class);//k_means 分类列表矩阵
+user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *class_matrix, user_nn_list_matrix *src_matrices, int n_class, int count);//k_means 分类列表矩阵
 
 void user_nn_matrix_paint_p(user_nn_matrix *src_matrix, int x, int y, float value);//画一个点
 void user_nn_matrix_paint_hl(user_nn_matrix *src_matrix, int x, int y, int length, float value);//画一个横线

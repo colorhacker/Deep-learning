@@ -17,8 +17,8 @@
 //f_height 需要生成矩阵的高度
 //step 矩阵每次移动大小
 //返回特征矩阵
-user_nn_list_matrix *user_nn_matrix_generate_feature(user_nn_matrix *src_matrix,int f_width,int f_height,int step) {
-	user_nn_list_matrix *featrue_list = user_nn_matrices_create_head(1, 1);
+user_nn_list_matrix *user_nn_matrix_generate_feature(user_nn_list_matrix *save_featrue,user_nn_matrix *src_matrix,int f_width,int f_height,int step) {
+	user_nn_list_matrix *featrue_list = save_featrue == NULL ? user_nn_matrices_create_head(1, 1) : save_featrue;//不存在就创建
 	for (int height = 0; height < src_matrix->height - f_height + 1; height+= step) {
 		for (int width = 0; width < src_matrix->width - f_width + 1; width+= step) {
 			user_nn_matrices_add_matrix(featrue_list, user_nn_matrix_ext_matrix(src_matrix, width, height, f_width, f_height));
@@ -29,35 +29,18 @@ user_nn_list_matrix *user_nn_matrix_generate_feature(user_nn_matrix *src_matrix,
 }
 
 int main(int argc, const char** argv){
-	/*user_nn_matrix *matrix = NULL;
-	user_nn_matrix *dest = NULL;
-
-	matrix = user_nn_matrix_create(1, 3);//创建2*2大小的二维矩阵
-	matrix->data[0] = 1.0f;
-	matrix->data[1] = 2.0f;
-	matrix->data[2] = 3.0f;
-	matrix->data[3] = 4.0f;
-	matrix->data[4] = 5.0f;
-
-	dest = user_nn_matrix_create(1, 3);//创建2*2大小的二维矩阵
-	dest->data[0] = 0.1f;
-	dest->data[1] = 0.2f;
-	dest->data[2] = 0.3f;
-	dest->data[3] = 0.4f;
-	dest->data[4] = 0.5f;
-
-	printf("%f\n", user_nn_matrix_cc_dist(matrix, dest));
-	_getch();
-	return 0;*/
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 
-	//user_opencv_show_matrix("test_image:0", user_nn_matrices_ext_matrix_index(train_images, 0), 100, 100, 1);
-	user_nn_matrix *data_matrix = user_nn_matrices_ext_matrix_index(train_images, 1);
+	user_nn_list_matrix *featrue_list = NULL;//创建头
+	user_nn_list_matrix *k_class_matrices = NULL;
 
-	user_nn_list_matrix *featrue_list = user_nn_matrix_generate_feature(data_matrix,8,8,2);//分割图像
-	user_nn_list_matrix *k_class_matrices = user_nn_matrix_k_means(featrue_list,8);//
-
+	//for (int count = 0; count < train_images->width*train_images->height; count++) {
+	for (int count = 0; count < 100; count++) {
+		featrue_list = user_nn_matrix_generate_feature(featrue_list, user_nn_matrices_ext_matrix_index(train_images, count), 7, 7, 2);//分割图像
+	}
+	printf("\nk_means:\n");
+	k_class_matrices = user_nn_matrix_k_means(NULL, featrue_list, 20, 1000);//
 	for (int index = 0; index < k_class_matrices->height*k_class_matrices->width;index++) {
 		user_opencv_show_matrix("f:0", user_nn_matrices_ext_matrix_index(k_class_matrices, index), 100, 100, 1);
 		_getch();

@@ -1787,33 +1787,40 @@ float user_nn_matrix_cos_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix
 	user_nn_matrix *temp_matrix = user_nn_matrix_cpy_create(a_matrix);
 	user_nn_matrix *temp_a_matrix = user_nn_matrix_cpy_create(a_matrix);
 	user_nn_matrix *temp_b_matrix = user_nn_matrix_cpy_create(b_matrix);
-	
+	float a_baise, b_baise, t_baise;
+
 	user_nn_matrix_poit_mult_matrix(temp_matrix, a_matrix, b_matrix);
 	user_nn_matrix_poit_mult_matrix(temp_a_matrix, a_matrix, a_matrix);
 	user_nn_matrix_poit_mult_matrix(temp_b_matrix, b_matrix, b_matrix);
 
-	float a_baise = user_nn_matrix_cum_element(temp_a_matrix);
-	float b_baise = user_nn_matrix_cum_element(temp_b_matrix);
-	float t_baise = user_nn_matrix_cum_element(temp_matrix);
-
-	a_baise = a_baise == 0 ? 0 : sqrt(a_baise);
-	b_baise = b_baise == 0 ? 0 : sqrt(b_baise);
+	a_baise = user_nn_matrix_cum_element(temp_a_matrix);
+	b_baise = user_nn_matrix_cum_element(temp_b_matrix);
+	t_baise = user_nn_matrix_cum_element(temp_matrix);
 	
 	user_nn_matrix_delete(temp_matrix);
 	user_nn_matrix_delete(temp_a_matrix);
 	user_nn_matrix_delete(temp_b_matrix);
 
+	if (a_baise == 0 ) {
+		return b_baise;
+	}
+	if (b_baise == 0) {
+		return a_baise;
+	}
 	return t_baise /(a_baise*b_baise);
 }
 //欧式距离 euclidean metric
 //公式：dist(a,b)=sqrt((a1-b1)*(a1-b1)+(a2-b2)*(a1-b2)+...+(ai-bi)*(ai-bi))
 float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix) {
 	user_nn_matrix *temp_matrix = user_nn_matrix_cpy_create(a_matrix);
+	float t_baise;
 	user_nn_matrix_sub_matrix_s(temp_matrix, b_matrix);
 	user_nn_matrix_poit_mult_matrix(temp_matrix, temp_matrix, temp_matrix);
 	user_nn_matrix_delete(temp_matrix);
 
-	return user_nn_matrix_cum_element(temp_matrix) == 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_matrix));
+	t_baise = user_nn_matrix_cum_element(temp_matrix);
+
+	return t_baise == 0 ? 0 : sqrt(t_baise);
 }
 //皮尔逊相关系数 correlation coefficient
 //公式：dist(a,b)=E((A-Aavg)*(B-Bavg))/(sqrt(E(A-Aavg)^2)*sqrt(E(B-Bavg)^2))
@@ -1821,7 +1828,7 @@ float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 	user_nn_matrix *temp_a_matrix = user_nn_matrix_cpy_create(a_matrix);
 	user_nn_matrix *temp_b_matrix = user_nn_matrix_cpy_create(b_matrix);
 
-	float a_avg, b_avg, molecular, denominator;
+	float a_avg, b_avg, molecular, a_baise, b_baise;
 
 	a_avg = user_nn_matrix_cum_element(temp_a_matrix) / (a_matrix->width*a_matrix->height);
 	b_avg = user_nn_matrix_cum_element(temp_b_matrix) / (b_matrix->width*b_matrix->height);
@@ -1838,29 +1845,41 @@ float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 	user_nn_matrix_poit_mult_matrix(temp_a_matrix, temp_a_matrix, temp_a_matrix);
 	user_nn_matrix_poit_mult_matrix(temp_b_matrix, temp_b_matrix, temp_b_matrix);
 
-	float a_baise = user_nn_matrix_cum_element(temp_a_matrix) <= 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_a_matrix));
-	float b_baise = user_nn_matrix_cum_element(temp_b_matrix) <= 0 ? 0 : sqrt(user_nn_matrix_cum_element(temp_b_matrix));
-
-	denominator = a_baise * b_baise;
+	a_baise = user_nn_matrix_cum_element(temp_a_matrix);
+	b_baise = user_nn_matrix_cum_element(temp_b_matrix);
 
 	user_nn_matrix_delete(temp_a_matrix);
 	user_nn_matrix_delete(temp_b_matrix);
 
-	return molecular / denominator;
+	if (a_baise == 0) {
+		return b_baise;
+	}
+	if (b_baise == 0) {
+		return a_baise;
+	}
+
+	return molecular / (a_baise * b_baise);
 }
 //对链矩阵进行k-means聚类
 //src_matrices 需要被分类的链表矩阵
 //n_class 需要聚类的个数
 //return 返回聚类的中心矩阵值
-user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices,int n_class) {
-	user_nn_list_matrix *class_center_matrix = user_nn_matrices_create(1, n_class, src_matrices->matrix->height, src_matrices->matrix->width);//创建聚类中心矩阵
+user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *class_matrix,user_nn_list_matrix *src_matrices,int n_class,int count) {
+	user_nn_list_matrix *class_center_matrix = NULL;//创建聚类中心矩阵
 	int *count_array = (int*)malloc(n_class * sizeof(int));//创建用于保存每类的数量数组 寻址 0~n_class-1
 	int *class_array = (int*)malloc(src_matrices->height*src_matrices->width * sizeof(int));//创建对应矩阵序号的类别 寻址 0~n_class-1
 	float distance_max = FLT_MAX, distance_temp;
 	int new_class = 0;
 	bool flage = true;//是否需要继续迭代 false 不需要 true需要
-	user_nn_matrices_cpy_matrices_n(class_center_matrix, src_matrices, n_class);//初始化聚类中心
-	while (flage) {
+	if (class_matrix == NULL) {//创建矩阵
+		class_center_matrix = user_nn_matrices_create(1, n_class, src_matrices->matrix->height, src_matrices->matrix->width);
+		user_nn_matrices_cpy_matrices_n(class_center_matrix, src_matrices, n_class);//初始化聚类中心
+	}
+	else {
+		class_center_matrix = class_matrix;
+	}
+	
+	while (flage && count--) {
 		flage = false;
 		//分类所有数据
 		for (int index = 0; index < src_matrices->height*src_matrices->width; index++) {//历遍所有数据
@@ -1868,7 +1887,7 @@ user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices,in
 			new_class = class_array[index];//记录ID
 			for (int class_index = 0; class_index < n_class; class_index++) {//历遍所有分类的中心矩阵
 				//计算数据矩阵与分类矩阵的距离
-				distance_temp = user_nn_matrix_cos_dist(user_nn_matrices_ext_matrix_index(src_matrices, index), user_nn_matrices_ext_matrix_index(class_center_matrix, class_index));
+				distance_temp = user_nn_matrix_cc_dist(user_nn_matrices_ext_matrix_index(src_matrices, index), user_nn_matrices_ext_matrix_index(class_center_matrix, class_index));
 				if (distance_temp < distance_max) {
 					distance_max = distance_temp;
 					new_class = class_index;//记录最小距离的中心矩阵类别
@@ -1889,6 +1908,7 @@ user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *src_matrices,in
 		for (int class_index = 0; class_index < n_class; class_index++) {//历遍分类
 			user_nn_matrix_divi_constant(user_nn_matrices_ext_matrix_index(class_center_matrix, class_index), ((float)count_array[class_index] + 1.0f));//均值分类中心数据
 		}
+		printf("\ncount:%d",count);
 	}
 
 	free(count_array);
