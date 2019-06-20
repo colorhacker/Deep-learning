@@ -36,9 +36,9 @@ int main(int argc, const char** argv){
 	user_nn_list_matrix *k_class_matrices = NULL;
 
 	//for (int count = 0; count < train_images->width*train_images->height; count++) {
-	for (int count = 0; count < 100; count++) {
+	for (int count = 0; count < 10; count++) {
 		featrue_list = user_nn_matrix_generate_feature(NULL, user_nn_matrices_ext_matrix_index(train_images, count), 7, 7, 2);//分割图像
-		k_class_matrices = user_nn_matrix_k_means(k_class_matrices, featrue_list, 20, 500);//
+		k_class_matrices = user_nn_matrix_k_means(k_class_matrices, featrue_list, 10, 500);//
 		user_nn_matrices_delete(featrue_list);
 	}
 	printf("\nk_means:\n");

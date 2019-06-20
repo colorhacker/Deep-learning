@@ -1887,7 +1887,7 @@ user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *class_matrix,us
 			new_class = class_array[index];//记录ID
 			for (int class_index = 0; class_index < n_class; class_index++) {//历遍所有分类的中心矩阵
 				//计算数据矩阵与分类矩阵的距离
-				distance_temp = user_nn_matrix_cc_dist(user_nn_matrices_ext_matrix_index(src_matrices, index), user_nn_matrices_ext_matrix_index(class_center_matrix, class_index));
+				distance_temp = user_nn_matrix_eu_dist(user_nn_matrices_ext_matrix_index(src_matrices, index), user_nn_matrices_ext_matrix_index(class_center_matrix, class_index));
 				if (distance_temp < distance_max) {
 					distance_max = distance_temp;
 					new_class = class_index;//记录最小距离的中心矩阵类别
