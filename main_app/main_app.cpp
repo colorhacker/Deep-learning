@@ -65,21 +65,24 @@ int main(int argc, const char** argv){
 	int class_size = 16;//分类大小
 	//for (int count = 0; count < train_images->width*train_images->height; count++) {
 	for (int count = 0; count < 100; count++) {
-		featrue_list = user_nn_matrix_generate_feature(NULL, user_nn_matrices_ext_matrix_index(train_images, count), cut_width, cut_heigth, cut_step);//分割图像
-		if (kclass_list_temp == NULL) {
-			kclass_list_temp = user_nn_matrix_k_means(NULL, featrue_list, class_size, 100);
-		}else {
-			user_nn_matrices_splice_matrices(kclass_list_temp, user_nn_matrix_k_means(NULL, featrue_list, class_size, 100));//
-		}
+		//featrue_list = user_nn_matrix_generate_feature(NULL, user_nn_matrices_ext_matrix_index(train_images, count), cut_width, cut_heigth, cut_step);//分割图像
+		//if (kclass_list_temp == NULL) {
+		//	kclass_list_temp = user_nn_matrix_k_means(NULL, featrue_list, class_size, 100);
+		//}else {
+		//	user_nn_matrices_splice_matrices(kclass_list_temp, user_nn_matrix_k_means(NULL, featrue_list, class_size, 100));//
+		//}
 		////如果超出分类进行二次分类
-		if (kclass_list_temp->height*kclass_list_temp->width > 1000) {
-			kclass_list = user_nn_matrix_k_means(NULL, kclass_list_temp, class_size, 100);
-			break;
-		}
+		//if (kclass_list_temp->height*kclass_list_temp->width > 1000) {
+		//	kclass_list = user_nn_matrix_k_means(NULL, kclass_list_temp, class_size, 100);
+		//	break;
+		//}
+		//user_nn_matrices_delete(featrue_list);
+		featrue_list = user_nn_matrix_generate_feature(NULL, user_nn_matrices_ext_matrix_index(train_images, count), cut_width, cut_heigth, cut_step);//分割图像
+		kclass_list = user_nn_matrix_k_means(kclass_list, featrue_list, class_size, 100);
 		user_nn_matrices_delete(featrue_list);
 		printf("::%d\n", count);
 	}
-	printf("k class size:%d\n", kclass_list_temp->height * kclass_list_temp->width);
+	printf("k class size:%d\n", kclass_list->height * kclass_list->width);
 	//printf("feature size:%d\n", featrue_list->height * featrue_list->width);
 	//kclass_list = user_nn_matrix_k_means(kclass_list, featrue_list, class_size, 5000);//分类数据
 	//printf("k class size:%d\n", kclass_list->height * kclass_list->width);
