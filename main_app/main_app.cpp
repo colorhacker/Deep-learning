@@ -64,7 +64,7 @@ int main(int argc, const char** argv){
 	int cut_step = 1;//剪切精度
 	int class_size = 16;//分类大小
 	//for (int count = 0; count < train_images->width*train_images->height; count++) {
-	for (int count = 0; count < 100; count++) {
+	for (int count = 0; count < 1000; count++) {
 		//featrue_list = user_nn_matrix_generate_feature(NULL, user_nn_matrices_ext_matrix_index(train_images, count), cut_width, cut_heigth, cut_step);//分割图像
 		//if (kclass_list_temp == NULL) {
 		//	kclass_list_temp = user_nn_matrix_k_means(NULL, featrue_list, class_size, 100);
@@ -87,7 +87,7 @@ int main(int argc, const char** argv){
 	//kclass_list = user_nn_matrix_k_means(kclass_list, featrue_list, class_size, 5000);//分类数据
 	//printf("k class size:%d\n", kclass_list->height * kclass_list->width);
 
-	for (int count = 100; count < 200; count++) {
+	for (int count = 1000; count < 2000; count++) {
 		user_nn_matrix *matrix_temp = user_nn_matrix_kmeans_paste_refactor(kclass_list,user_nn_matrices_ext_matrix_index(train_images, count), cut_heigth, cut_step);
 		user_opencv_show_matrix("f:1", user_nn_matrices_ext_matrix_index(train_images, count), 100, 100, 1);
 		user_opencv_show_matrix("f:0", matrix_temp, 300, 100, 1);
