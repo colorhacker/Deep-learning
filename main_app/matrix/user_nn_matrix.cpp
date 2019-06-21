@@ -453,6 +453,76 @@ user_nn_matrix *user_nn_matrix_ext_matrix(user_nn_matrix *src_matrix, int startx
 
 	return result;
 }
+
+//从矩阵指定(x,y)位置粘贴(w,h)大小的矩阵。并且返回新截取的矩阵
+//参数
+//src_matrix：矩阵对象
+//x: 起始点 <=src_matrix->width
+//y：起始点 <=src_matrix->height
+//w：横范围 <=src_matrix->width
+//h：纵范围 <=src_matrix->height
+//返回：成功或者失败
+void user_nn_matrix_paste_matrix(user_nn_matrix *src_matrix,user_nn_matrix *sub_matrix, int startx, int starty) {
+	float *src_data = src_matrix->data;//数据指针
+	float *sub_data;
+	if (((startx + sub_matrix->width) > src_matrix->width) || ((starty + sub_matrix->height) > src_matrix->height) || (sub_matrix->width == 0) || (sub_matrix->height == 0)) {
+		return ;//如果超出范围那么直接返回空
+	}
+	sub_data = sub_matrix->data;//取得数据指针
+#if defined _OPENMP && _USER_API_OPENMP && _USER_API_OPENMP_CONV
+#pragma omp parallel for
+	for (int post_y = 0; post_y < sub_matrix->height; post_y++) {
+		for (int post_x = 0; post_x < sub_matrix->width; post_x++) {
+			src_data[(startx + post_x) + (starty + post_y)* src_matrix->width]= sub_data[post_y*width + post_x];//获取数据
+		}
+	}
+#else
+	//post_index = startx + starty* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
+	for (int post_y = 0; post_y < sub_matrix->height; post_y++) {
+		for (int post_x = 0; post_x < sub_matrix->width; post_x++) {
+			//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
+			src_data[(startx + post_x) + (starty + post_y)* src_matrix->width]= *sub_data++;//获取数据
+																								//printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
+		}
+		//printf("\n");
+	}
+#endif
+}
+//从矩阵指定(x,y)位置累加粘贴(w,h)大小的矩阵。并且返回新截取的矩阵
+//参数
+//src_matrix：矩阵对象
+//x: 起始点 <=src_matrix->width
+//y：起始点 <=src_matrix->height
+//w：横范围 <=src_matrix->width
+//h：纵范围 <=src_matrix->height
+//返回：成功或者失败
+void user_nn_matrix_add_paste_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, int startx, int starty) {
+	float *src_data = src_matrix->data;//数据指针
+	float *sub_data;
+	if (((startx + sub_matrix->width) > src_matrix->width) || ((starty + sub_matrix->height) > src_matrix->height) || (sub_matrix->width == 0) || (sub_matrix->height == 0)) {
+		return;//如果超出范围那么直接返回空
+	}
+	sub_data = sub_matrix->data;//取得数据指针
+#if defined _OPENMP && _USER_API_OPENMP && _USER_API_OPENMP_CONV
+#pragma omp parallel for
+	for (int post_y = 0; post_y < sub_matrix->height; post_y++) {
+		for (int post_x = 0; post_x < sub_matrix->width; post_x++) {
+			src_data[(startx + post_x) + (starty + post_y)* src_matrix->width] += sub_data[post_y*width + post_x];//获取数据
+		}
+	}
+#else
+								//post_index = startx + starty* src_matrix->width;//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
+	for (int post_y = 0; post_y < sub_matrix->height; post_y++) {
+		for (int post_x = 0; post_x < sub_matrix->width; post_x++) {
+			//指向通过(postx,posty)转化一维数组的位置 公式：index=横坐标+纵坐标*矩阵宽度
+			src_data[(startx + post_x) + (starty + post_y)* src_matrix->width] += *sub_data++;//获取数据
+			//printf("x:%d,y:%d,%d ", startx+i, starty+j, post_index);
+		}
+		//printf("\n");
+	}
+#endif
+}
+
 //把连续的矩阵的数据拷贝到一个矩阵中
 //参数
 //src_matrix：被转化矩阵
@@ -488,7 +558,22 @@ void user_nn_matrices_cpy_matrices(user_nn_list_matrix *src_matrices, user_nn_li
 		dest_m = dest_m->next;
 	}
 }
-
+//拼接连续矩阵
+void user_nn_matrices_splice_matrices(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices) {
+	//只有当被拼接矩阵为1的时候才能进行拼接
+	if (src_matrices->width == 1) {
+		user_nn_matrices_ext_matrix_index(src_matrices, src_matrices->width*src_matrices->height - 1)->next = dest_matrices->matrix;
+		src_matrices->height += dest_matrices->width*dest_matrices->height;
+	}
+	else if (src_matrices->height == 1) {
+		user_nn_matrices_ext_matrix_index(src_matrices, src_matrices->width*src_matrices->height - 1)->next = dest_matrices->matrix;
+		src_matrices->width += dest_matrices->width*dest_matrices->height;
+	}
+	else {
+		return;
+	}
+	
+}
 //拷贝n一个连续的矩阵到另外一个连续矩阵中
 void user_nn_matrices_cpy_matrices_n(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices,int n) {
 	user_nn_matrix *src_m = src_matrices->matrix;
@@ -1816,10 +1901,8 @@ float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 	float t_baise;
 	user_nn_matrix_sub_matrix_s(temp_matrix, b_matrix);
 	user_nn_matrix_poit_mult_matrix(temp_matrix, temp_matrix, temp_matrix);
-	user_nn_matrix_delete(temp_matrix);
-
 	t_baise = user_nn_matrix_cum_element(temp_matrix);
-
+	user_nn_matrix_delete(temp_matrix);
 	return t_baise == 0 ? 0 : sqrt(t_baise);
 }
 //皮尔逊相关系数 correlation coefficient
@@ -1860,9 +1943,12 @@ float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 
 	return molecular / (a_baise * b_baise);
 }
+
 //对链矩阵进行k-means聚类
+//class_matrix 保持分类中心矩阵
 //src_matrices 需要被分类的链表矩阵
 //n_class 需要聚类的个数
+//count	 最大迭代次数
 //return 返回聚类的中心矩阵值
 user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *class_matrix,user_nn_list_matrix *src_matrices,int n_class,int count) {
 	user_nn_list_matrix *class_center_matrix = NULL;//创建聚类中心矩阵
@@ -1900,21 +1986,37 @@ user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *class_matrix,us
 		}
 		//按照分类后的数据计算中心矩阵
 		memset(count_array, 0, n_class * sizeof(int));//设置为0
-		//user_nn_matrices_memset(class_center_matrix, 0.0f);//中心值设置为0
 		for (int index = 0; index < src_matrices->height*src_matrices->width; index++) {//历遍所有数据
 			user_nn_matrix_cum_matrix_s(user_nn_matrices_ext_matrix_index(class_center_matrix, class_array[index]), user_nn_matrices_ext_matrix_index(src_matrices, index));//累加到相应的聚类中心
 			count_array[class_array[index]]++;
 		}
 		for (int class_index = 0; class_index < n_class; class_index++) {//历遍分类
-			user_nn_matrix_divi_constant(user_nn_matrices_ext_matrix_index(class_center_matrix, class_index), ((float)count_array[class_index] + 1.0f));//均值分类中心数据
+			user_nn_matrix_divi_constant(user_nn_matrices_ext_matrix_index(class_center_matrix, class_index), (count_array[class_index] + 1.0f));//均值分类中心数据
 		}
-		printf("\ncount:%d",count);
 	}
 
 	free(count_array);
 	free(class_array);
 	return class_center_matrix;
 }
+
+//根据聚类中心的数据识别矩阵数据属于哪一类
+//class_matrix 聚类矩阵
+//src_matrix 识别的矩阵
+//返回 class
+int user_nn_matrix_k_means_discern(user_nn_list_matrix *class_matrix, user_nn_matrix *src_matrix) {
+	float distance_max = FLT_MAX, distance_temp;
+	int new_class = 0;
+	for (int class_index = 0; class_index < class_matrix->height * class_matrix->width; class_index++) {//历遍所有分类的中心矩阵 
+		distance_temp = user_nn_matrix_eu_dist(user_nn_matrices_ext_matrix_index(class_matrix, class_index), src_matrix);//计算数据矩阵与分类矩阵的距离
+		if (distance_temp < distance_max) {
+			distance_max = distance_temp;
+			new_class = class_index;//记录最小距离的中心矩阵类别
+		}
+	}
+	return new_class;
+}
+
 
 
 //画一个点

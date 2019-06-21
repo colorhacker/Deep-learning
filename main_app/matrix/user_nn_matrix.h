@@ -76,6 +76,7 @@ user_nn_matrix *user_nn_matrices_ext_matrix_index(user_nn_list_matrix *list_matr
 void user_nn_matrices_to_matrix(user_nn_matrix *src_matrix, user_nn_list_matrix *sub_matrices);//把一个连续矩阵转化为一个矩阵，其中的值为连续矩阵的所有值，此转化后的矩阵的宽度为1，高度为数据个数总和
 void user_nn_matrix_to_matrices(user_nn_list_matrix *src_matrices, user_nn_matrix *sub_matrix);//把矩阵src_matrix转化为src_matrices的连续矩阵
 void user_nn_matrices_cpy_matrices(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices);//拷贝连续矩阵dest_matrices到连续矩阵src_matrices中
+void user_nn_matrices_splice_matrices(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices);//把dest_matrices追加到src_matrices之后
 void user_nn_matrices_cpy_matrices_n(user_nn_list_matrix *src_matrices, user_nn_list_matrix *dest_matrices, int n);//拷贝n个连续矩阵dest_matrices到连续矩阵src_matrices中
 bool user_nn_matrix_cpy_array(float *dest_data,user_nn_matrix *src_matrix, int startx, int starty, int width, int height); //拷贝src_matrix矩阵(x,y)起点大小为width*height的数据至dest_data,其中，返回失败或成功
 bool user_nn_matrix_cpy_array_mult_constant(float *dest_data, user_nn_matrix *src_matrix, int startx, int starty, int width, int height, float constant); //拷贝src_matrix*constant矩阵(x,y)起点大小为width*height的数据至dest_data,其中，返回失败或成功
@@ -116,6 +117,8 @@ void user_nn_matrix_cpy_matrix_p(user_nn_matrix *save_matrix, user_nn_matrix *su
 void user_nn_matrix_cpy_matrix_sum_constant(user_nn_matrix *save_matrix, user_nn_matrix *sub_matrix, int index, float constant);//拷贝矩阵到指定矩阵中，在给定位置地方进行求和constant
 float user_nn_matrix_mult_cum_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix);//矩阵src_matrix.*sub_matrix 然后求和矩阵里面所有值 （条件要求矩阵大小完全一致）
 user_nn_matrix *user_nn_matrix_ext_matrix(user_nn_matrix *src_matrix, int startx, int starty, int width, int height);//在矩阵src_matrix 中提取指定（startx,starty）位置为基点 的指定width、height大小的矩阵区域
+void user_nn_matrix_paste_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, int startx, int starty);//在矩阵src_matrix 中粘贴指定（startx,starty）位置为基点的sub_matrix矩阵
+void user_nn_matrix_add_paste_matrix(user_nn_matrix *src_matrix, user_nn_matrix *sub_matrix, int startx, int starty);//在矩阵src_matrix 中累加粘贴指定（startx,starty）位置为基点的sub_matrix矩阵
 bool user_nn_matrix_save_array(user_nn_matrix *src_matrix, float *save_data, int startx, int starty, int width, int height); //在src_matrix矩阵指定(x, y)位置保存save_datad的内存数据，返回失败或成功
 bool user_nn_matrix_save_float(user_nn_matrix *src_matrix, int startx, int starty, float vaule);//在指定位置保存一个值，返回失败或成功
 bool user_nn_matrix_save_matrix(user_nn_matrix *src_matrix, user_nn_matrix *save_matrix, int startx, int starty);//在src_matrix矩阵指定(x,y)位置保存save_matrix矩阵
@@ -146,6 +149,7 @@ float user_nn_matrix_cos_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix
 float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);
 float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix);//计算皮尔逊相关系数 correlation coefficient
 user_nn_list_matrix *user_nn_matrix_k_means(user_nn_list_matrix *class_matrix, user_nn_list_matrix *src_matrices, int n_class, int count);//k_means 分类列表矩阵
+int user_nn_matrix_k_means_discern(user_nn_list_matrix *class_matrix, user_nn_matrix *src_matrix);//识别矩阵
 
 void user_nn_matrix_paint_p(user_nn_matrix *src_matrix, int x, int y, float value);//画一个点
 void user_nn_matrix_paint_hl(user_nn_matrix *src_matrix, int x, int y, int length, float value);//画一个横线
