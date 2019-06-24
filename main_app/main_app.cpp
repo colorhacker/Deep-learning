@@ -50,8 +50,19 @@ user_nn_matrix *user_nn_matrix_kmeans_paste_refactor(user_nn_list_matrix *class_
 	}
 	return result;
 }
-
+void user_nn_mnist_cut_matrices(int c_width,int c_heigth,int step) {
+	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
+	user_nn_list_matrix *featrue_list = NULL;//创建头
+	for (int count = 0; count < train_images->width*train_images->height; count++) {
+		featrue_list = user_nn_matrix_generate_feature(featrue_list, user_nn_matrices_ext_matrix_index(train_images, count), c_width, c_heigth, step);//分割图像
+		printf("\n::%d", count);
+	}
+	user_nn_model_file_save_matrices("./mnist/files/train-images.idx3-ubyte.bx.c", 0, featrue_list);//保存矩阵
+}
 int main(int argc, const char** argv){
+	user_nn_mnist_cut_matrices(7, 7, 1);
+	_getch();
+	return 0;
 	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 
@@ -62,7 +73,7 @@ int main(int argc, const char** argv){
 	int cut_width = 7;//剪切宽度
 	int cut_heigth = 7;//剪切高度
 	int cut_step = 1;//剪切精度
-	int class_size = 16;//分类大小
+	int class_size = 255;//分类大小
 	//for (int count = 0; count < train_images->width*train_images->height; count++) {
 	for (int count = 0; count < 1000; count++) {
 		//featrue_list = user_nn_matrix_generate_feature(NULL, user_nn_matrices_ext_matrix_index(train_images, count), cut_width, cut_heigth, cut_step);//分割图像
