@@ -17,6 +17,14 @@ def display_image(data):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def mnsit_feature_data_c(data,c_w,c_h,s):
+    result = np.empty(shape=[0,c_w*c_h], dtype=int)
+    for x in range(0,data.shape[0]-c_w+1,s):
+        for y in range(0,data.shape[1]-c_h+1,s):
+            #print(data[x:x+c_w,y:y+c_h].flatten())
+            result = np.row_stack((result, data[x:x+c_w,y:y+c_h].flatten()))
+    return result
+
 def mnsit_feature_data(c_w,c_h,s):
     images, labels = load_mnist()
     result = np.empty(shape=[0,c_w*c_h], dtype=int)
@@ -24,12 +32,10 @@ def mnsit_feature_data(c_w,c_h,s):
     for i in range(10):
         #print("count:",i)
         data = np.uint8(images[i], dtype=int).reshape(28, 28)
-        for x in range(data.shape[0]-c_w+1):
-            for y in range(data.shape[1]-c_h+1):
+        for x in range(0,data.shape[0]-c_w+1,s):
+            for y in range(0,data.shape[1]-c_h+1,s):
                 #print(data[x:x+c_w,y:y+c_h].flatten())
                 result = np.row_stack((result, data[x:x+c_w,y:y+c_h].flatten()))
-                y = y + s
-            x = x + s
     return result
 
 def kmeans_feature(data,n_class):
@@ -39,16 +45,9 @@ def kmeans_feature(data,n_class):
 
 def rebuild_mnist(kmeans,data,c_w,c_h,s):
     result = np.empty(shape=[0, c_w * c_h], dtype=int)
-    for x in range(data.shape[0] - c_w + 1):
-        x = x + s
-        for y in range(data.shape[1] - c_h + 1):
-            y = y + s
-            #print(data[x:x+c_w,y:y+c_h].flatten())
-            #data[x:x + c_w, y:y + c_h].flatten()
-            #print(kmeans.predict(data[x:x+c_w,y:y+c_h].flatten()))
-            #print(kmeans.fit_predict(data[x:x+c_w,y:y+c_h].flatten()))
+    for x in range(0,data.shape[0] - c_w + 1,s):
+        for y in range(0,data.shape[1] - c_h + 1,s):
             result = np.row_stack((result, data[x:x + c_w, y:y + c_h].flatten()))
-            print(x,y)
     return result
 
 images, labels =load_mnist()
@@ -56,7 +55,6 @@ images, labels =load_mnist()
 result = mnsit_feature_data(7,7,1)
 kmeans,cluster_centers = kmeans_feature(result,16)
 
-
-print(kmeans.predict(rebuild_mnist(kmeans,np.uint8(images[0], dtype=int).reshape(28, 28),7,7,7)))
+print(kmeans.predict(mnsit_feature_data_c(np.uint8(images[0], dtype=int).reshape(28, 28),7,7,7)))
 #for i in range(kmeans.shape[0]):
 #    display_image(np.uint8(kmeans[i], dtype=int).reshape(7, 7))
