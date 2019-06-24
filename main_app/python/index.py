@@ -21,8 +21,8 @@ def mnsit_feature_data(c_w,c_h,s=1):
     images, labels = load_mnist()
     result = np.empty(shape=[0,c_w*c_h], dtype=int)
     #for i in range(len(images)):
-    for i in range(100):
-        print("count:",i)
+    for i in range(10):
+        #print("count:",i)
         data = np.uint8(images[i], dtype=int).reshape(28, 28)
         for x in range(data.shape[0]-c_w+1):
             for y in range(data.shape[1]-c_h+1):
@@ -42,12 +42,16 @@ def rebuild_mnist(kmeans,data,c_w,c_h,s=1):
         for y in range(data.shape[1] - c_h + 1):
             #print(data[x:x+c_w,y:y+c_h].flatten())
             #data[x:x + c_w, y:y + c_h].flatten()
-            #print(kmeans.predict(data[x:x+c_w,y:y+c_h].flatten()))
+            print(kmeans.predict(data[x:x+c_w,y:y+c_h].flatten()))
+            #print(kmeans.fit_predict(data[x:x+c_w,y:y+c_h].flatten()))
             y = y + s
         x = x + s
 
-result = mnsit_feature_data(7,7,1)
-kmeans = kmeans_feature(result,255)
+images, labels =load_mnist()
 
-for i in range(kmeans.shape[0]):
-    display_image(np.uint8(kmeans[i], dtype=int).reshape(7, 7))
+result = mnsit_feature_data(7,7,1)
+kmeans = kmeans_feature(result,16)
+
+rebuild_mnist(kmeans,np.uint8(images[0], dtype=int).reshape(28, 28),7,7,7)
+#for i in range(kmeans.shape[0]):
+#    display_image(np.uint8(kmeans[i], dtype=int).reshape(7, 7))
