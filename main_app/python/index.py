@@ -1,7 +1,8 @@
 from mnist import MNIST
 from PIL import Image
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans,MiniBatchKMeans
 from time import strftime, localtime
+import joblib as jb
 import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,7 +43,8 @@ def split_feature_data(c_w,c_h,s):
 
 #进行矩阵kmeans处理
 def cpu_kmeans_feature(data,n_class):
-    kmeans = KMeans(n_clusters=n_class).fit(data)
+    #kmeans = KMeans(n_clusters=n_class).fit(data)
+    kmeans = MiniBatchKMeans(n_clusters=n_class).fit(data)
     return kmeans,kmeans.cluster_centers_ # kmeans.labels_ # kmeans.inertia_
 
 #重构数据
@@ -59,12 +61,20 @@ def rebuild_matrix_data(kmeans,data,c_w,c_h,s):
 images, labels =load_mnist()#加载数据
 #result = split_feature_data(7,7,1)#分解特征
 
-print("load data..")
-result  = np.loadtxt("./f/feature_0.gz")
-print("kmeans data..")
-kmeans,cluster_centers = cpu_kmeans_feature(result,255)#进行聚类
-print("print data..")
+print(os.path.exists("kmeans.pkl"))
+
+if os.path.exists("kmeans.pkl") == False:
+    print("load data..")
+    result  = np.loadtxt("./f/feature_0.gz")
+    print("kmeans data..")
+    kmeans,cluster_centers = cpu_kmeans_feature(result,512)#进行聚类
+    print("print data..")
+    jb.dump(kmeans, "kmeans.pkl", compress=9)
+else:
+    kmeans = jb.load("kmeans.pkl")
+
 for i in range(1000):
     display_image(rebuild_matrix_data(kmeans,mnist_to_matrix(images[10000+i]),7,7,7))
+
 #np.savetxt('feature.gz', result)
 #np.savetxt('feature.csv', result, delimiter = ',')
