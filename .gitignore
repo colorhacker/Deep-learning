@@ -1,3 +1,12 @@
 
 main_app/python/python-mnist/
 main_app/python/.idea/workspace.xml
+main_app/mnist/files/t10k-images.idx3-ubyte
+main_app/mnist/files/t10k-images.idx3-ubyte.bx
+main_app/mnist/files/t10k-labels.idx1-ubyte
+main_app/mnist/files/t10k-labels.idx1-ubyte.bx
+main_app/mnist/files/train-images.idx3-ubyte
+main_app/mnist/files/train-images.idx3-ubyte.bx
+main_app/mnist/files/train-labels.idx1-ubyte
+main_app/mnist/files/train-labels.idx1-ubyte.bx
+*.npy
