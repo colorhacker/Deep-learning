@@ -25,14 +25,8 @@ def split_feature_data(c_w,c_h,s):
         result = np.empty(shape=[0, c_w * c_h], dtype=int)
         for j in range(0, 1000, 1):
             print(dt.datetime.now(), j)
-            result = np.vstack((result, split_feature_data_c(mnist_to_matrix(images[i*1000+j]), c_w, c_h, s)))
-        np.savetxt('./f/feature_'+str(i)+'.gz', result)
-    print("load " + str(0) + " ..")
-    feature = np.loadtxt('./f/feature_' + str(0) + '.gz')
-    for i in range(1, 60, 1):
-        print("load " + str(i) + " ..")
-        feature = np.vstack((feature, np.loadtxt('./f/feature_' + str(i) + '.gz')))
+            result = np.vstack((result, split_feature_data_c(mnist_to_matrix(images[i*1000+j]), c_w, c_h, s))).astype('uint8')
+        np.save("./feature/feature",result)
     return 0
-
 
 split_feature_data(7,7,1) #分解图像

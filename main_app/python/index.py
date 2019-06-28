@@ -1,18 +1,12 @@
 from mnist import MNIST
-from PIL import Image
 from sklearn.cluster import KMeans,MiniBatchKMeans
-from time import strftime, localtime
-import joblib as jb
-import datetime as dt
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns; sns.set()
 import os, random, base64, cv2
 
 def load_mnist():
     data = MNIST('./python-mnist/data')
-    images, labels = data.load_training()
-    return images, labels
+    image, label = data.load_training()
+    return image, label
 
 def display_image(data):
     #display_image(np.uint8(images[0], dtype=int).reshape(28, 28))
@@ -20,7 +14,7 @@ def display_image(data):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def mnist_to_matrix(data):
+def flatten_to_matrix(data):
     return np.uint8(data, dtype=int).reshape(28, 28)
 
 #拆分一个矩阵分解为特征矩阵
@@ -33,19 +27,12 @@ def split_feature_data_c(data,c_w,c_h,s):
 
 #拆分一堆矩阵分解为特征
 def split_feature_data(c_w,c_h,s):
-    images, labels = load_mnist()
+    image, label = load_mnist()
     result = np.empty(shape=[0,c_w*c_h], dtype=int)
     #for i in range(0,len(images),1):
     for i in range(0, 60, 1):
-        print(dt.datetime.now(),i)
-        result = np.vstack((result, split_feature_data_c(mnist_to_matrix(images[i]),c_w,c_h,s)))
+        result = np.vstack((result, split_feature_data_c(flatten_to_matrix(image[i]),c_w,c_h,s)))
     return result
-
-#进行矩阵kmeans处理
-def cpu_kmeans_feature(data,n_class):
-    kmeans = KMeans(n_clusters=n_class).fit(data)
-    #kmeans = MiniBatchKMeans(n_clusters=n_class).fit(data)
-    return kmeans,kmeans.cluster_centers_ # kmeans.labels_ # kmeans.inertia_
 
 #重构数据
 def rebuild_matrix_data(kmeans,data,c_w,c_h,s):
@@ -59,19 +46,12 @@ def rebuild_matrix_data(kmeans,data,c_w,c_h,s):
     return data
 
 images, labels =load_mnist()#加载数据
-#result = split_feature_data(7,7,1)#分解特征
 
-print(os.path.exists("kmeans.pkl"))
-
-if os.path.exists("kmeans.pkl") == False:
-    print("load data..")
-    result  = np.load("./f/feature_0.npy")
-    print("kmeans data..")
-    kmeans,cluster_centers = cpu_kmeans_feature(result,512)#进行聚类
-    print("print data..")
-    jb.dump(kmeans, "kmeans.pkl", compress=9)
+if os.path.exists("feature_file.npy") == False:
+    print("not found feature file .npy")
 else:
-    kmeans = jb.load("kmeans.pkl")
+    feature = np.load("feature_file.npy").astype('uint8')
+    print(feature)
 
-for i in range(1000):
-    display_image(rebuild_matrix_data(kmeans,mnist_to_matrix(images[10000+i]),7,7,7))
+#for i in range(1000):
+    #display_image(rebuild_matrix_data(kmeans,mnist_to_matrix(images[10000+i]),7,7,7))
