@@ -15,23 +15,25 @@ def display_image(data):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-
-def pearson_correlation_coefficient(x,y):
-    a = np.sqrt(np.sum((x - np.mean(x)) ** 2))
-    b = np.sqrt(np.sum((y - np.mean(y)) ** 2))
-    if a ==0:
-        return b
-    if b==0:
-        return a
-    return np.sum(a*b)/(a*b)
+#pearson_correlation_coefficient
+def pcc(x,y):
+    a = x - np.mean(x)
+    b = y - np.mean(y)
+    c = np.sqrt(np.sum(a*a))
+    d = np.sqrt(np.sum(b*b))
+    if c == 0:
+        return d
+    if d == 0:
+        return c
+    return np.sum(a*b)/(c*d)
 
 #采用cosine返回最小距离的特征
 def re_feature_matrix(c_means,data):
-    m_len=999999.0
+    m_len=-999
     m_class=0
     for i in range(c_means.shape[0]):
-        n_len = np.linalg.norm(c_means[i]-data)
-        if n_len < m_len:
+        n_len = pcc(c_means[i],data)
+        if n_len > m_len:
             m_len = n_len
             m_class = i
     return c_means[m_class]
@@ -54,15 +56,14 @@ def rebuild_matrix_data(k_means,i_data,c_w,c_h,s):
             data[x:x + c_w, y:y + c_h] = re_feature_matrix(k_means,data[x:x + c_w, y:y + c_h].flatten()).reshape(c_w,c_h)
     return data
 
-
-
 images, labels =load_mnist()#加载数据
 
-if os.path.exists("feature_file_L2.npy") == False:
+if os.path.exists("feature_file_L2_512.npy") == False:
     print("not found feature file .npy")
 else:
-    feature = np.load("feature_file_L2.npy").astype('uint8')
+    feature = np.load("feature_file_L2_512.npy").astype('uint8')
 
-#for i in range(1000):
-    #display_image(rebuild_matrix_data(feature,np.uint8(images[i], dtype=int).reshape(28, 28),7,7,7))
-print(correlation_coefficient([6,0.2,0.3],[1,2,3]))
+for i in range(1000):
+    display_image(rebuild_matrix_data(feature,np.uint8(images[i], dtype=int).reshape(28, 28),7,7,7))
+    #display_image(feature[i].reshape(7, 7))
+

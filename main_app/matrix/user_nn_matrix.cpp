@@ -1906,7 +1906,7 @@ float user_nn_matrix_eu_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 	return t_baise == 0 ? 0 : sqrt(t_baise);
 }
 //皮尔逊相关系数 correlation coefficient
-//公式：dist(a,b)=E((A-Aavg)*(B-Bavg))/(sqrt(E(A-Aavg)^2)*sqrt(E(B-Bavg)^2))
+//公式：dist(a,b)=E((A-Aavg)*(B-Bavg))/(sqrt(E((A-Aavg)^2))*sqrt(E((B-Bavg)^2)))
 float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix) {
 	user_nn_matrix *temp_a_matrix = user_nn_matrix_cpy_create(a_matrix);
 	user_nn_matrix *temp_b_matrix = user_nn_matrix_cpy_create(b_matrix);
