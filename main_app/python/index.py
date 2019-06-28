@@ -43,8 +43,8 @@ def split_feature_data(c_w,c_h,s):
 
 #进行矩阵kmeans处理
 def cpu_kmeans_feature(data,n_class):
-    #kmeans = KMeans(n_clusters=n_class).fit(data)
-    kmeans = MiniBatchKMeans(n_clusters=n_class).fit(data)
+    kmeans = KMeans(n_clusters=n_class).fit(data)
+    #kmeans = MiniBatchKMeans(n_clusters=n_class).fit(data)
     return kmeans,kmeans.cluster_centers_ # kmeans.labels_ # kmeans.inertia_
 
 #重构数据
@@ -65,7 +65,7 @@ print(os.path.exists("kmeans.pkl"))
 
 if os.path.exists("kmeans.pkl") == False:
     print("load data..")
-    result  = np.loadtxt("./f/feature_0.gz")
+    result  = np.load("./f/feature_0.npy")
     print("kmeans data..")
     kmeans,cluster_centers = cpu_kmeans_feature(result,512)#进行聚类
     print("print data..")
@@ -75,6 +75,3 @@ else:
 
 for i in range(1000):
     display_image(rebuild_matrix_data(kmeans,mnist_to_matrix(images[10000+i]),7,7,7))
-
-#np.savetxt('feature.gz', result)
-#np.savetxt('feature.csv', result, delimiter = ',')

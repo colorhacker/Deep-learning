@@ -10,3 +10,6 @@ main_app/mnist/files/train-images.idx3-ubyte.bx
 main_app/mnist/files/train-labels.idx1-ubyte
 main_app/mnist/files/train-labels.idx1-ubyte.bx
 *.npy
+main_app/python/.idea/misc.xml
+main_app/python/.idea/modules.xml
+main_app/python/.idea/python.iml
