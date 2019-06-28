@@ -1,5 +1,6 @@
 from mnist import MNIST
 from sklearn.cluster import KMeans,MiniBatchKMeans
+from scipy.spatial import distance
 import numpy as np
 import os, random, base64, cv2
 
@@ -14,8 +15,26 @@ def display_image(data):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def flatten_to_matrix(data):
-    return np.uint8(data, dtype=int).reshape(28, 28)
+
+def pearson_correlation_coefficient(x,y):
+    a = np.sqrt(np.sum((x - np.mean(x)) ** 2))
+    b = np.sqrt(np.sum((y - np.mean(y)) ** 2))
+    if a ==0:
+        return b
+    if b==0:
+        return a
+    return np.sum(a*b)/(a*b)
+
+#采用cosine返回最小距离的特征
+def re_feature_matrix(c_means,data):
+    m_len=999999.0
+    m_class=0
+    for i in range(c_means.shape[0]):
+        n_len = np.linalg.norm(c_means[i]-data)
+        if n_len < m_len:
+            m_len = n_len
+            m_class = i
+    return c_means[m_class]
 
 #拆分一个矩阵分解为特征矩阵
 def split_feature_data_c(data,c_w,c_h,s):
@@ -25,33 +44,25 @@ def split_feature_data_c(data,c_w,c_h,s):
             result = np.vstack((result, data[x:x+c_w,y:y+c_h].flatten()))
     return result
 
-#拆分一堆矩阵分解为特征
-def split_feature_data(c_w,c_h,s):
-    image, label = load_mnist()
-    result = np.empty(shape=[0,c_w*c_h], dtype=int)
-    #for i in range(0,len(images),1):
-    for i in range(0, 60, 1):
-        result = np.vstack((result, split_feature_data_c(flatten_to_matrix(image[i]),c_w,c_h,s)))
-    return result
-
 #重构数据
-def rebuild_matrix_data(kmeans,data,c_w,c_h,s):
-    fit_array = kmeans.predict(split_feature_data_c(data, c_w,c_h,s))
-    fit_index = 0
+def rebuild_matrix_data(k_means,i_data,c_w,c_h,s):
+    data = i_data.copy()
     for x in range(0,data.shape[0]-c_w+1,s):
         for y in range(0,data.shape[1]-c_h+1,s):
-            #data[x:x + c_w, y:y + c_h] = np.uint8(kmeans.cluster_centers_[fit_array[fit_index]], dtype=int).reshape(c_w, c_h)
-            data[x:x+c_w,y:y+c_h] = kmeans.cluster_centers_[fit_array[fit_index]].reshape(c_w, c_h)
-            fit_index = fit_index+1
+            #display_image(data[x:x + c_w, y:y + c_h])
+            #display_image(re_feature_matrix(k_means,data[x:x + c_w, y:y + c_h].flatten()).reshape(c_w,c_h))
+            data[x:x + c_w, y:y + c_h] = re_feature_matrix(k_means,data[x:x + c_w, y:y + c_h].flatten()).reshape(c_w,c_h)
     return data
+
+
 
 images, labels =load_mnist()#加载数据
 
-if os.path.exists("feature_file.npy") == False:
+if os.path.exists("feature_file_L2.npy") == False:
     print("not found feature file .npy")
 else:
-    feature = np.load("feature_file.npy").astype('uint8')
-    print(feature)
+    feature = np.load("feature_file_L2.npy").astype('uint8')
 
 #for i in range(1000):
-    #display_image(rebuild_matrix_data(kmeans,mnist_to_matrix(images[10000+i]),7,7,7))
+    #display_image(rebuild_matrix_data(feature,np.uint8(images[i], dtype=int).reshape(28, 28),7,7,7))
+print(correlation_coefficient([6,0.2,0.3],[1,2,3]))
