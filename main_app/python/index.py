@@ -15,24 +15,13 @@ def display_image(data):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-#pearson_correlation_coefficient
-def pcc(x,y):
-    a = x - np.mean(x)
-    b = y - np.mean(y)
-    c = np.sqrt(np.sum(a*a))
-    d = np.sqrt(np.sum(b*b))
-    if c == 0:
-        return d
-    if d == 0:
-        return c
-    return np.sum(a*b)/(c*d)
 
 #采用cosine返回最小距离的特征
 def re_feature_matrix(c_means,data):
-    m_len=-999
+    m_len=0
     m_class=0
     for i in range(c_means.shape[0]):
-        n_len = pcc(c_means[i],data)
+        n_len = 0.5+0.5*np.corrcoef(c_means[i],data)[0][1]
         if n_len > m_len:
             m_len = n_len
             m_class = i
@@ -66,4 +55,3 @@ else:
 for i in range(1000):
     display_image(rebuild_matrix_data(feature,np.uint8(images[i], dtype=int).reshape(28, 28),7,7,7))
     #display_image(feature[i].reshape(7, 7))
-
