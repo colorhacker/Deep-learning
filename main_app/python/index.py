@@ -21,8 +21,14 @@ def re_feature_matrix(c_means,data):
     m_len=0
     m_class=0
     for i in range(c_means.shape[0]):
-        n_len = 0.5+0.5*np.corrcoef(c_means[i],data)[0][1]
-        if n_len > m_len:
+        ''' 
+        if np.sum(c_means[i]) is 0:
+            n_len=0
+        else:
+            n_len = 0.5+0.5*np.corrcoef(c_means[i],data)[0][1]
+        '''
+        n_len = np.sqrt(np.sum(np.square(c_means[i]-data)))
+        if n_len < m_len:
             m_len = n_len
             m_class = i
     return c_means[m_class]
