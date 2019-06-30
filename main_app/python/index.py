@@ -16,13 +16,14 @@ def display_image( data):
     cv2.destroyAllWindows()
 
 
-#采用cosine返回最小距离的特征
+#指定方式返回特征矩阵最接近的矩阵
 def re_feature_matrix(center_data,data):
     m_class = 0
-    m_len = np.linalg.norm(data-center_data[0])
+    #m_len = np.linalg.norm(data-center_data[0])
+    m_len = np.cov(data-center_data[0])
     for i in range(1,center_data.shape[0],1):
-        #n_len = 0.5+0.5*np.corrcoef(center_data[i],data)[0][1]
-        n_len = np.linalg.norm(data-center_data[i])
+        n_len = np.cov(data-center_data[i])
+        #n_len = np.linalg.norm(data-center_data[i])
         if n_len < m_len:
             m_len = n_len
             m_class = i
@@ -45,14 +46,20 @@ def rebuild_matrix_data(k_means,i_data,c_w,c_h,s):
     return data
 
 
-def print_acc_loss(data,re_data):
+def get_mnist_loss():
+    image, label = load_mnist()
     loss=0
-    for i in range(data.shape[0]):
-        loss = loss + np.linalg.norm(data - re_data)
-    return loss/data.shape[0]
+    #for i in range(len(image)):
+    for i in range(100):
+        aims = rebuild_matrix_data(feature, np.uint8(image[i], dtype=int).reshape(28, 28), 7, 7, 7)
+        _l = np.cov(image[i] - aims.flatten())
+        loss = loss + _l
+        print(i,_l,label[i])
+    return loss/100
 
-images, labels =load_mnist()#加载数据
+#images, labels =load_mnist()#加载数据
 
+#删除相同值的行
 def delete_same_rows(data):
     new_array = [tuple(row) for row in data]
     uniques = np.unique(new_array, axis=0)
@@ -66,6 +73,10 @@ else:
     feature = delete_same_rows(feature).astype('float32')
     print(feature.shape)
 
-#for i in range(1000):
-    #display_image(rebuild_matrix_data(feature,np.uint8(images[i+1000], dtype=int).reshape(28, 28),7,7,7))
-    #display_image(feature[i].reshape(7, 7))
+#print(get_mnist_loss())
+image, label = load_mnist()
+for i in range(1000):
+    display_image(np.uint8(image[i], dtype=int).reshape(28, 28))
+    display_image(rebuild_matrix_data(feature,np.uint8(image[i], dtype=int).reshape(28, 28),7,7,7))
+
+

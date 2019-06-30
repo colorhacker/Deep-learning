@@ -67,6 +67,12 @@
     <Filter Include="头文件\snn">
       <UniqueIdentifier>{ca0c19f4-490b-4f0b-934d-f2b518a5e390}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\cifar">
+      <UniqueIdentifier>{990e9f54-fd91-4ffc-a622-7ab45960316f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\cifar">
+      <UniqueIdentifier>{2fd6984a-0502-45cd-ac63-26e248e4ea74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user_config.h">
@@ -195,6 +201,12 @@
     <ClInclude Include="snn\user_snn_model.h">
       <Filter>头文件\snn</Filter>
     </ClInclude>
+    <ClInclude Include="snn\user_snn_rw_model.h">
+      <Filter>头文件\snn</Filter>
+    </ClInclude>
+    <ClInclude Include="cifar\user_cifar.h">
+      <Filter>头文件\cifar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -322,6 +334,12 @@
     </ClCompile>
     <ClCompile Include="snn\user_snn_model.cpp">
       <Filter>源文件\snn</Filter>
+    </ClCompile>
+    <ClCompile Include="snn\user_snn_rw_model.cpp">
+      <Filter>源文件\snn</Filter>
+    </ClCompile>
+    <ClCompile Include="cifar\user_cifar.cpp">
+      <Filter>源文件\cifar</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
