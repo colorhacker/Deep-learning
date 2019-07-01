@@ -1,6 +1,7 @@
 from mnist import MNIST
 from sklearn.cluster import KMeans,MiniBatchKMeans
 from scipy.spatial import distance
+import matplotlib.pyplot as plt
 import numpy as np
 import os, random, base64, cv2
 
@@ -44,17 +45,18 @@ def rebuild_matrix_data(k_means,i_data,c_w,c_h,s):
             data[x:x + c_w, y:y + c_h] = re_feature_matrix(k_means,data[x:x + c_w, y:y + c_h].flatten()).reshape(c_w,c_h)
     return data
 
-
-def get_mnist_loss():
+#测试重构数据的错误值
+def get_mnist_loss(feature,count):
     images, label = load_mnist()
     image = np.array(images,dtype='float32')
     loss=0
-    for i in range(len(image)):
+    for i in range(count):
+    # for i in range(len(image)):
         aims = rebuild_matrix_data(feature, image[i].reshape(28, 28), 7, 7, 7)
         _l = np.cov(image[i] - aims.flatten())
         loss = loss + _l
         print(i,_l,label[i])
-    return loss/len(image)
+    return loss/count
 
 
 #删除无效值的行
@@ -63,17 +65,21 @@ def delete_same_rows(data):
     #uniques = np.unique(new_array, axis=0)
     return np.delete(data, np.where(np.isnan(data))[0], axis=0) #删除nan行
 
-f_files = "feature_file_L2_512.npy"
-if os.path.exists(f_files) == False:
-    print("not found feature file .npy")
-else:
-    feature = delete_same_rows(np.load(f_files))
-    print("feature:",feature.shape,feature.dtype)
-    print(get_mnist_loss())
-    #
-    # images, label = load_mnist()
-    # image = np.array(images,dtype='float32')
-    # for i in range(1000):
-    #     #display_image(np.uint8(image[i], dtype=int).reshape(28, 28))
-    #     display_image(rebuild_matrix_data(feature,image[i].reshape(28, 28),7,7,7))
-    #
+def display_loss(set):
+    X=[]
+    Y=[]
+    for i in range(len(set)):
+        X.append(set[i])
+        f_files = "feature_file_L2_"+str(set[i])+".npy"
+        if os.path.exists(f_files) == False:
+            print("not found feature file .npy")
+        else:
+            feature = delete_same_rows(np.load(f_files))
+            #print("feature:", feature.shape, feature.dtype)
+            Y.append(get_mnist_loss(feature,100))
+    return X,Y
+
+X,Y=display_loss([32,64,128,255,512])
+
+plt.plot(X,Y)
+plt.show()
