@@ -1,6 +1,8 @@
 from mnist import MNIST
+from sklearn.cluster import KMeans
 import datetime as dt
 import numpy as np
+import os
 
 def load_mnist():
     data = MNIST('./python-mnist/data')
@@ -18,19 +20,24 @@ def split_feature_data_c(data,c_w,c_h,s):
 save_path = "./split_feature/split_feature_"
 #拆分一堆矩阵分解为特征
 def split_feature_data(c_w,c_h,s):
-    # images, labels = load_mnist()
-    # image = np.array(images, dtype='float32')
-    # for i in range(0, 60, 1):
-    #     result = np.empty(shape=[0, c_w * c_h])
-    #     for j in range(0, 1000, 1):
-    #         print(dt.datetime.now(), j)
-    #         result = np.vstack((result, split_feature_data_c(image[i*1000+j].reshape(28, 28), c_w, c_h, s)))
-    #     np.save(save_path+ str(i), result)
+    images, labels = load_mnist()
+    image = np.array(images, dtype='float32')
+    for i in range(0, 60, 1):
+        result = np.empty(shape=[0, c_w * c_h])
+        for j in range(0, 1000, 1):
+            print(dt.datetime.now(), j)
+            result = np.vstack((result, split_feature_data_c(image[i*1000+j].reshape(28, 28), c_w, c_h, s)))
+        np.save(save_path+ str(i), result)
 
     result = np.load(save_path + str(0)+".npy")
     for i in range(1, 60, 1):
         print("load ",i)
         result = np.vstack((result,np.load(save_path + str(i)+".npy")))
     np.save(save_path+str(c_w)+"x"+str(c_h)+"x"+str(s),result.astype('uint8'))
+    for i in range(60):
+        print("delete ", i)
+        os.remove(save_path + str(i)+".npy")
 
-split_feature_data(7,7,2) #分解图像
+split_feature_data(7,7,7) #分解图像
+
+

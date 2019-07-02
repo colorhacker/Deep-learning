@@ -33,3 +33,4 @@ main_app/python/split_feature/split_feature_7x7x2.npy
 main_app.VC.VC.opendb
 .vs/main_app/v14/.suo
 .vs/main_app/v14/.suo
+*.npy

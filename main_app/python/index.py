@@ -65,21 +65,28 @@ def delete_same_rows(data):
     #uniques = np.unique(new_array, axis=0)
     return np.delete(data, np.where(np.isnan(data))[0], axis=0) #删除nan行
 
-def display_loss(set):
+def display_loss(file,set):
     X=[]
     Y=[]
     for i in range(len(set)):
         X.append(set[i])
-        f_files = "./kmeans_feature_7x7x1/feature_file_L2_"+str(set[i])+".npy"
+        f_files = file+"/feature_file_L2_"+str(set[i])+".npy"
         if os.path.exists(f_files) == False:
             print("not found feature file .npy")
         else:
             feature = delete_same_rows(np.load(f_files))
             #print("feature:", feature.shape, feature.dtype)
             Y.append(get_mnist_loss(feature,100))
+    np.save(file+"/feature_file_L2_X",X)
+    np.save(file+"/feature_file_L2_Y",Y)
     return X,Y
 
-X,Y=display_loss([8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-plt.plot(X,Y)
-plt.show()
+X,Y=display_loss("./kmeans_feature_7x7x1",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=display_loss("./kmeans_feature_7x7x2",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=display_loss("./kmeans_feature_7x7x3",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=display_loss("./kmeans_feature_7x7x4",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=display_loss("./kmeans_feature_7x7x5",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=display_loss("./kmeans_feature_7x7x7",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+#plt.plot(X,Y)
+#plt.show()
 

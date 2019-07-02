@@ -10,4 +10,4 @@ def display_loss(file,c_array):
         centroids, assignments = kmeans_cuda(feature, c_array[i], init="random", yinyang_t=0, verbosity=1)
         np.save("./kmeans_feature/feature_file_L2_"+str(c_array[i]), centroids)
 
-display_loss('./split_feature/split_feature_7x7x2.npy',[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+display_loss('./split_feature/split_feature_7x7x3.npy',[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
