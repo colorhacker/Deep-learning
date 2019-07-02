@@ -70,7 +70,7 @@ def display_loss(set):
     Y=[]
     for i in range(len(set)):
         X.append(set[i])
-        f_files = "feature_file_L2_"+str(set[i])+".npy"
+        f_files = "./kmeans_feature_7x7x1/feature_file_L2_"+str(set[i])+".npy"
         if os.path.exists(f_files) == False:
             print("not found feature file .npy")
         else:
@@ -79,7 +79,7 @@ def display_loss(set):
             Y.append(get_mnist_loss(feature,100))
     return X,Y
 
-X,Y=display_loss([32,64,128,255,512])
-
+X,Y=display_loss([8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
 plt.plot(X,Y)
 plt.show()
+

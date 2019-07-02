@@ -28,3 +28,8 @@ main_app/python/.idea/other.xml
 main_app/python/.idea/vcs.xml
 main_app/python/venv/*
 main_app/main_app.vcxproj
+main_app/python/split_feature/split_feature_7x7x1.npy
+main_app/python/split_feature/split_feature_7x7x2.npy
+main_app.VC.VC.opendb
+.vs/main_app/v14/.suo
+.vs/main_app/v14/.suo
