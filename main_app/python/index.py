@@ -19,11 +19,9 @@ def display_image( data):
 #指定方式返回特征矩阵最接近的矩阵
 def re_feature_matrix(center_data,data):
     m_class = 0
-    #m_len = np.linalg.norm(data-center_data[0])
-    m_len = np.cov(data-center_data[0])
+    m_len = np.linalg.norm(data-center_data[0])#L2欧式距离
     for i in range(1,center_data.shape[0],1):
-        n_len = np.cov(center_data[i]-data)
-        #n_len = np.linalg.norm(data-center_data[i])
+        n_len = np.linalg.norm(data-center_data[i])#L2欧式距离
         if n_len < m_len:
             m_len = n_len
             m_class = i
@@ -49,7 +47,7 @@ def rebuild_matrix_data(k_means,i_data,c_w,c_h,s):
 def get_mnist_loss(feature,count):
     images, label = load_mnist()
     image = np.array(images,dtype='float32')
-    loss=0
+    loss = 0
     for i in range(count):
     # for i in range(len(image)):
         aims = rebuild_matrix_data(feature, image[i].reshape(28, 28), 7, 7, 7)
@@ -60,33 +58,53 @@ def get_mnist_loss(feature,count):
 
 
 #删除无效值的行
-def delete_same_rows(data):
-    #new_array = [tuple(row) for row in data]
-    #uniques = np.unique(new_array, axis=0)
+def delete_nan_rows(data):
     return np.delete(data, np.where(np.isnan(data))[0], axis=0) #删除nan行
 
-def display_loss(file,set):
+def return_loss(file,set):
     X=[]
     Y=[]
     for i in range(len(set)):
-        X.append(set[i])
+        print(set[i])
         f_files = file+"/feature_file_L2_"+str(set[i])+".npy"
         if os.path.exists(f_files) == False:
             print("not found feature file .npy")
         else:
-            feature = delete_same_rows(np.load(f_files))
-            #print("feature:", feature.shape, feature.dtype)
+            feature = delete_nan_rows(np.load(f_files))
+            print("feature:", feature.shape, feature.dtype)
+            X.append(feature.shape[0])
             Y.append(get_mnist_loss(feature,100))
+            # print(get_mnist_loss(feature,100))
     np.save(file+"/feature_file_L2_X",X)
     np.save(file+"/feature_file_L2_Y",Y)
     return X,Y
 
-X,Y=display_loss("./kmeans_feature_7x7x1",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=display_loss("./kmeans_feature_7x7x2",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=display_loss("./kmeans_feature_7x7x3",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=display_loss("./kmeans_feature_7x7x4",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=display_loss("./kmeans_feature_7x7x5",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=display_loss("./kmeans_feature_7x7x7",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-#plt.plot(X,Y)
-#plt.show()
+X,Y=return_loss("./kmeans_feature_7x7x1",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=return_loss("./kmeans_feature_7x7x2",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=return_loss("./kmeans_feature_7x7x3",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=return_loss("./kmeans_feature_7x7x4",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=return_loss("./kmeans_feature_7x7x5",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+X,Y=return_loss("./kmeans_feature_7x7x7",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+
+# X1=np.load("./kmeans_feature_7x7x1/feature_file_L2_X.npy")
+# X2=np.load("./kmeans_feature_7x7x2/feature_file_L2_X.npy")
+# X3=np.load("./kmeans_feature_7x7x3/feature_file_L2_X.npy")
+# X4=np.load("./kmeans_feature_7x7x4/feature_file_L2_X.npy")
+# X5=np.load("./kmeans_feature_7x7x5/feature_file_L2_X.npy")
+# X7=np.load("./kmeans_feature_7x7x7/feature_file_L2_X.npy")
+#
+# Y1=np.load("./kmeans_feature_7x7x1/feature_file_L2_Y.npy")
+# Y2=np.load("./kmeans_feature_7x7x2/feature_file_L2_Y.npy")
+# Y3=np.load("./kmeans_feature_7x7x3/feature_file_L2_Y.npy")
+# Y4=np.load("./kmeans_feature_7x7x4/feature_file_L2_Y.npy")
+# Y5=np.load("./kmeans_feature_7x7x5/feature_file_L2_Y.npy")
+# Y7=np.load("./kmeans_feature_7x7x7/feature_file_L2_Y.npy")
+# plt.plot(X1,Y1,label ='7x7x1')
+# plt.plot(X2,Y2,label ='7x7x2')
+# plt.plot(X3,Y3,label ='7x7x3')
+# plt.plot(X4,Y4,label ='7x7x4')
+# plt.plot(X5,Y5,label ='7x7x5')
+# plt.plot(X7,Y7,label ='7x7x7')
+# plt.legend()
+# plt.show()
 

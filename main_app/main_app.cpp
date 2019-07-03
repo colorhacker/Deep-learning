@@ -13,7 +13,7 @@
 
 
 int main(int argc, const char** argv){
-	numpy_load("./feature_file_L2_32.npy");
+	//numpy_load("./feature_file_L2_32.npy");
 /*
 #ifdef _OPENMP
 	omp_set_num_threads(64);

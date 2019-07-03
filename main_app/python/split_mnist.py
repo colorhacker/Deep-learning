@@ -17,7 +17,7 @@ def split_feature_data_c(data,c_w,c_h,s):
             result = np.vstack((result, data[x:x+c_w,y:y+c_h].flatten()))
     return result
 
-save_path = "./split_feature/split_feature_"
+save_path = "./split/f_"
 #拆分一堆矩阵分解为特征
 def split_feature_data(c_w,c_h,s):
     images, labels = load_mnist()
@@ -28,7 +28,6 @@ def split_feature_data(c_w,c_h,s):
             print(dt.datetime.now(), j)
             result = np.vstack((result, split_feature_data_c(image[i*1000+j].reshape(28, 28), c_w, c_h, s)))
         np.save(save_path+ str(i), result)
-
     result = np.load(save_path + str(0)+".npy")
     for i in range(1, 60, 1):
         print("load ",i)
@@ -38,6 +37,17 @@ def split_feature_data(c_w,c_h,s):
         print("delete ", i)
         os.remove(save_path + str(i)+".npy")
 
-split_feature_data(7,7,7) #分解图像
+def delete_same_rows(data):
+    print('input data:',data.shape)
+    new_array = [tuple(row) for row in data]
+    uniques = np.unique(new_array, axis=0)
+    print('output data:', uniques.shape)
+    return uniques
 
+# np.save("./split_feature/split_feature_7x7x7_t",delete_same_rows(np.load("./split_feature/split_feature_7x7x7.npy")))
+# np.save("./split_feature/split_feature_7x7x5_t",delete_same_rows(np.load("./split_feature/split_feature_7x7x5.npy")))
+# np.save("./split_feature/split_feature_7x7x4_t",delete_same_rows(np.load("./split_feature/split_feature_7x7x4.npy")))
+# np.save("./split_feature/split_feature_7x7x3_t",delete_same_rows(np.load("./split_feature/split_feature_7x7x3.npy")))
+# np.save("./split_feature/split_feature_7x7x2_t",delete_same_rows(np.load("./split_feature/split_feature_7x7x2.npy")))
 
+# split_feature_data(14,14,2) #分解图像
