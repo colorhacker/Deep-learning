@@ -59,7 +59,7 @@ def get_mnist_loss(feature,count):
         aims = rebuild_matrix_data(feature, image[i].reshape(28, 28), 7, 7, 7)
         _l = np.cov(image[i] - aims.flatten())
         loss = loss + _l
-        print(i,_l,label[i])
+        #print(i,_l,label[i])
     return loss/count
 
 
@@ -80,7 +80,7 @@ def return_loss(file,set):
             print("feature:", feature.shape, feature.dtype)
             X.append(feature.shape[0])
             Y.append(get_mnist_loss(feature,100))
-            # print(get_mnist_loss(feature,100))
+            print("loss",get_mnist_loss(feature,100))
     np.save(file+"/feature_file_L2_X",X)
     np.save(file+"/feature_file_L2_Y",Y)
     return X,Y
@@ -88,8 +88,8 @@ def return_loss(file,set):
 mnist_feature = np.load("./mnist_feature.npy")
 images, label = load_mnist_training()
 
-
-
+# print(delete_nan_rows(np.load("./kmeans_feature_7x7x7/feature_file_L2_4096.npy")).shape)
+return_loss("./kmeans_feature_7x7x7",[768,1024,2048,4096])
 # X,Y=return_loss("./kmeans_feature_7x7x1",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
 # X,Y=return_loss("./kmeans_feature_7x7x2",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
 # X,Y=return_loss("./kmeans_feature_7x7x3",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
