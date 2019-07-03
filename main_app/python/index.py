@@ -5,9 +5,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os, random, base64, cv2
 
-def load_mnist():
+def load_mnist_training():
     data = MNIST('./python-mnist/data')
     image, label = data.load_training()
+    return image, label
+
+def load_mnist_testing():
+    data = MNIST('./python-mnist/data')
+    image, label = data.load_testing()
     return image, label
 
 def display_image( data):
@@ -45,7 +50,8 @@ def rebuild_matrix_data(k_means,i_data,c_w,c_h,s):
 
 #测试重构数据的错误值
 def get_mnist_loss(feature,count):
-    images, label = load_mnist()
+    images, label = load_mnist_training()
+    #images, label = load_mnist_testing()
     image = np.array(images,dtype='float32')
     loss = 0
     for i in range(count):
@@ -79,12 +85,17 @@ def return_loss(file,set):
     np.save(file+"/feature_file_L2_Y",Y)
     return X,Y
 
-X,Y=return_loss("./kmeans_feature_7x7x1",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=return_loss("./kmeans_feature_7x7x2",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=return_loss("./kmeans_feature_7x7x3",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=return_loss("./kmeans_feature_7x7x4",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=return_loss("./kmeans_feature_7x7x5",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-X,Y=return_loss("./kmeans_feature_7x7x7",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+mnist_feature = np.load("./mnist_feature.npy")
+images, label = load_mnist_training()
+
+
+
+# X,Y=return_loss("./kmeans_feature_7x7x1",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+# X,Y=return_loss("./kmeans_feature_7x7x2",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+# X,Y=return_loss("./kmeans_feature_7x7x3",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+# X,Y=return_loss("./kmeans_feature_7x7x4",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+# X,Y=return_loss("./kmeans_feature_7x7x5",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+# X,Y=return_loss("./kmeans_feature_7x7x7",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
 
 # X1=np.load("./kmeans_feature_7x7x1/feature_file_L2_X.npy")
 # X2=np.load("./kmeans_feature_7x7x2/feature_file_L2_X.npy")
