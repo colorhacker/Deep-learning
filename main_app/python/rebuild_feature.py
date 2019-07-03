@@ -3,7 +3,7 @@ from sklearn.cluster import KMeans,MiniBatchKMeans
 from scipy.spatial import distance
 import matplotlib.pyplot as plt
 import numpy as np
-import os, random, base64, cv2
+import os, random, base64, cv2, _thread,time
 
 def load_mnist_training():
     data = MNIST('./python-mnist/data')
@@ -49,12 +49,24 @@ def rebuild_matrix_data(k_means,i_data,c_w,c_h,s):
             index = index+1
     return data
 
-mnist_feature = np.load("./mnist_feature.npy")
-images, label = load_mnist_training()
-image = np.array(images,dtype='float32')
-result=[]
-# for i in range(10):
-for i in range(image.shape[0]):
-    print(i)
-    result.append(re_rebuild_data(mnist_feature,image[i].reshape(28, 28),7,7,7))
-np.save("new_mnist_training",result)
+def split_feature(thread_name,start,stop):
+    mnist_feature = np.load("./mnist_feature.npy")
+    images, label = load_mnist_training()
+    image = np.array(images,dtype='float32')
+    result=[]
+    for i in range(start,stop,1):
+    # for i in range(image.shape[0]):
+        print(thread_name,i)
+        result.append(re_rebuild_data(mnist_feature,image[i].reshape(28, 28),7,7,7))
+    np.save("new_mnist_training"+str(start)+"_"+str(stop),result)
+try:
+    _thread.start_new_thread(split_feature, ("0-5000",0,10000))
+    _thread.start_new_thread(split_feature, ("5000-10000",10000,20000))
+    _thread.start_new_thread(split_feature, ("5000-10000",20000,30000))
+    _thread.start_new_thread(split_feature, ("5000-10000",30000,40000))
+    _thread.start_new_thread(split_feature, ("5000-10000",40000,50000))
+    _thread.start_new_thread(split_feature, ("5000-10000",50000,60000))
+except:
+    print("Error: unable to start thread")
+while 1:
+    pass
