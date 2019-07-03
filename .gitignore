@@ -34,3 +34,5 @@ main_app.VC.VC.opendb
 .vs/main_app/v14/.suo
 .vs/main_app/v14/.suo
 *.npy
+main_app/python/kmeans_feature_7x7x1/feature_file_L2_1024.npy
+main_app/python/kmeans_feature_7x7x1/feature_file_L2_1024.npy
