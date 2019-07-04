@@ -276,6 +276,7 @@
     <ClCompile Include="snn\user_snn_layers.cpp" />
     <ClCompile Include="snn\user_snn_app.cpp" />
     <ClCompile Include="snn\user_snn_model.cpp" />
+    <ClCompile Include="snn\user_snn_rw_model.cpp" />
     <ClCompile Include="w2c\user_pca.cpp" />
     <ClCompile Include="w2c\user_earth_movers_distance.cpp" />
     <ClCompile Include="w2c\user_k_means.cpp" />

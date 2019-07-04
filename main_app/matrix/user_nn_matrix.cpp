@@ -1941,7 +1941,7 @@ float user_nn_matrix_cc_dist(user_nn_matrix *a_matrix, user_nn_matrix *b_matrix)
 		return a_baise;
 	}
 
-	return molecular / (a_baise * b_baise);
+	return molecular / (sqrt(a_baise) * sqrt(b_baise));
 }
 
 //对链矩阵进行k-means聚类
