@@ -95,6 +95,7 @@ if __name__=='__main__':
     # c = np.corrcoef(a,b)
     # print(c)
 
+    np.save("d",np.load("./train_mnist_feature.npy").astype("float32"))
 
     # X,Y=return_loss("./kmeans_feature_7x7x1",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
     # X,Y=return_loss("./kmeans_feature_7x7x2",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
