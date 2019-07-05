@@ -16,13 +16,14 @@ int main(int argc, const char** argv){
 	
 	//srand((unsigned)time(NULL));//随机种子 ----- 若不设置那么每次训练结果一致
 	int user_layers[] = {
-		'i', 1, 784, //输入层 特征（宽度、高度）
-		'h', 392, //隐含层 特征 （高度）
+		'i', 1, 16, //输入层 特征（宽度、高度）
+		'h', 256, //隐含层 特征 （高度）
+		'h', 128, //隐含层 特征 （高度）
 		'o', 10 //输出层 特征 （高度）
 	};
 	bool sw_display = false;
 	float loss_function = 1.0f, loss_target = 0.001f;
-	int save_model_count = 0, exit_train_count = 100000;
+	int save_model_count = 0, exit_train_count = 10000000;
 	clock_t start_time, end_time;
 	printf("\n\n");
 	printf("\n-----训练可视化-----\n");
@@ -31,7 +32,9 @@ int main(int argc, const char** argv){
 	printf("\n请输入数字：");
 	sw_display = (_getch() == '1') ? true : false;
 	user_nn_matrix *train_lables_m = numpy_load("./train_mnist_feature.npy");
-	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
+	user_nn_list_matrix *train_lables = user_nn_matrices_create(1,60000,1,16);
+	user_nn_matrix_to_matrices(train_lables, train_lables_m);
+	//user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
 	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 	user_nn_layers *nn_layers = user_nn_model_load_model(0);//载入模型
 	if (nn_layers == NULL) {

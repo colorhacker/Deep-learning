@@ -1,23 +1,11 @@
 
 main_app/python/python-mnist/
 main_app/python/.idea/workspace.xml
-main_app/mnist/files/t10k-images.idx3-ubyte
-main_app/mnist/files/t10k-images.idx3-ubyte.bx
-main_app/mnist/files/t10k-labels.idx1-ubyte
-main_app/mnist/files/t10k-labels.idx1-ubyte.bx
-main_app/mnist/files/train-images.idx3-ubyte
-main_app/mnist/files/train-images.idx3-ubyte.bx
-main_app/mnist/files/train-labels.idx1-ubyte
-main_app/mnist/files/train-labels.idx1-ubyte.bx
+main_app/mnist/files
 main_app/python/.idea/misc.xml
 main_app/python/.idea/modules.xml
 main_app/python/.idea/python.iml
 main_app/python/feature/feature_0_59.npy
-.vs/main_app/v14/.suo
-main_app.sdf
-main_app/main_app.vcxproj
-main_app/main_app.vcxproj.filters
-.vs/main_app/v14/.suo
 main_app.sdf
 main_app/main_app.vcxproj
 main_app/main_app.vcxproj.filters
@@ -27,4 +15,10 @@ main_app/python/venv/*
 main_app/main_app.vcxproj
 main_app.VC.VC.opendb
 .vs/main_app/v14/.suo
-*.npy
+.*
+main_app/python/kmeans_feature_7x7x2
+main_app/python/kmeans_feature_7x7x3
+main_app/python/kmeans_feature_7x7x4
+main_app/python/kmeans_feature_7x7x5
+main_app/python/kmeans_feature_7x7x7
+main_app/python/split_feature

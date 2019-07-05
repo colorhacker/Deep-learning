@@ -644,16 +644,6 @@ void user_nn_matrix_to_matrices(user_nn_list_matrix *src_matrices, user_nn_matri
 	int count_matrix, count_data;//
 	float *result_data = sub_matrix->data;//指向对象数据
 	float *src_data = NULL;
-#if defined _OPENMP && _USER_API_OPENMP
-	for (count_matrix = 0; count_matrix < (src_matrices->width * src_matrices->height); count_matrix++) {
-		src_data = matrix->data;
-		#pragma omp parallel for
-		for (count_data = 0; count_data < (matrix->width * matrix->height); count_data++) {
-			src_data[count_data] = result_data[count_data];
-		}
-		matrix = matrix->next;
-}
-#else
 	for (count_matrix = 0; count_matrix < (src_matrices->width * src_matrices->height); count_matrix++) {
 		src_data = matrix->data;//获取保存数据指针
 		for (count_data = 0; count_data < (matrix->width * matrix->height); count_data++) {
@@ -661,10 +651,7 @@ void user_nn_matrix_to_matrices(user_nn_list_matrix *src_matrices, user_nn_matri
 		}
 		//user_nn_matrix_exc_width_height(matrix);//交换矩阵 matlab同步
 		matrix = matrix->next;
-}
-#endif
-
-
+	}
 }
 //矩阵扩充 均值扩充
 //src_matrix：
