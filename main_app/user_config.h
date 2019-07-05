@@ -50,7 +50,7 @@
 //RNN配置结束
 //NN配置开始
 #define		user_nn_use_bias				true
-#define		user_nn_nn_softmax				activation_tanh
+#define		user_nn_nn_softmax				activation_sigmoid
 #define		user_nn_model_nn_file_name		"./model/nn_model"
 #define		user_nn_model_nn_layer_addr		 0x0		//保存层的基地址
 #define		user_nn_model_nn_content_addr	 0x800		//保存层对象的基地址
