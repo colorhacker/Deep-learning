@@ -34,10 +34,10 @@ int main(int argc, const char** argv){
 	printf("\n请输入数字：");
 	sw_display = (_getch() == '1') ? true : false;
 	user_nn_matrix *train_lables_m = numpy_load("./train_mnist_feature.npy");
-	user_nn_list_matrix *train_lables = user_nn_matrices_create(1,60000,1,16);
-	user_nn_matrix_to_matrices(train_lables, train_lables_m);
-	//user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
-	user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
+	user_nn_list_matrix *train_images = user_nn_matrices_create(1,60000,1,16);
+	user_nn_matrix_to_matrices(train_images, train_lables_m);
+	user_nn_list_matrix *train_lables = user_nn_model_file_read_matrices("./mnist/files/train-labels.idx1-ubyte.bx", 0);
+	//user_nn_list_matrix *train_images = user_nn_model_file_read_matrices("./mnist/files/train-images.idx3-ubyte.bx", 0);
 	user_nn_layers *nn_layers = user_nn_model_load_model(0);//载入模型
 	if (nn_layers == NULL) {
 		printf("loading model failed\ncreate nn new object \n");
