@@ -25,6 +25,6 @@ predictions = Dense(10, activation='softmax')(x)
 model = Model(inputs=inputs, outputs=predictions)
 sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(optimizer=sgd, loss='mean_squared_error', metrics=['accuracy'])
-history = model.fit(train_feature, labels, validation_split=0.25, epochs=1, batch_size=16, verbose=1)  # starts training
+history = model.fit(train_feature, labels, validation_split=0.25, epochs=1, batch_size=16, verbose=0)  # starts training
 print(dir(history))
-print(history.params)
+print(history.history)
