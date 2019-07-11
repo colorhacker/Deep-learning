@@ -1,6 +1,7 @@
 from mnist import MNIST
 from multiprocessing import Process,Pool
 import numpy as np
+import cv2 as opencv
 import os
 
 #指定方式返回特征矩阵最接近的矩阵
@@ -24,17 +25,6 @@ def rebuild_for(k_means,i_data,c_w,c_h,step):
             re_d.append(re_feature_matrix(k_means,i_data[x:x + c_w, y:y + c_h].flatten()))
     return re_d
 
-#重构数据
-def rebuild_matrix_data(k_means,i_data,c_w,c_h,step):
-    width_height = int(i_data.shape[0] ** 0.5)
-    data = np.zeros((width_height,width_height))
-    index=0
-    for x in range(0,data.shape[0]-c_w+1,step):
-        for y in range(0,data.shape[1]-c_h+1,step):
-            data[x:x + c_w, y:y + c_h] = k_means[i_data[index]].reshape(c_w,c_h)
-            index = index+1
-    return data
-
 def rebuilt_feature(thread,feature,matrix,p_width,p_height,step,path,start,stop):
     width_height = int(matrix.shape[1]**0.5)
     if width_height**2 != matrix.shape[1]:
@@ -47,7 +37,7 @@ def rebuilt_feature(thread,feature,matrix,p_width,p_height,step,path,start,stop)
         result.append(rebuild_for(feature,matrix[i].reshape(width_height, width_height),p_width,p_height,step))
     np.save(path+str(start)+"_"+str(stop),result)
 
-def rebuild_data(data,feature,async_count,save_path):
+def rebuild_feature_matrix(data,feature,async_count,save_path):
     step = int(data.shape[0]/async_count)
     try:
         print('Parent process %s.' % os.getpid())
@@ -67,9 +57,26 @@ def rebuild_data(data,feature,async_count,save_path):
     except:
         print("Error: unable to start process")
 
+
+#重构数据
+def rebuild_matrix_c(feature,f_array,c_width,c_hight,step):
+    wh = int(len(f_array) ** 0.5)
+    data = np.zeros((wh*c_width,wh*c_hight))
+    index=0
+    for x in range(0,data.shape[0],step):
+        for y in range(0,data.shape[1],step):
+            data[x:x + c_width, y:y + c_hight] = feature[f_array[index]].reshape(c_width,c_hight)
+            index = index+1
+    return data
+
 if __name__ == '__main__':
     feature_matrix = np.load("./temp/kmeans_feature_7x7x7_1138.npy")
     # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
-    # rebuild_data(images,feature_matrix,20,"./temp/train_feature")
-    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
-    rebuild_data(images,feature_matrix,20,"./temp/test_feature")
+    # rebuild_feature_matrix(images,feature_matrix,20,"./temp/train_feature")
+    # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
+    # rebuild_feature_matrix(images,feature_matrix,20,"./temp/test_feature")
+
+    # f_array = np.load("./temp/train_feature.npy")
+    # opencv.imshow("image", opencv.resize(rebuild_matrix_c(feature_matrix,f_array[6],7,7,7), None, fx=2, fy=2, interpolation=opencv.INTER_CUBIC))
+    # opencv.waitKey(0)
+    # opencv.destroyAllWindows()
