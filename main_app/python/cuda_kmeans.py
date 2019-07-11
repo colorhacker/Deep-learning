@@ -1,18 +1,21 @@
 import numpy as np
 from libKMCUDA import kmeans_cuda
 
+#删除无效值的行
+def delete_same_rows(data):
+    new_array = [tuple(row) for row in data]
+    uniques = np.unique(new_array, axis=0)
+    print('delete ', data.shape[0] - uniques.shape[0],"same matrix")
+    return uniques
 
 def kmeans_data(i_file,o_file,c_array):
     feature = np.load(i_file).astype('float32')
     print(feature.shape)
     for i in range(len(c_array)):
-        # centroids,assignments = kmeans_cuda(feature,255,init="random",yinyang_t=0,metric="cos",verbosity=1)
-        centroids, assignments = kmeans_cuda(feature, c_array[i], init="random", yinyang_t=0, verbosity=1)
-        np.save(o_file+str(c_array[i]), centroids)
+        centroids,assignments = kmeans_cuda(feature,c_array[i],init="random",yinyang_t=0,metric="cos",verbosity=1)
+        # centroids, assignments = kmeans_cuda(feature, c_array[i], init="random", yinyang_t=0, verbosity=1)
+        center_feature = delete_same_rows(centroids.astype('uint8'))
+        np.save(o_file+str(center_feature.shape[0]),center_feature)
 
-#kmeans_data('./split_feature/split_feature_7x7x1_t.npy',"./kmeans_feature_7x7x1/f_t_",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-kmeans_data('./split_feature/split_feature_7x7x2_t.npy',"./kmeans_feature_7x7x2/f_t_",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-kmeans_data('./split_feature/split_feature_7x7x3_t.npy',"./kmeans_feature_7x7x3/f_t_",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-kmeans_data('./split_feature/split_feature_7x7x4_t.npy',"./kmeans_feature_7x7x4/f_t_",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-kmeans_data('./split_feature/split_feature_7x7x5_t.npy',"./kmeans_feature_7x7x5/f_t_",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
-kmeans_data('./split_feature/split_feature_7x7x7_t.npy',"./kmeans_feature_7x7x7/f_t_",[8,16,32,64,128,256,512,768,1024,2048,4096,10240,20480])
+if __name__ == '__main__':
+    kmeans_data('./temp/feature_7x7x7.npy',"./temp/kmeans_feature_7x7x7_",[4096,10240,20480])
