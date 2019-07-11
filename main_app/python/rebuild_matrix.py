@@ -1,7 +1,6 @@
 from mnist import MNIST
 from multiprocessing import Process,Pool
 import numpy as np
-import cv2 as opencv
 import os
 
 #指定方式返回特征矩阵最接近的矩阵
@@ -43,11 +42,11 @@ def rebuild_feature_matrix(data,feature,async_count,save_path):
         print('Parent process %s.' % os.getpid())
         pool = Pool(async_count)
         for i in range(0,data.shape[0],step):
-            pool.apply_async(func=rebuilt_feature,args=(str(i), feature, images, 7, 7, 7, "./temp/_", i, i+step))
+            pool.apply_async(func=rebuilt_feature,args=(str(i), feature, data, 7, 7, 7, "./temp/_", i, i+step))
         pool.close()
         pool.join()
         train_data = []
-        for i in range(0, images.shape[0], step):
+        for i in range(0, data.shape[0], step):
             if i is 0:
                 train_data = np.load("./temp/_" + str(i) + "_" + str(i + step) + ".npy")
             else:
@@ -73,10 +72,5 @@ if __name__ == '__main__':
     feature_matrix = np.load("./temp/kmeans_feature_7x7x7_1138.npy")
     # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
     # rebuild_feature_matrix(images,feature_matrix,20,"./temp/train_feature")
-    # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
-    # rebuild_feature_matrix(images,feature_matrix,20,"./temp/test_feature")
-
-    # f_array = np.load("./temp/train_feature.npy")
-    # opencv.imshow("image", opencv.resize(rebuild_matrix_c(feature_matrix,f_array[6],7,7,7), None, fx=2, fy=2, interpolation=opencv.INTER_CUBIC))
-    # opencv.waitKey(0)
-    # opencv.destroyAllWindows()
+    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
+    rebuild_feature_matrix(images,feature_matrix,20,"./temp/test_feature")
