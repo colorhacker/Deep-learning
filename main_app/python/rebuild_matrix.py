@@ -68,6 +68,8 @@ def rebuild_data(data,feature,async_count,save_path):
         print("Error: unable to start process")
 
 if __name__ == '__main__':
-    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
     feature_matrix = np.load("./temp/kmeans_feature_7x7x7_1138.npy")
-    rebuild_data(images,feature_matrix,10,"./temp/test_feature")
+    # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
+    # rebuild_data(images,feature_matrix,20,"./temp/train_feature")
+    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
+    rebuild_data(images,feature_matrix,20,"./temp/test_feature")
