@@ -54,5 +54,5 @@ def partition_matrix(matirx,p_width,p_height,step):
         os.remove("./temp/" + str(i)+".npy")
 
 if __name__=='__main__':
-    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
+    images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
     partition_matrix(images,7,7,7) #按照7x7大小 每步移动7 28x28产生16个矩阵 一共16*60000
