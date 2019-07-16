@@ -45,7 +45,7 @@ if __name__=='__main__':
     #new_feature = custum_sort_matrix(np.load("./temp/kmeans_feature_7x7x7_1138.npy"))
     # new_feature = kmeans_process(16, np.load("./temp/kmeans_feature_7x7x7_10240.npy"))
     # np.save("./temp/kmeans_feature_7x7x7_10240_10",new_feature)
-    new_feature = np.load("./temp/kmeans_feature_7x7x7_10240_16.npy")
+    new_feature = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
     print(new_feature)
     for i in range(new_feature.shape[0]):
         plt.matshow(new_feature[i].reshape(7,7))
