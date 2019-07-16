@@ -14,8 +14,8 @@ def kmeans_data(i_file,o_file,c_array):
     for i in range(len(c_array)):
         centroids,assignments = kmeans_cuda(feature,c_array[i],init="random",yinyang_t=0,metric="cos",verbosity=1)
         # centroids, assignments = kmeans_cuda(feature, c_array[i], init="random", yinyang_t=0, verbosity=1)
-        center_feature = delete_same_rows(centroids.astype('uint8'))
+        center_feature = delete_same_rows(centroids)
         np.save(o_file+str(center_feature.shape[0]),center_feature)
 
 if __name__ == '__main__':
-    kmeans_data('./temp/feature_7x7x7.npy',"./temp/kmeans_feature_7x7x7_",[4096,10240,20480])
+    kmeans_data('./temp/feature_7x7x7.npy',"./temp/kmeans_feature_7x7x7_",[10240,20480])

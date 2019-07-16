@@ -1,5 +1,5 @@
 from mnist import MNIST
-from multiprocessing import Process,Pool
+from multiprocessing import Pool
 import numpy as np
 import os
 
