@@ -43,4 +43,9 @@ if __name__=='__main__':
     # print(np.linalg.norm(images[0]-rebuild_matrix_c(feature_matrix,f_array[0],7,7,7).flatten()))
 
     #new_feature = custum_sort_matrix(np.load("./temp/kmeans_feature_7x7x7_1138.npy"))
-    print(kmeans_process(10,np.load("./temp/kmeans_feature_7x7x7_1138.npy")))
+    new_feature = kmeans_process(16, np.load("./temp/kmeans_feature_7x7x7_10240.npy"))
+    np.save("./temp/kmeans_feature_7x7x7_10240_16",new_feature)
+    print(new_feature)
+    for i in range(new_feature.shape[0]):
+        plt.matshow(new_feature[i].reshape(7,7))
+        plt.show()
