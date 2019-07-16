@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def load_data_training():
-    image, label = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
+    image, label = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
     return image, to_categorical(label)
 
 images, labels = load_data_training()

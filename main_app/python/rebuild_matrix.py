@@ -69,8 +69,8 @@ def rebuild_matrix_c(feature,f_array,c_width,c_hight,step):
     return data
 
 if __name__ == '__main__':
-    feature_matrix = np.load("./temp/kmeans_feature_7x7x7_8232.npy")
-    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
+    feature_matrix = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
+    images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
     rebuild_feature_matrix(images,feature_matrix,20,"./temp/train_feature")
-    # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
-    # rebuild_feature_matrix(images,feature_matrix,20,"./temp/test_feature")
+    images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_testing()
+    rebuild_feature_matrix(images,feature_matrix,20,"./temp/test_feature")
