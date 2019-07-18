@@ -3,6 +3,7 @@ import numpy as np
 from mnist import MNIST
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+import rebuild_matrix as rebulid
 
 def display_image(data):
     opencv.imshow("image", opencv.resize(data, None, fx=2, fy=2, interpolation=opencv.INTER_CUBIC))
@@ -18,17 +19,6 @@ def kmeans_process(n_class,data):
     kmeans = KMeans(n_clusters=n_class,init='random',algorithm='full').fit(data)
     return kmeans.cluster_centers_
 
-#重构数据
-def rebuild_matrix_c(feature,f_array,c_width,c_hight,step):
-    wh = int(len(f_array) ** 0.5)
-    data = np.zeros((wh*c_width,wh*c_hight))
-    index=0
-    for x in range(0,data.shape[0],step):
-        for y in range(0,data.shape[1],step):
-            data[x:x + c_width, y:y + c_hight] = feature[f_array[index]].reshape(c_width,c_hight)
-            index = index+1
-    return data
-
 #自定义排序矩阵
 def custum_sort_matrix(data):
     data_list = data.tolist()
@@ -42,12 +32,23 @@ if __name__=='__main__':
     # # print(re_feature_matrix(images[0],rebuild_matrix_c(feature_matrix,f_array[0],7,7,7)))
     # print(np.linalg.norm(images[0]-rebuild_matrix_c(feature_matrix,f_array[0],7,7,7).flatten()))
 
-    #new_feature = custum_sort_matrix(np.load("./temp/kmeans_feature_7x7x7_1138.npy"))
+    # new_feature = custum_sort_matrix(np.load("./temp/kmeans_feature_7x7x7_10240.npy"))
     # new_feature = kmeans_process(16, np.load("./temp/kmeans_feature_7x7x7_10240.npy"))
     # np.save("./temp/kmeans_feature_7x7x7_10240_10",new_feature)
 
-    new_feature = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
-    print(new_feature)
-    for i in range(new_feature.shape[0]):
-        plt.matshow(new_feature[i].reshape(7,7))
+    # new_feature = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
+    # print(new_feature)
+    # for i in range(new_feature.shape[0]):
+    #     plt.matshow(new_feature[i].reshape(7,7))
+    #     plt.show()
+
+    feature = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
+    feature_ten = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
+    train = np.load("./temp/test_feature.npy")
+    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
+    for i in range(10):
+    # for i in range(train.shape[0]):
+        plt.matshow(images[i].reshape(28,28))
+        plt.matshow(rebulid.rebuild_matrix_c(feature,train[i],7,7,7))
+        # plt.matshow(rebuild_matrix_c(feature_ten,train[i],7,7,7))
         plt.show()
