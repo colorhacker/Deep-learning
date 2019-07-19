@@ -42,13 +42,21 @@ if __name__=='__main__':
     #     plt.matshow(new_feature[i].reshape(7,7))
     #     plt.show()
 
-    feature = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
-    feature_ten = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
-    train = np.load("./temp/test_feature.npy")
-    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
-    for i in range(10):
-    # for i in range(train.shape[0]):
-        plt.matshow(images[i].reshape(28,28))
-        plt.matshow(rebulid.rebuild_matrix_c(feature,train[i],7,7,7))
-        # plt.matshow(rebuild_matrix_c(feature_ten,train[i],7,7,7))
-        plt.show()
+    # feature = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
+    # feature_ten = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
+    # train = np.load("./temp/test_feature.npy")
+    # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
+    # for i in range(10):
+    # # for i in range(train.shape[0]):
+    #     plt.matshow(images[i].reshape(28,28))
+    #     plt.matshow(rebulid.rebuild_matrix_c(feature,train[i],7,7,7))
+    #     # plt.matshow(rebuild_matrix_c(feature_ten,train[i],7,7,7))
+    #     plt.show()
+    
+    # data = np.copy(feature[2])
+    # feature = np.delete(feature, 2,axis = 0)
+    # print(rebulid.re_feature_matrix(feature,data))
+    #
+    # plt.matshow(data.reshape(7, 7))
+    # plt.matshow(feature[rebulid.re_feature_matrix(feature,data)].reshape(7, 7))
+    # plt.show()
