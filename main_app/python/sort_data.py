@@ -32,10 +32,10 @@ def kmeans_sort(n_class,data):
 
 
 if __name__=='__main__':
-    data_size = 100
-    data_class = 10
-    src_data = np.arange(data_size).reshape(50,2)
+    src_data = np.random.randn(100,1)
+    # src_data = np.linspace(-1,100,100).reshape(100,1)
     res_data = kmeans_sort(10,src_data)
+    print(src_data)
     print(res_data)
 
 
