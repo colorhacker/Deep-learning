@@ -1,6 +1,8 @@
 from sklearn.cluster import KMeans
+from scipy import spatial,stats
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 def kmeans_process(n_class,data):
     kmeans = KMeans(n_clusters=n_class,init='random',algorithm='full',random_state=99).fit(data)
@@ -8,8 +10,14 @@ def kmeans_process(n_class,data):
 
 
 def sort_func(x,y):
-    return np.linalg.norm(x - y)
-
+    # return np.linalg.norm(x - y) #欧式距离
+    # return 1 - spatial.distance.cosine(x, y) #cosine距离
+    # a=np.corrcoef(x, y)[0][1] # Pearson product-moment correlation coefficients
+    a = stats.pearsonr(x,y)[0]
+    if np.isnan(a):
+        return 0
+    else:
+        return a
 
 def custum_sort_matrix(data, rule=False):
     target_data = np.zeros(data.shape[1])
@@ -40,14 +48,13 @@ def kmeans_sort(n_class, data):
 
 
 if __name__=='__main__':
-    src_data = np.random.randn(10000,2)
+    np.random.seed(0)
+    src_data = np.random.randn(1000,2)
     # np.random.shuffle(src_data)
     res_data = kmeans_sort(10,src_data)
-
     plt.plot(np.arange(0, res_data.shape[0]), res_data, alpha=0.5)
     plt.show()
-    # a,b=custum_sort_matrix(src_data, rule=True)
-    # plt.plot(np.arange(0, res_data.shape[0]), a, alpha=0.5)
-    # plt.show()
+    # a = stats.pearsonr(np.array([0, 0.0, 0.0, 0.0, 0.0]), np.array([0.11, 0.12, 0.13, 0.15, 0.18]))
+    # print(a[0])
 
 

@@ -4,6 +4,7 @@ from mnist import MNIST
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 import rebuild_matrix as rebulid
+import sort_data as sortd
 
 def display_image(data):
     opencv.imshow("image", opencv.resize(data, None, fx=2, fy=2, interpolation=opencv.INTER_CUBIC))
@@ -25,38 +26,21 @@ def custum_sort_matrix(data):
     return np.array(sorted(data_list, key=lambda x:np.linalg.norm(np.zeros(data.shape[1]) - np.array(x))))
 
 
+def parallel_matrix(data,count):
+    step  = int(data.shape[1]**0.5)
+    image = np.zeros(shape=[count*step, count*step])
+    index = 0
+    for x in range(0,count*step,step):
+        for y in range(0,count*step,step):
+            image[x:x + step, y:y + step] = data[index].reshape(step,step)
+            index = index + 1
+    return image
+
+
 if __name__=='__main__':
-    # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
-    # feature_matrix = np.load("./temp/kmeans_feature_7x7x7_1138.npy")
-    # f_array = np.load("./temp/train_feature.npy")
-    # # print(re_feature_matrix(images[0],rebuild_matrix_c(feature_matrix,f_array[0],7,7,7)))
-    # print(np.linalg.norm(images[0]-rebuild_matrix_c(feature_matrix,f_array[0],7,7,7).flatten()))
-
-    # new_feature = custum_sort_matrix(np.load("./temp/kmeans_feature_7x7x7_10240.npy"))
-    # new_feature = kmeans_process(16, np.load("./temp/kmeans_feature_7x7x7_10240.npy"))
-    # np.save("./temp/kmeans_feature_7x7x7_10240_10",new_feature)
-
-    # new_feature = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
-    # print(new_feature)
-    # for i in range(new_feature.shape[0]):
-    #     plt.matshow(new_feature[i].reshape(7,7))
-    #     plt.show()
-
     feature = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
-    # feature_ten = np.load("./temp/kmeans_feature_7x7x7_10240_10.npy")
-    # train = np.load("./temp/test_feature.npy")
-    # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
-    # for i in range(10):
-    # # for i in range(train.shape[0]):
-    #     plt.matshow(images[i].reshape(28,28))
-    #     plt.matshow(rebulid.rebuild_matrix_c(feature,train[i],7,7,7))
-    #     # plt.matshow(rebuild_matrix_c(feature_ten,train[i],7,7,7))
-    #     plt.show()
-
-    data = np.copy(feature[2])
-    feature = np.delete(feature, 2,axis = 0)
-    print(rebulid.re_feature_matrix(feature,data))
-
-    plt.matshow(data.reshape(7, 7))
-    plt.matshow(feature[rebulid.re_feature_matrix(feature,data)].reshape(7, 7))
+    i_feature = sortd.kmeans_sort(10, feature)
+    image = parallel_matrix(i_feature,10)
+    plt.matshow(image)
     plt.show()
+
