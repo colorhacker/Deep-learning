@@ -13,7 +13,7 @@ def sort_func(x,y):
     # return np.linalg.norm(x - y) #欧式距离
     # return 1 - spatial.distance.cosine(x, y) #cosine距离
     # a=np.corrcoef(x, y)[0][1] # Pearson product-moment correlation coefficients
-    a = stats.pearsonr(x,y)[0]
+    a = 1-stats.pearsonr(x,y)[0]
     if np.isnan(a):
         return 0
     else:

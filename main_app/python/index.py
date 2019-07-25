@@ -26,12 +26,12 @@ def custum_sort_matrix(data):
     return np.array(sorted(data_list, key=lambda x:np.linalg.norm(np.zeros(data.shape[1]) - np.array(x))))
 
 
-def parallel_matrix(data,count):
+def parallel_matrix(data,count,space=1):
     step  = int(data.shape[1]**0.5)
-    image = np.zeros(shape=[count*step, count*step])
+    image = np.zeros(shape=[count*(step+space), count*(step+space)])
     index = 0
-    for x in range(0,count*step,step):
-        for y in range(0,count*step,step):
+    for x in range(0,image.shape[0],step+space):
+        for y in range(0,image.shape[1],step+space):
             image[x:x + step, y:y + step] = data[index].reshape(step,step)
             index = index + 1
     return image
