@@ -39,7 +39,7 @@ def parallel_matrix(data,count):
 
 if __name__=='__main__':
     feature = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
-    i_feature = sortd.kmeans_sort(10, feature)
+    i_feature = sortd.kmeans_sort(100, feature)
     image = parallel_matrix(i_feature,10)
     plt.matshow(image)
     plt.show()
