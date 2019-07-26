@@ -38,11 +38,8 @@ def parallel_matrix(data,count,space=1):
 
 
 if __name__=='__main__':
-    feature = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
-    i_feature,k_center = sortd.kmeans_sort(255, feature)
-    i_feature,_ = sortd.custum_sort_matrix(k_center,rule=True)
-    np.save("./temp/kmeans_feature_7x7x7_255.npy",i_feature.astype("float32"))
-    image = parallel_matrix(i_feature,10)
+    feature = np.load("./temp/kmeans_feature_7x7x7_1024.npy")
+    image = parallel_matrix(feature,10)
     plt.matshow(image)
     plt.show()
 

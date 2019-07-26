@@ -19,6 +19,7 @@ def sort_func(x,y):
     # else:
     #     return a
 
+#自定义排序矩阵
 def custum_sort_matrix(data, rule=False):
     target_data = np.zeros(data.shape[1])
     data_list = data.tolist()
@@ -29,7 +30,7 @@ def custum_sort_matrix(data, rule=False):
     labels = np.array(sorted(range(len(data_list)), key=lambda element: sort_func(target_data , np.array(data_list[element]))))
     return value,labels
 
-
+#使用kmeans进行矩阵排序
 def kmeans_sort(n_class, data):
     k_center, k_label = kmeans_process(n_class, data)
     k_sort_center, k_sort_label = custum_sort_matrix(k_center,rule=True)
