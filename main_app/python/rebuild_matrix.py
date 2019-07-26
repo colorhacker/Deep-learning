@@ -1,5 +1,6 @@
 from mnist import MNIST
 from multiprocessing import Pool
+from scipy import spatial,stats
 import numpy as np
 import os
 
@@ -7,10 +8,14 @@ import os
 def re_feature_matrix(center_data,data):
     m_class = 0
     m_len = np.linalg.norm(data-center_data[0])#L2欧式距离
-    # m_len = 1 - np.corrcoef(data, center_data[0])[0][1]# Pearson product-moment correlation coefficients
+    # m_len = 1 - stats.pearsonr(data, center_data[0])[0]#Pearson product-moment correlation coefficients
+    # if np.isnan(m_len):
+    #     m_len = 0
     for i in range(1,center_data.shape[0],1):
         n_len = np.linalg.norm(data-center_data[i])#L2欧式距离
-        # n_len = 1 - np.corrcoef(data,center_data[i])[0][1]#Pearson product-moment correlation coefficients
+        # n_len = 1 - stats.pearsonr(data, center_data[i])[0]
+        # if np.isnan(n_len):
+        #     n_len = 0
         if n_len < m_len:
             m_len = n_len
             m_class = i
@@ -23,6 +28,7 @@ def rebuild_for(k_means,i_data,c_w,c_h,step):
         for y in range(0,i_data.shape[1]-c_h+1,step):
             re_d.append(re_feature_matrix(k_means,i_data[x:x + c_w, y:y + c_h].flatten()))
     return re_d
+
 
 def rebuilt_feature(thread,feature,matrix,p_width,p_height,step,path,start,stop):
     width_height = int(matrix.shape[1]**0.5)
@@ -69,7 +75,7 @@ def rebuild_matrix_c(feature,f_array,c_width,c_hight,step):
     return data
 
 if __name__ == '__main__':
-    feature_matrix = np.load("./temp/kmeans_feature_7x7x7_10240.npy")
+    feature_matrix = np.load("./temp/kmeans_feature_7x7x7_255.npy")
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
     rebuild_feature_matrix(images,feature_matrix,20,"./temp/train_feature")
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_testing()

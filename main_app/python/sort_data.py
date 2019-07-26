@@ -10,14 +10,14 @@ def kmeans_process(n_class,data):
 
 
 def sort_func(x,y):
-    # return np.linalg.norm(x - y) #欧式距离
+    return np.linalg.norm(x - y) #欧式距离
     # return 1 - spatial.distance.cosine(x, y) #cosine距离
     # a=np.corrcoef(x, y)[0][1] # Pearson product-moment correlation coefficients
-    a = 1-stats.pearsonr(x,y)[0]
-    if np.isnan(a):
-        return 0
-    else:
-        return a
+    # a = 1-stats.pearsonr(x,y)[0]
+    # if np.isnan(a):
+    #     return 1
+    # else:
+    #     return a
 
 def custum_sort_matrix(data, rule=False):
     target_data = np.zeros(data.shape[1])
@@ -44,14 +44,14 @@ def kmeans_sort(n_class, data):
     ret_data = np.empty(shape=[0, data.shape[1]])
     for i in range(len(sort_data)):
         ret_data = np.vstack((ret_data,sort_data[i]))
-    return ret_data
+    return ret_data,k_center
 
 
 if __name__=='__main__':
     np.random.seed(0)
     src_data = np.random.randn(1000,2)
     # np.random.shuffle(src_data)
-    res_data = kmeans_sort(10,src_data)
+    res_data,_ = kmeans_sort(10,src_data)
     plt.plot(np.arange(0, res_data.shape[0]), res_data, alpha=0.5)
     plt.show()
     # a = stats.pearsonr(np.array([0, 0.0, 0.0, 0.0, 0.0]), np.array([0.11, 0.12, 0.13, 0.15, 0.18]))
