@@ -42,9 +42,3 @@ if __name__=='__main__':
     image = parallel_matrix(feature,10)
     plt.matshow(image)
     plt.show()
-
-    # feature = np.load("./temp/kmeans_feature_7x7x7_10240_kc100.npy")
-    # images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
-    # d = rebulid.rebuild_for(feature, images[4].reshape(28, 28), 7, 7, 7)
-    # plt.matshow(rebulid.rebuild_matrix_c(feature,d,7,7,7))
-    # plt.show()

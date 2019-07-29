@@ -1,25 +1,18 @@
 from mnist import MNIST
 from multiprocessing import Pool
 from scipy import spatial,stats
+import sort_data as sortd
 import numpy as np
 import os
 
+
+dist_index = 0 #设置迭代相似度矩阵
+
 #指定方式返回特征矩阵最接近的矩阵
 def re_feature_matrix(center_data,data):
-    m_class = 0
-    m_len = np.linalg.norm(data-center_data[0])#L2欧式距离
-    # m_len = 1 - stats.pearsonr(data, center_data[0])[0]#Pearson product-moment correlation coefficients
-    # if np.isnan(m_len):
-    #     m_len = 0
-    for i in range(1,center_data.shape[0],1):
-        n_len = np.linalg.norm(data-center_data[i])#L2欧式距离
-        # n_len = 1 - stats.pearsonr(data, center_data[i])[0]
-        # if np.isnan(n_len):
-        #     n_len = 0
-        if n_len < m_len:
-            m_len = n_len
-            m_class = i
-    return m_class
+    global dist_index
+    return np.array(sorted(range(len(center_data)), key=lambda element: sortd.sort_func(data, np.array(center_data[element]))))[dist_index]
+
 
 #重构数据
 def rebuild_for(k_means,i_data,c_w,c_h,step):
@@ -41,6 +34,7 @@ def rebuilt_feature(thread,feature,matrix,p_width,p_height,step,path,start,stop)
         print(thread,i)
         result.append(rebuild_for(feature,matrix[i].reshape(width_height, width_height),p_width,p_height,step))
     np.save(path+str(start)+"_"+str(stop),result)
+
 
 def rebuild_feature_matrix(data,feature,async_count,save_path):
     step = int(data.shape[0]/async_count)
@@ -74,12 +68,16 @@ def rebuild_matrix_c(feature,f_array,c_width,c_hight,step):
             index = index+1
     return data
 
+
 def rebuild_mnist(file):
+    global dist_index
     feature_matrix = np.load(file)
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
-    rebuild_feature_matrix(images,feature_matrix,20,"./temp/train_feature")
+    rebuild_feature_matrix(images,feature_matrix,20,"./temp/train_feature"+str(dist_index)+"_")
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_testing()
-    rebuild_feature_matrix(images,feature_matrix,20,"./temp/test_feature")
+    rebuild_feature_matrix(images,feature_matrix,20,"./temp/test_feature"+str(dist_index)+"_")
 
 if __name__ == '__main__':
-    rebuild_mnist("./temp/kmeans_feature_7x7x7_1024.npy")
+    for i in range(5):
+        dist_index = i
+        rebuild_mnist("./temp/kmeans_feature_7x7x7_512.npy")

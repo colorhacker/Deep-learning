@@ -12,12 +12,7 @@ def kmeans_process(n_class,data):
 def sort_func(x,y):
     return np.linalg.norm(x - y) #欧式距离
     # return 1 - spatial.distance.cosine(x, y) #cosine距离
-    # a=np.corrcoef(x, y)[0][1] # Pearson product-moment correlation coefficients
-    # a = 1-stats.pearsonr(x,y)[0]
-    # if np.isnan(a):
-    #     return 1
-    # else:
-    #     return a
+    # a = 1-stats.pearsonr(x,y)[0] # Pearson product-moment correlation coefficients
 
 #自定义排序矩阵
 def custum_sort_matrix(data, rule=False):
