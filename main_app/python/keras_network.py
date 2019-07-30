@@ -19,7 +19,8 @@ def load_data():
 
     images = images / images.max()
     labels = to_categorical(labels)
-    labels = np.vstack((labels,1-labels))
+    # labels = np.vstack((labels,labels-labels))
+    labels = np.vstack((labels,labels))
     print(images.shape)
     print(labels.shape)
     return images, labels
