@@ -15,12 +15,11 @@ def model_load():
 
 def load_data():
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
-    images = np.vstack((images,np.load("./temp/train_feature_28_56.npy")))
-
+    # images = np.vstack((images,np.load("./temp/train_feature_28_56.npy")))
     images = images / images.max()
     labels = to_categorical(labels)
     # labels = np.vstack((labels,labels-labels))
-    labels = np.vstack((labels,labels))
+    # labels = np.vstack((labels,labels))
     print(images.shape)
     print(labels.shape)
     return images, labels
