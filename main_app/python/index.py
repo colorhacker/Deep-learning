@@ -50,5 +50,3 @@ if __name__=='__main__':
     # print(splitm.sort_func(images,np.load("./temp/train_feature_28_56.npy"))/60000)
     # print(images.shape)
     # print(np.load("./temp/train_feature_28_56.npy").shape)
-    # images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
-

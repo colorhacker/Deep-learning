@@ -16,9 +16,10 @@ def model_load():
 def load_data():
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
     images = np.vstack((images,np.load("./temp/train_feature_28_56.npy")))
-    labels = np.hstack((labels,labels))
-    images = images/images.max()
+
+    images = images / images.max()
     labels = to_categorical(labels)
+    labels = np.vstack((labels,1-labels))
     print(images.shape)
     print(labels.shape)
     return images, labels
@@ -27,7 +28,9 @@ def load_data():
 def train_data():
     images, labels = load_data()
     # images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
-    # labels = to_categorical(labels)
+    images_t, labels_t = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
+    images_t = images_t / images_t.max()
+    labels_t = to_categorical(labels_t)
     inputs = Input(shape=(784,))
     x = Dense(392, activation='tanh')(inputs)
     x = Dense(196, activation='tanh')(x)
@@ -38,7 +41,8 @@ def train_data():
     model.compile(optimizer=sgd, loss='mean_squared_error', metrics=['accuracy'])
     history = model.fit(images, labels, validation_split=0.25, epochs=100, batch_size=256, verbose=1)  # starts training
     # predict = model.predict(test_feature)
-    # evaluate = model.evaluate(test_feature,labels_t)
+    evaluate = model.evaluate(images_t,labels_t)
+    print(evaluate)
     model.save("./temp/keras_model")
 
 
