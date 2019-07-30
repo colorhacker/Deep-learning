@@ -1,7 +1,9 @@
 import numpy as np
 import sort_data as sortd
 import rebuild_matrix as rebm
+import split_matrix as splitm
 from libKMCUDA import kmeans_cuda
+from mnist import MNIST
 
 #删除无效值的行
 def delete_same_rows(data):
@@ -22,4 +24,6 @@ def kmeans_data(i_file,o_file,c_array):
         rebm.rebuild_mnist(o_file+str(center_feature.shape[0])+".npy") #重构数据
 
 if __name__ == '__main__':
-    kmeans_data('./temp/feature_7x7x7.npy',"./temp/kmeans_feature_7x7x7_",[512])
+    images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
+    splitm.partition_matrix(images, 28, 56)
+    kmeans_data('./temp/feature_28x56.npy',"./temp/kmeans_feature_28x56_",[512])

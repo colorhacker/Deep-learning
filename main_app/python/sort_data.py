@@ -14,6 +14,7 @@ def sort_func(x,y):
     # return 1 - spatial.distance.cosine(x, y) #cosine距离
     # a = 1-stats.pearsonr(x,y)[0] # Pearson product-moment correlation coefficients
 
+
 #自定义排序矩阵
 def custum_sort_matrix(data, rule=False):
     target_data = np.zeros(data.shape[1])
@@ -24,6 +25,7 @@ def custum_sort_matrix(data, rule=False):
     value = np.array(sorted(data_list, key=lambda element: sort_func(target_data , np.array(element))))
     labels = np.array(sorted(range(len(data_list)), key=lambda element: sort_func(target_data , np.array(data_list[element]))))
     return value,labels
+
 
 #使用kmeans进行矩阵排序
 def kmeans_sort(n_class, data):
@@ -46,11 +48,8 @@ def kmeans_sort(n_class, data):
 if __name__=='__main__':
     np.random.seed(0)
     src_data = np.random.randn(1000,2)
-    # np.random.shuffle(src_data)
     res_data,_ = kmeans_sort(10,src_data)
     plt.plot(np.arange(0, res_data.shape[0]), res_data, alpha=0.5)
     plt.show()
-    # a = stats.pearsonr(np.array([0, 0.0, 0.0, 0.0, 0.0]), np.array([0.11, 0.12, 0.13, 0.15, 0.18]))
-    # print(a[0])
 
 

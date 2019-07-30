@@ -1,10 +1,13 @@
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import rebuild_matrix as rebulid
+import sort_data as sortd
+import split_matrix as splitm
+
 import cv2 as opencv
 import numpy as np
 from mnist import MNIST
-import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-import rebuild_matrix as rebulid
-import sort_data as sortd
 
 def display_image(data):
     opencv.imshow("image", opencv.resize(data, None, fx=2, fy=2, interpolation=opencv.INTER_CUBIC))
@@ -38,7 +41,14 @@ def parallel_matrix(data,count,space=1):
 
 
 if __name__=='__main__':
-    feature = np.load("./temp/kmeans_feature_7x7x7_1024.npy")
-    image = parallel_matrix(feature,10)
-    plt.matshow(image)
-    plt.show()
+    images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
+    images_t, labels_t = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_testing()
+    # image = parallel_matrix(feature,10)
+    # plt.matshow(images[59999].reshape(28,28))
+    # plt.show()
+    # print(splitm.sort_func(images,np.load("./temp/train_feature_49_49.npy"))/60000)
+    # print(splitm.sort_func(images,np.load("./temp/train_feature_28_56.npy"))/60000)
+    # print(images.shape)
+    # print(np.load("./temp/train_feature_28_56.npy").shape)
+    # images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
+
