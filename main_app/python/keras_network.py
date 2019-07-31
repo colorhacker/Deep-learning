@@ -1,7 +1,7 @@
-from keras.layers import Input, Dense
-from keras.models import Model,load_model
+from keras.layers import Input, Dense, LSTM, RNN
+from keras.models import Model, load_model
 from keras.optimizers import SGD
-from keras.utils import to_categorical,plot_model
+from keras.utils import to_categorical, plot_model
 from mnist import MNIST
 import matplotlib.pyplot as plt
 import rebuild_matrix as rebulid
@@ -15,14 +15,13 @@ def model_load():
 
 def load_data():
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
-    # images = np.vstack((images,np.load("./temp/train_feature_28_56.npy")))
+    images = np.vstack((images,np.load("./temp/train_feature_28_56.npy")))
     images = images / images.max()
-    labels = to_categorical(labels)
-    # labels = np.vstack((labels,labels-labels))
-    # labels = np.vstack((labels,labels))
+    labels_m = to_categorical(labels)
+    labels_m = np.vstack((labels_m,to_categorical(labels)))
     print(images.shape)
-    print(labels.shape)
-    return images, labels
+    print(labels_m.shape)
+    return images, labels_m
 
 
 def train_data():
@@ -34,7 +33,6 @@ def train_data():
     inputs = Input(shape=(784,))
     x = Dense(392, activation='tanh')(inputs)
     x = Dense(196, activation='tanh')(x)
-    x = Dense(98, activation='tanh')(x)
     predictions = Dense(10, activation='softmax')(x)
     model = Model(inputs=inputs, outputs=predictions)
     sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)

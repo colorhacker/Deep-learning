@@ -5,12 +5,14 @@ import split_matrix as splitm
 from libKMCUDA import kmeans_cuda
 from mnist import MNIST
 
+
 #删除无效值的行
 def delete_same_rows(data):
     new_array = [tuple(row) for row in data]
     uniques = np.unique(new_array, axis=0)
     print('delete ', data.shape[0] - uniques.shape[0],"same matrix")
     return uniques
+
 
 def kmeans_data(i_file,o_file,c_array):
     feature = np.load(i_file).astype('float32')
@@ -22,6 +24,7 @@ def kmeans_data(i_file,o_file,c_array):
         center_feature,_ = sortd.custum_sort_matrix(center_feature,rule=True) #排序矩阵
         np.save(o_file+str(center_feature.shape[0]),center_feature)
         rebm.rebuild_mnist(o_file+str(center_feature.shape[0])+".npy") #重构数据
+
 
 if __name__ == '__main__':
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
