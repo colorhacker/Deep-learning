@@ -40,7 +40,7 @@ def parallel_matrix(data,count,space=1):
     return image
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     images, labels = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_training()
     images_t, labels_t = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_testing()
     # image = parallel_matrix(feature,10)
