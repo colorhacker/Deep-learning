@@ -135,13 +135,16 @@ class Networks:
 
 if __name__ == '__main__':
     seed(0)
-    n = Networks(1, 5, 6, 10, 10, 0.1)
+    n = Networks(1, 5, 1, 5, 10, 0.1)
 
     a=[1,1,1,1,1]
-    for i in range(100):
+    x= range(100)
+    y=[]
+    for i in x:
         n.input(a)
         n.tick()
+        y.append(n.output()[0])
     print(n.__dict__)
-    # # plt.plot(x, y)
+    plt.plot(x, y)
     # plt.plot(x, z)
-    # plt.show()
+    plt.show()
