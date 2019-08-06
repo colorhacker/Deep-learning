@@ -105,8 +105,6 @@ class Networks:
                 self._axon_d[count] = self.cell[i].axon[j][-1]
                 count = count + 1
         count = 0
-        print(self._axon_d)
-        print(self.self_list)
         for i in range(self.number):
             for j in range(len(self.cell[i].dendrites)):
                 if count in self.self_list:
@@ -137,10 +135,12 @@ class Networks:
 
 if __name__ == '__main__':
     seed(0)
-    n = Networks(2, 5, 6, 10, 5, 0.1)
+    n = Networks(1, 5, 6, 10, 10, 0.1)
+
     a=[1,1,1,1,1]
-    n.input(a)
-    n.tick()
+    for i in range(100):
+        n.input(a)
+        n.tick()
     print(n.__dict__)
     # # plt.plot(x, y)
     # plt.plot(x, z)
