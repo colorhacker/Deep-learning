@@ -51,10 +51,8 @@ class Neurons:
             self.dendrites[i][0] = 0  # 清除最左边值
         for i in range(len(self.axon) - 1):
             self.axon[i].insert(0, self.axon[i].pop())  # 向右移动一格
-            #self.axon[i][-1] #需要转移的值  * self._inhib[i]
             self.axon[i][0] = self.axon[-1][-1]  # 设置值
-        for i in range(len(self.axon)):
-            self.axon[i].insert(0, self.axon[i].pop())  # 向右移动一格
+        self.axon[-1].insert(0, self.axon[-1].pop())  # 向右移动一格
         if self._voltage >= self._thred:
             self._thred = self._thred ** 2
             self.axon[-1][0] = 1
@@ -68,7 +66,7 @@ class Neurons:
 class Networks:
     def __init__(self, number, input_num, output_num, dendrites, axon, inhib):
         self.number = number
-        self._dend_n = 0
+        self._dent_n = 0
         self._axon_n = 0
         self.input_list = []
         self.output_list= []
@@ -77,23 +75,24 @@ class Networks:
         for i in range(self.number):
             _cell = Neurons(dendrites, axon, inhib)
             self.cell.append(_cell)
-            self._dend_n = self._dend_n + len(_cell.dendrites)
+            self._dent_n = self._dent_n + len(_cell.dendrites)
             self._axon_n = self._axon_n + len(_cell.axon) - 1
 
-        _input_list = list(range(self._dend_n))
+        _input_list = list(range(self._dent_n))
         _output_list = list(range(self._axon_n))
         shuffle(_input_list)
         shuffle(_output_list)
         self.input_list = _input_list[0:input_num]
         self.output_list = _output_list[0:output_num]
         self.self_list = _output_list[
-                            output_num:output_num + min(self._dend_n - input_num, self._axon_n - output_num)]
+                            output_num:output_num + min(self._dent_n - input_num, self._axon_n - output_num)]
         self._axon_d = [0] * self._axon_n
 
+        print(self.input_list)
+        print(self.output_list)
+        print(self.self_list)
+
     def tick(self):
-        # print(self.input_list)
-        # print(self.output_list)
-        # print(self.self_link_id)
         self.self_transport()
         for i in range(self.number):
             self.cell[i].tick()
@@ -113,13 +112,8 @@ class Networks:
 
     def output(self):
         d = [0] * len(self.output_list)
-        count = 0
-        for i in range(self.number):
-            for j in range(len(self.cell[i].axon) - 1):
-                if count in self.output_list:
-                   d[self.output_list.index(count)] = self.cell[i].axon[j][-1]
-                   # print(count)
-                count = count + 1
+        for i in range(len(self.output_list)):
+            d[i] = self._axon_d[self.output_list[i]]
         return d
 
     def input(self, d):
@@ -127,24 +121,34 @@ class Networks:
         for i in range(self.number):
             for j in range(len(self.cell[i].dendrites)):
                 if count in self.input_list:
-                   self.cell[i].dendrites[j][0] = d[self.input_list.index(count)]
-                   # print(count)
+                    self.cell[i].dendrites[j][0] = d[self.input_list.index(count)]
                 count = count + 1
-        return d
 
 
 if __name__ == '__main__':
     seed(0)
-    n = Networks(1, 5, 1, 5, 10, 0.1)
+    n = Networks(2, 5, 1, 6, 10, 0.1)
 
-    a=[1,1,1,1,1]
-    x= range(100)
-    y=[]
-    for i in x:
-        n.input(a)
-        n.tick()
-        y.append(n.output()[0])
-    print(n.__dict__)
-    plt.plot(x, y)
+    a = [0.1, 0.2, 0.3, 0.4, 0.5]
+    n.input(a)
+    n.cell[0].axon[0][-1] = 0.11
+    n.cell[0].axon[1][-1] = 0.22
+    n.cell[0].axon[2][-1] = 0.33
+    n.cell[0].axon[3][-1] = 0.44
+    print(n.cell[0].axon)
+    print(n.cell[1].axon)
+    n.self_transport()
+    n.cell[0].dendrites.extend(n.cell[1].dendrites)
+    print(n.cell[0].dendrites)
+    # print(n.cell[1].dendrites)
+    # x = range(30)
+    # y = []
+    # for i in x:
+    #     n.input(a)
+    #     n.tick()
+    #     y.append(n.output()[0])
+    # print(n.__dict__)
+    # plt.plot(x, y)
     # plt.plot(x, z)
-    plt.show()
+    # plt.show()
+
