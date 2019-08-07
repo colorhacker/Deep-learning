@@ -64,33 +64,28 @@ class Neurons:
 
 
 class Networks:
-    def __init__(self, number, input_num, output_num, dendrites, axon, inhib):
+    def __init__(self, number, n_input, n_output, dendrites, axon, inhib):
         self.number = number
-        self._dent_n = 0
-        self._axon_n = 0
-        self.input_list = []
-        self.output_list= []
-        self.self_link_id = []
+        self.output_num = n_output
+        self.input_num = n_input
+        self.loop_num = 0
+        self.dendrites_list = []
+        self.axon_list = []
+        self.dendrites_num = 0
+        self.axon_num = 0
         self.cell = []
         for i in range(self.number):
             _cell = Neurons(dendrites, axon, inhib)
             self.cell.append(_cell)
-            self._dent_n = self._dent_n + len(_cell.dendrites)
-            self._axon_n = self._axon_n + len(_cell.axon) - 1
-
-        _input_list = list(range(self._dent_n))
-        _output_list = list(range(self._axon_n))
-        shuffle(_input_list)
-        shuffle(_output_list)
-        self.input_list = _input_list[0:input_num]
-        self.output_list = _output_list[0:output_num]
-        self.self_list = _output_list[
-                            output_num:output_num + min(self._dent_n - input_num, self._axon_n - output_num)]
-        self._axon_d = [0] * self._axon_n
-
-        print(self.input_list)
-        print(self.output_list)
-        print(self.self_list)
+            self.dendrites_num = self.dendrites_num + len(_cell.dendrites)
+            self.axon_num = self.axon_num + len(_cell.axon) - 1
+        self.dendrites_list = list(range(self.dendrites_num))
+        self.axon_list = list(range(self.axon_num))
+        shuffle(self.dendrites_list)
+        shuffle(self.axon_list)
+        self.loop_num = min(self.dendrites_num - n_input, self.axon_num - n_output)
+        self.dendrites_data = [0] * self.dendrites_num
+        self.axon_data = [0] * self.axon_num
 
     def tick(self):
         self.self_transport()
@@ -98,57 +93,43 @@ class Networks:
             self.cell[i].tick()
 
     def self_transport(self):
+        #提取所有神经元输出的数据
         count = 0
         for i in range(self.number):
             for j in range(len(self.cell[i].axon) - 1):
-                self._axon_d[count] = self.cell[i].axon[j][-1]
+                self.axon_data[self.axon_list.index(count)] = self.cell[i].axon[j][-1]
                 count = count + 1
+        #把输出的数据通过loop_list传递给输出缓冲区
+        for e, d in zip(self.dendrites_list[self.input_num:self.input_num + self.loop_num],
+                        self.axon_data[self.output_num:self.output_num + self.loop_num]):
+            self.dendrites_data[e] = d
         count = 0
         for i in range(self.number):
             for j in range(len(self.cell[i].dendrites)):
-                if count in self.self_list:
-                    self.cell[i].dendrites[j][0] = self._axon_d[self.self_list.index(count)] * self.cell[i]._inhib[j]
+                self.cell[i].dendrites[j][0] = self.dendrites_data[count]
                 count = count + 1
 
     def output(self):
-        d = [0] * len(self.output_list)
-        for i in range(len(self.output_list)):
-            d[i] = self._axon_d[self.output_list[i]]
-        return d
+        return self.axon_data[0:self.output_num]
 
     def input(self, d):
-        count = 0
-        for i in range(self.number):
-            for j in range(len(self.cell[i].dendrites)):
-                if count in self.input_list:
-                    self.cell[i].dendrites[j][0] = d[self.input_list.index(count)]
-                count = count + 1
+        for i in range(self.input_num):
+            self.dendrites_data[self.dendrites_list[i]] = d[i]
 
 
 if __name__ == '__main__':
     seed(0)
     n = Networks(2, 5, 1, 6, 10, 0.1)
-
-    a = [0.1, 0.2, 0.3, 0.4, 0.5]
-    n.input(a)
-    n.cell[0].axon[0][-1] = 0.11
-    n.cell[0].axon[1][-1] = 0.22
-    n.cell[0].axon[2][-1] = 0.33
-    n.cell[0].axon[3][-1] = 0.44
-    print(n.cell[0].axon)
-    print(n.cell[1].axon)
-    n.self_transport()
-    n.cell[0].dendrites.extend(n.cell[1].dendrites)
-    print(n.cell[0].dendrites)
-    # print(n.cell[1].dendrites)
-    # x = range(30)
-    # y = []
-    # for i in x:
-    #     n.input(a)
-    #     n.tick()
-    #     y.append(n.output()[0])
     # print(n.__dict__)
-    # plt.plot(x, y)
+    a=[1]*5
+    x = range(30)
+    y = []
+    for i in x:
+        n.input(a)
+        n.tick()
+        y.append(n.output()[0])
+    print(n.__dict__)
+    plt.plot(x, y)
     # plt.plot(x, z)
-    # plt.show()
+    plt.show()
 
