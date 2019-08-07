@@ -16,7 +16,7 @@ def create_spine(length,axon=True):
 
 
 #创建抑制神经元
-def create_inhibitory_list(number,pro):
+def create_inhibitory_list(number, pro):
     p_list = [1] * (number - int(number * pro))
     n_list = [-1] * int(number * pro)
     p_list.extend(n_list)
@@ -24,12 +24,15 @@ def create_inhibitory_list(number,pro):
     return p_list
 
 
+#dendrites 树突个数
+# axon 轴突个数
+# inhib树突抑制比
 class Neurons:
-    def __init__(self, dendrites, axon, inhib): #树突个数 轴突个数 以及抑制比
+    def __init__(self, dendrites, axon, inhib):
         self.dendrites = create_spine(dendrites,axon=False)
         self._inhib = create_inhibitory_list(len(self.dendrites), inhib)
         self.axon = create_spine(axon,axon=True)
-        self._thred_m = int(len(self.dendrites)*0.5*round(1-inhib))
+        self._thred_m = int(len(self.dendrites) * 0.5 * round(1 - inhib))
         self._thred = self._thred_m
         self._voltage = 0
 
@@ -63,9 +66,15 @@ class Neurons:
                 self._thred = self._thred_m
 
 
+#cell_num 神经元个数
+#n_input 输入的数据个数
+#n_output 输出的数据个数
+#dendrites 单个神经元内部树突个数
+#axon 单个神经元内部树突个数
+#inhib 突触抑制比例
 class Networks:
-    def __init__(self, number, n_input, n_output, dendrites, axon, inhib):
-        self.number = number
+    def __init__(self, cell_num, n_input, n_output, dendrites, axon, inhib):
+        self.cell_num = cell_num
         self.output_num = n_output
         self.input_num = n_input
         self.loop_num = 0
@@ -74,8 +83,10 @@ class Networks:
         self.dendrites_num = 0
         self.axon_num = 0
         self.cell = []
-        for i in range(self.number):
-            _cell = Neurons(dendrites, axon, inhib)
+        for i in range(self.cell_num):
+            # _cell = Neurons(dendrites,axon, inhib)
+            _cell = Neurons(randint(dendrites, dendrites + int(dendrites ** 0.5)),
+                            randint(axon, axon + int(axon ** 0.5)), inhib)
             self.cell.append(_cell)
             self.dendrites_num = self.dendrites_num + len(_cell.dendrites)
             self.axon_num = self.axon_num + len(_cell.axon) - 1
@@ -89,13 +100,13 @@ class Networks:
 
     def tick(self):
         self.self_transport()
-        for i in range(self.number):
+        for i in range(self.cell_num):
             self.cell[i].tick()
 
     def self_transport(self):
         #提取所有神经元输出的数据
         count = 0
-        for i in range(self.number):
+        for i in range(self.cell_num):
             for j in range(len(self.cell[i].axon) - 1):
                 self.axon_data[self.axon_list.index(count)] = self.cell[i].axon[j][-1]
                 count = count + 1
@@ -103,10 +114,11 @@ class Networks:
         for e, d in zip(self.dendrites_list[self.input_num:self.input_num + self.loop_num],
                         self.axon_data[self.output_num:self.output_num + self.loop_num]):
             self.dendrites_data[e] = d
+        #进行输入设置
         count = 0
-        for i in range(self.number):
+        for i in range(self.cell_num):
             for j in range(len(self.cell[i].dendrites)):
-                self.cell[i].dendrites[j][0] = self.dendrites_data[count]
+                self.cell[i].dendrites[j][0] = self.dendrites_data[count] * self.cell[i]._inhib[j]
                 count = count + 1
 
     def output(self):
@@ -118,17 +130,16 @@ class Networks:
 
 
 if __name__ == '__main__':
-    seed(0)
-    n = Networks(2, 5, 1, 6, 10, 0.1)
+    # seed(0)
+    n = Networks(3, 10, 2, 6, 7, 0.2)
     # print(n.__dict__)
-    a=[1]*5
-    x = range(30)
+    a=[1]*10
+    x = range(200)
     y = []
     for i in x:
         n.input(a)
         n.tick()
         y.append(n.output()[0])
-    print(n.__dict__)
     plt.plot(x, y)
     # plt.plot(x, z)
     plt.show()
