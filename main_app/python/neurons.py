@@ -131,7 +131,7 @@ class Networks:
 
 if __name__ == '__main__':
     # seed(0)
-    n = Networks(3, 10, 2, 6, 7, 0.2)
+    n = Networks(3, 10, 3, 6, 7, 0.2)
     # print(n.__dict__)
     a=[1]*10
     x = range(200)
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     for i in x:
         n.input(a)
         n.tick()
-        y.append(n.output()[0])
+        y.append(sum(n.output()))
     plt.plot(x, y)
     # plt.plot(x, z)
     plt.show()

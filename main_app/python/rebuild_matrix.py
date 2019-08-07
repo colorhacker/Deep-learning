@@ -1,11 +1,34 @@
 from mnist import MNIST
 from multiprocessing import Pool
 from scipy import spatial,stats
+from sklearn.cluster import KMeans
 from tqdm import tqdm
 import split_matrix as splitm
 import numpy as np
 import os
 
+
+def kmeans_process(n_class,data):
+    kmeans = KMeans(n_clusters=n_class,init='random',algorithm='full').fit(data)
+    return kmeans.cluster_centers_
+
+
+#自定义排序矩阵
+def custum_sort_matrix(data):
+    data_list = data.tolist()
+    return np.array(sorted(data_list, key=lambda x:np.linalg.norm(np.zeros(data.shape[1]) - np.array(x))))
+
+
+#拼接矩阵显示
+def parallel_matrix(data,count,space=1):
+    step  = int(data.shape[1]**0.5)
+    image = np.zeros(shape=[count*(step+space), count*(step+space)])
+    index = 0
+    for x in range(0,image.shape[0],step+space):
+        for y in range(0,image.shape[1],step+space):
+            image[x:x + step, y:y + step] = data[index].reshape(step,step)
+            index = index + 1
+    return image
 
 def rebuilt_feature(thread,feature, matrix, move_step, split_size, path, start, stop):
     result = []
