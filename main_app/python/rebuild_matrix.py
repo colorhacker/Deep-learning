@@ -13,13 +13,13 @@ def kmeans_process(n_class,data):
     return kmeans.cluster_centers_
 
 
-#自定义排序矩阵
+# 自定义排序矩阵
 def custum_sort_matrix(data):
     data_list = data.tolist()
     return np.array(sorted(data_list, key=lambda x:np.linalg.norm(np.zeros(data.shape[1]) - np.array(x))))
 
 
-#拼接矩阵显示
+# 拼接矩阵显示
 def parallel_matrix(data,count,space=1):
     step  = int(data.shape[1]**0.5)
     image = np.zeros(shape=[count*(step+space), count*(step+space)])
@@ -29,6 +29,7 @@ def parallel_matrix(data,count,space=1):
             image[x:x + step, y:y + step] = data[index].reshape(step,step)
             index = index + 1
     return image
+
 
 def rebuilt_feature(thread,feature, matrix, move_step, split_size, path, start, stop):
     result = []
