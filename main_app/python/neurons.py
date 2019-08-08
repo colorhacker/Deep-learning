@@ -4,18 +4,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-#创建树突和轴突 axon 开启为树突 否则为轴突
-def create_spine(length,axon=True):
-    count = randint(length, length + int(length ** 0.5))
+axon_myelin_sheath = 5  # 髓鞘 长度
+dendrite_length = 3  # 树突长度
+cell_thred_max = 0.5  # 设置阈值和最大输入值比例
+cell_thred_attenuate = 0.05  # 衰减系数 0.05需要衰减10次才能到最大值
+
+
+# 创建树突和轴突 axon 开启为树突 否则为轴突
+def create_spine(number, axon=True):
+    count = randint(number, number + int(number ** 0.5))
     spine = []
     for i in range(count):
-        spine.append([0] * randint(1, int(count ** 0.5)))
+        spine.append([0] * randint(1, dendrite_length))
     if axon:
-        spine.append([0] * length)
+        spine.append([0] * axon_myelin_sheath)
     return spine
 
 
-#创建抑制神经元
+# 创建抑制神经元
 def create_inhibitory_list(number, pro):
     p_list = [1] * (number - int(number * pro))
     n_list = [-1] * int(number * pro)
@@ -24,7 +30,7 @@ def create_inhibitory_list(number, pro):
     return p_list
 
 
-#dendrites 树突个数
+# dendrites 树突个数
 # axon 轴突个数
 # inhib树突抑制比
 class Neurons:
@@ -32,7 +38,7 @@ class Neurons:
         self.dendrites = create_spine(dendrites,axon=False)
         self._inhib = create_inhibitory_list(len(self.dendrites), inhib)
         self.axon = create_spine(axon,axon=True)
-        self._thred_m = int(len(self.dendrites) * 0.5 * round(1 - inhib))
+        self._thred_m = int(len(self.dendrites) * cell_thred_max * round(1 - inhib))
         self._thred = self._thred_m
         self._voltage = 0
 
@@ -57,21 +63,21 @@ class Neurons:
             self.axon[i][0] = self.axon[-1][-1]  # 设置值
         self.axon[-1].insert(0, self.axon[-1].pop())  # 向右移动一格
         if self._voltage >= self._thred:
-            self._thred = self._thred ** 2
+            self._thred = self._thred + len(self.dendrites)
             self.axon[-1][0] = 1
         else:
             self.axon[-1][0] = 0
-            self._thred = self._thred - self._thred ** 0.5
+            self._thred = self._thred - self._thred * cell_thred_attenuate
             if self._thred <= self._thred_m:
                 self._thred = self._thred_m
 
 
-#cell_num 神经元个数
-#n_input 输入的数据个数
-#n_output 输出的数据个数
-#dendrites 单个神经元内部树突个数
-#axon 单个神经元内部树突个数
-#inhib 突触抑制比例
+# cell_num 神经元个数
+# n_input 输入的数据个数
+# n_output 输出的数据个数
+# dendrites 单个神经元内部树突个数
+# axon 单个神经元内部树突个数
+# inhib 突触抑制比例
 class Networks:
     def __init__(self, cell_num, n_input, n_output, dendrites, axon, inhib):
         self.cell_num = cell_num
@@ -84,9 +90,9 @@ class Networks:
         self.axon_num = 0
         self.cell = []
         for i in range(self.cell_num):
-            # _cell = Neurons(dendrites,axon, inhib)
-            _cell = Neurons(randint(dendrites, dendrites + int(dendrites ** 0.5)),
-                            randint(axon, axon + int(axon ** 0.5)), inhib)
+            _cell = Neurons(dendrites,axon, inhib)
+            # _cell = Neurons(randint(dendrites, dendrites + int(dendrites ** 0.5)),
+            #                 randint(axon, axon + int(axon ** 0.5)), inhib)
             self.cell.append(_cell)
             self.dendrites_num = self.dendrites_num + len(_cell.dendrites)
             self.axon_num = self.axon_num + len(_cell.axon) - 1
@@ -104,17 +110,17 @@ class Networks:
             self.cell[i].tick()
 
     def self_transport(self):
-        #提取所有神经元输出的数据
+        # 提取所有神经元输出的数据
         count = 0
         for i in range(self.cell_num):
             for j in range(len(self.cell[i].axon) - 1):
                 self.axon_data[self.axon_list.index(count)] = self.cell[i].axon[j][-1]
                 count = count + 1
-        #把输出的数据通过loop_list传递给输出缓冲区
+        # 把输出的数据通过loop_list传递给输出缓冲区
         for e, d in zip(self.dendrites_list[self.input_num:self.input_num + self.loop_num],
                         self.axon_data[self.output_num:self.output_num + self.loop_num]):
             self.dendrites_data[e] = d
-        #进行输入设置
+        # 进行输入设置
         count = 0
         for i in range(self.cell_num):
             for j in range(len(self.cell[i].dendrites)):
