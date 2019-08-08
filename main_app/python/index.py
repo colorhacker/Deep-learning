@@ -28,18 +28,41 @@ def encode_data(d):
     return result.tolist()
 
 
-def training(network, file, count):
+def training(s_id, network, file, count):
     network.clear_evaluate()
     image = np.load(file)
     # for index in tqdm(range(len(image))):
-    for index in tqdm(range(10)):
+    for index in tqdm(range(100)):
         e = encode_data(image[index])
         for c in range(count):
             for k in range(len(e)):
                 network.input(e[k])
                 network.tick()
-    np.save("./temp/d/eva_"+str(), network.eva_active)
+    np.save("./temp/d/eva_"+str(s_id), network.eva_active)
     return network.eva_active
+
+
+def for_training(network):
+    for i in range(10):
+        training(i, network, "./temp/d/"+str(i)+".npy",100)
+
+
+def pool_training(network):
+    try:
+        pool = Pool(10)
+        for i in range(10):
+            pool.apply_async(func=training, args=(i, network, "./temp/d/"+str(i)+".npy", 100))
+        pool.close()
+        pool.join()
+    except:
+        print("Error: unable to start process")
+
+
+def bar_show():
+    for e in range(10):
+        k = np.load("./temp/d/eva_"+str(e)+".npy")
+        plt.bar(range(len(k)),k)
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -47,11 +70,7 @@ if __name__ == '__main__':
     net = N.Networks(50, 784, 100, 20, 20, 0.2)
     print("axon:", net.axon_num)
     print("dendrites:", net.dendrites_num)
-    try:
-        pool = Pool(10)
-        for i in range(10):
-            pool.apply_async(func=training, args=(N, "./temp/d/"+str(i)+".npy", 100))
-        pool.close()
-        pool.join()
-    except:
-        print("Error: unable to start process")
+
+    # for_training(net)
+    pool_training(net)
+
