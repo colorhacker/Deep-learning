@@ -72,5 +72,5 @@ if __name__ == '__main__':
     print("dendrites:", net.dendrites_num)
 
     # for_training(net)
-    pool_training(net)
-
+    # pool_training(net)
+    bar_show()
