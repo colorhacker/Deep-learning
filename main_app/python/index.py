@@ -62,6 +62,7 @@ def bar_show():
     for e in range(10):
         k = np.load("./temp/d/eva_"+str(e)+".npy")
         plt.bar(range(len(k)),k)
+        plt.title(e)
         plt.show()
 
 
