@@ -169,7 +169,7 @@ if __name__ == '__main__':
     # training_random(net, 100, 200)
     result = []
     for i in range(10):
-        result.append(testing(i, net, 0, 5))
+        result.append(testing(i, net, 0, 100))
     print(np.array(result).sum()/10)
     # testing_c(0, 0, net, 100)
 
