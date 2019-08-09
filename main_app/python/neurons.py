@@ -1,13 +1,25 @@
 
+from tqdm import tqdm
 from random import randint, shuffle, seed
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-axon_myelin_sheath = 5  # 髓鞘 长度
+axon_myelin_sheath = 6  # 髓鞘 长度
 dendrite_length = 3  # 树突长度
-cell_thred_max = 0.5  # 设置阈值和最大输入值比例
-cell_thred_attenuate = 0.1  # 衰减系数 0.05需要衰减10次才能到最大值
+cell_thred_max = 0.45  # 设置阈值和最大输入值比例
+cell_thred_attenuate = 0.15  # 衰减系数 0.05需要衰减10次才能到最大值
+
+
+def encode_data(d):
+    result = []
+    for e in d:
+        if e == 0:
+            result.append([ 0, 0, 1, 1])
+        else:
+            result.append([ 0, 0, 0, 0])
+    result = np.array(result).T
+    return result.tolist()
 
 
 # 创建树突和轴突 axon 开启为树突 否则为轴突
@@ -141,6 +153,18 @@ class Networks:
     def clear_evaluate(self):
         self.eva_active = [0] * self.cell_num
 
+    def update_thred_m(self, coe):
+        self.clear_evaluate()
+        e = encode_data([0] * self.input_num)
+        for _c in tqdm(range(30)):
+            for k in range(len(e)):
+                self.input(e[k])
+                self.tick()
+        d = np.array(self.eva_active)
+        d = d / d.max()
+        self.clear_evaluate()
+        for _i, _eum in enumerate(d):
+            self.cell[_i]._thred_m = self.cell[_i]._thred_m - (1.0 - _eum) * coe
 
 if __name__ == '__main__':
     # seed(0)
@@ -157,3 +181,14 @@ if __name__ == '__main__':
     # plt.plot(x, z)
     plt.show()
 
+    # eva = training_c([1] * 784, net, 50)
+    # plt.bar(range(len(eva)), eva)
+    # plt.show()
+    #
+    # eva = training_c(np.load("./temp/mnist_test.npy", allow_pickle=True)[0][0], net, 50)
+    # plt.bar(range(len(eva)), eva)
+    # plt.show()
+    #
+    # eva = training_c([0] * 784, net, 50)
+    # plt.bar(range(len(eva)), eva)
+    # plt.show()
