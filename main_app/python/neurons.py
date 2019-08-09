@@ -153,7 +153,7 @@ class Networks:
     def clear_evaluate(self):
         self.eva_active = [0] * self.cell_num
 
-    def update_thred_m(self, coe):
+    def self_update_thred_m(self, coe):
         self.clear_evaluate()
         e = encode_data([0] * self.input_num)
         for _c in tqdm(range(30)):
@@ -165,6 +165,14 @@ class Networks:
         self.clear_evaluate()
         for _i, _eum in enumerate(d):
             self.cell[_i]._thred_m = self.cell[_i]._thred_m - (1.0 - _eum) * coe
+
+    def update_thred_m(self, coe):
+        d = np.array(self.eva_active)
+        d = d/d.max()
+        for _i, _eum in enumerate(d):
+            self.cell[_i]._thred_m = self.cell[_i]._thred_m - (1.0 - _eum) * coe
+        return np.mean(d)
+
 
 if __name__ == '__main__':
     # seed(0)

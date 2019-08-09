@@ -1,6 +1,6 @@
 import neurons as N
 import matplotlib.pyplot as plt
-import sort_data as sortd
+# import sort_data as sortd
 from multiprocessing import Pool
 # import cv2 as opencv
 import numpy as np
@@ -20,6 +20,17 @@ def sort_func(x,y):
 def re_feature_same(feature, data):
     return np.array(sorted(range(len(feature)), key=lambda element: sort_func(data, np.array(feature[element]))))[0]
 
+
+# 自定义排序矩阵1d
+def custum_sort_list(data, rule=False):
+    target_data = 0
+    data_list = data.tolist()
+    if rule:
+        # target_data = np.array(sorted(data_list, key=lambda element: sort_func(target_data , np.array(element))))
+        target_data = np.array(sorted(data_list, key=lambda element: sort_func(target_data , np.array(element))))[len(data_list)-1]
+    value = np.array(sorted(data_list, key=lambda element: sort_func(target_data , np.array(element))))
+    labels = np.array(sorted(range(len(data_list)), key=lambda element: sort_func(target_data , np.array(data_list[element]))))
+    return value,labels
 
 # 按类别存储手写数据
 def mnist_class_save():
@@ -60,21 +71,25 @@ def training(s_id, network, start, end):
     return network.eva_active
 
 
-def training_random( network, start, end):
-    network.clear_evaluate()
+def training_random(network, update):
     images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='lists').load_training()
-    # for index in tqdm(range(len(image))):
-    for index in tqdm(range(start, end)):
+    network.clear_evaluate()
+    update_count = update
+    means = 0
+    for index in tqdm(range(len(images))):
         e = N.encode_data(images[index])
-        for c in range(30):
+        for c in range(10):
             for k in range(len(e)):
                 network.input(e[k])
                 network.tick()
-    total = network.eva_active
-    np.save("./temp/train_random", total)
-    total = np.array(total)
-    np.savetxt("./temp/train_random.csv", (total / total.max()).T, delimiter=',')
-    return network.eva_active
+        update_count = update_count - 1
+        if update_count == 0:
+            update_count = update
+            means = network.update_thred_m(1)
+            print(means)
+            network.clear_evaluate()
+        if means > 0.8:
+            break
 
 
 def testing(s_id, network,  start, end):
@@ -85,8 +100,6 @@ def testing(s_id, network,  start, end):
     success = 0
     # for index in range(start, end):
     for index in tqdm(range(start, end)):
-        # plt.imshow(image[index].reshape(28, 28))
-        # plt.show()
         result = fit_c(image[index], network, 30)
         result = np.array(result)
         result = result / result.max()
@@ -94,19 +107,6 @@ def testing(s_id, network,  start, end):
         if _class == s_id:
             success = success + 1
     return (success/(end - start)) * 100
-
-
-def testing_c(s_id, c_id, network,  count):
-    network.clear_evaluate()
-    image = np.load("./temp/mnist_test.npy", allow_pickle=True)[s_id]
-    e = N.encode_data(image[c_id])
-    for c in tqdm(range(count)):
-        for k in range(len(e)):
-            network.input(e[k])
-            network.tick()
-    result = np.array(network.eva_active)
-    np.savetxt("./temp/test_c"+str(s_id)+str(c_id)+".csv", (result / result.max()).T, delimiter=',')
-    return network.eva_active
 
 
 def for_training(network):
@@ -124,7 +124,7 @@ def pool_training(network):
     try:
         pool = Pool(10)
         for i in range(10):
-            pool.apply_async(func=training, args=(i, network, 0, 200))
+            pool.apply_async(func=training, args=(i, network, 0, 100))
         pool.close()
         pool.join()
         total = []
@@ -147,9 +147,9 @@ def bar_show(title):
 
 
 def sort_bar_show(title, data):
-    value, labels = sortd.custum_sort_list(data, rule=True)
-    # plt.bar(range(len(value)), value)
-    plt.plot(value)
+    value, labels = custum_sort_list(data, rule=True)
+    plt.bar(range(len(value)), value)
+    # plt.plot(value)
     plt.xticks(range(len(value)), labels, rotation='vertical')
     plt.title(title)
     plt.show()
@@ -158,19 +158,21 @@ def sort_bar_show(title, data):
 if __name__ == '__main__':
     seed(0)
     net = N.Networks(40, 784, 0, 25, 15, 0.3)
-    net.update_thred_m(5)  # 更新阈值
+    net.self_update_thred_m(5)  # 更新阈值
     print("dendrites:", net.dendrites_num)
     print("axon:", net.axon_num)
     print("selt:", net.dendrites_num - 784)
+
+    bar_show("d")
     # pool_training(net)
     # for_training(net)
     # bar_show("train ")
     # training_random(net, 0, 100)
     # training_random(net, 100, 200)
-    result = []
-    for i in range(10):
-        result.append(testing(i, net, 0, 100))
-    print(np.array(result).sum()/10)
+    # result = []
+    # for i in range(10):
+    #     result.append(testing(i, net, 0, 10))
+    # print(np.array(result).sum()/10)
     # testing_c(0, 0, net, 100)
 
 
