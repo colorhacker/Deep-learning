@@ -78,6 +78,10 @@ class Networks:
     def active_freq(self):
         return self.notes_tick_active / self.notes_tick_count  # 计算激活频率
 
+    def update_threshold(self, biase):
+        index = self.active_freq().tolist().index(min(self.active_freq()))
+        self.cell_threshold_fix[index] -= biase
+
 
 if __name__ == '__main__':
     seed(0)
@@ -85,3 +89,4 @@ if __name__ == '__main__':
     for i in range(40):
         net.tick([2, 2])
     print(net.active_freq())
+    print(net.update_threshold(0.1))
