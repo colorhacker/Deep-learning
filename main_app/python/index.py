@@ -163,7 +163,7 @@ if __name__ == '__main__':
     print("axon:", net.axon_num)
     print("selt:", net.dendrites_num - 784)
 
-    bar_show("d")
+    # bar_show("d")
     # pool_training(net)
     # for_training(net)
     # bar_show("train ")
