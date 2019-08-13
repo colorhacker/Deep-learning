@@ -38,6 +38,6 @@ if __name__ == '__main__':
     model = N.Networks(100, 784, 5, 50, 10, 0.2)
     mnist_train = np.load("./temp/mnist_train.npy")
     mnist_test = np.load("./temp/mnist_test.npy")
-    parallel_process(model, mnist_test)
+    parallel_process(model, mnist_test[0:3])
     # parallel_process(model, mnist_train)
     # serial_process(model, mnist_train)

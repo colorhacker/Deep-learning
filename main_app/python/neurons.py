@@ -4,9 +4,9 @@ from random import randint, shuffle, seed
 import matplotlib.pyplot as plt
 import numpy as np
 
-cell_threshold_max = 0.45  # 设置阈值和最大输入值比例
+cell_threshold_max = 0.4  # 设置阈值和最大输入值比例
 cell_threshold_attenuate = 0.15  # 衰减系数 0.05需要衰减10次才能到最大值
-cell_blank_synapse = 0.2  # 树突无连接的数量比
+cell_blank_synapse = 0.1  # 树突无连接的数量比
 
 
 # cell_num 神经元个数
