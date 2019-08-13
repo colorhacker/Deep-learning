@@ -10,11 +10,11 @@ from tqdm import tqdm
 
 def serial_training(net_model, train_data):
     for a in train_data:
-        for b in a:
-            net_model.batch_tick(b)
-            plt.plot(net_model.active_freq())
-            net_model.clean_freq()
+        net_model.batch_tick(a)
+        plt.plot(net_model.active_freq())
+        net_model.clean_freq()
     plt.show()
+
 
 def parallel_training(net_model, train_data):
     try:
