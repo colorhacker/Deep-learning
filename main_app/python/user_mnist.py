@@ -1,7 +1,7 @@
 import neurons as N
 import matplotlib.pyplot as plt
 # import sort_data as sortd
-from multiprocessing import Pool
+from multiprocessing import Pool, Queue, Process, current_process
 # import cv2 as opencv
 import numpy as np
 from mnist import MNIST
@@ -48,10 +48,6 @@ def mnist_class_save():
     np.save("./temp/mnist_test", digital)
 
 
-def fit_c(image, network, count):
-    network.clear_evaluate()
-
-
 def training(s_id, network, start, end):
     image = np.load("./temp/mnist_train.npy", allow_pickle=True)[s_id]
     # for index in tqdm(range(len(image))):
@@ -91,3 +87,24 @@ def sort_bar_show(title, data):
     plt.xticks(range(len(value)), labels, rotation='vertical')
     plt.title(title)
     plt.show()
+
+
+class Realpolt:
+    def __init__(self, title, delay):
+        # plt.xticks(range(len(value)), labels, rotation='vertical')
+        self.title = title
+        self.delay = delay
+        self.Queue = Queue()
+
+        plt.title(self.title)
+        self.Process = Process(target=self._p, args=())
+        self.Process.start()
+
+    def put(self, d):
+        self.Queue.put(d)
+
+    def _p(self):
+        while True:
+            data = self.Queue.get()
+            plt.plot(data, color='red')
+            plt.pause(self.delay)
