@@ -34,7 +34,7 @@ def parallel_training(net_model, train_data):
 if __name__ == '__main__':
     seed(0)
     # 神经元个数，输入个数，树突最小长度，树突个数，突触长度，突触抑制率
-    model = N.Networks(100, 784, 5, 50, 10, 0.2)
+    model = N.Networks(100, 784, 5, 100, 10, 0.2)
     mnist_train = np.load("./temp/mnist_train.npy")
     parallel_training(model, mnist_train)
     # serial_training(model, mnist_train)
