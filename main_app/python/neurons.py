@@ -76,6 +76,7 @@ class Networks:
     def batch_tick(self, d):
         for e in tqdm(d):
             self.tick(e)
+        return self.active_freq()
 
     def active_freq(self):
         return self.notes_tick_active / self.notes_tick_count  # 计算激活频率

@@ -19,10 +19,14 @@ def serial_training(net_model, train_data):
 def parallel_training(net_model, train_data):
     try:
         pool = Pool(len(train_data))
-        for e in train_data:
-            pool.apply_async(func=net_model.batch_tick, args=(e,))
+        result = list()
+        for i, e in enumerate(train_data):
+            result[i] = pool.apply_async(func=net_model.batch_tick, args=(e,))
         pool.close()
         pool.join()
+        for res in result:
+            plt.plot(res.get())
+        plt.show()
     except ValueError as e:
         print(e)
 
@@ -32,5 +36,5 @@ if __name__ == '__main__':
     # 神经元个数，输入个数，树突最小长度，树突个数，突触长度，突触抑制率
     model = N.Networks(100, 784, 5, 50, 10, 0.2)
     mnist_train = np.load("./temp/mnist_train.npy")
-    # parallel_training(model, mnist_train)
-    serial_training(model, mnist_train)
+    parallel_training(model, mnist_train)
+    # serial_training(model, mnist_train)
