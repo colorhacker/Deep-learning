@@ -47,39 +47,6 @@ def mnist_class_save():
         digital[labels_t[c]].append(np.array(images_t[c]).astype("uint8"))
     np.save("./temp/mnist_test", digital)
 
-
-def training(s_id, network, start, end):
-    image = np.load("./temp/mnist_train.npy", allow_pickle=True)[s_id]
-    # for index in tqdm(range(len(image))):
-    for index in tqdm(range(start, end)):
-        print(0)
-
-
-def testing(s_id, network,  start, end):
-    print(0)
-
-
-def for_training(network):
-    print(0)
-
-
-def pool_training(network):
-    try:
-        pool = Pool(10)
-        for i in range(10):
-            pool.apply_async(func=training, args=(i, network, 0, 100))
-        pool.close()
-        pool.join()
-        # total = []
-        # for e in range(10):
-        #     total.append(np.load("./temp/train_" + str(e) + ".npy"))
-        #     os.remove("./temp/train_" + str(e) + ".npy")
-        # np.save("./temp/train_total", total)
-        # np.savetxt("./temp/train_total.csv", (total/total.max()).T, delimiter=',')
-    except ValueError as e:
-        print(0)
-
-
 def sort_bar_show(title, data):
     value, labels = custum_sort_list(data, rule=True)
     plt.bar(range(len(value)), value)

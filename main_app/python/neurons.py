@@ -34,7 +34,7 @@ class Networks:
         shuffle(self.synapse_polarity)
         self.synapse_polarity = np.array(self.synapse_polarity).reshape(self.dendrites_number, 1)
         self.notes_tick_active = np.zeros(shape=(self.cell_num, 1))  # 用于保存神经元的激活值
-        self.notes_tick_count = 0
+        self.notes_tick_count = 1
 
     def update_input(self, data):
         self.synapse = np.roll(self.synapse, -1)  # 移动髓鞘数据
@@ -73,8 +73,16 @@ class Networks:
         self.update_output()
         self.notes_tick_active += self.axon[:, 0:1]  # 记录神经元的激活次数
 
+    def batch_tick(self, d):
+        for e in tqdm(d):
+            self.tick(e)
+
     def active_freq(self):
         return self.notes_tick_active / self.notes_tick_count  # 计算激活频率
+
+    def clean_freq(self):
+        self.notes_tick_count = 1
+        self.notes_tick_active = np.zeros(shape=(self.cell_num, 1))
 
     def update_threshold(self, biase):
         index = self.active_freq().tolist().index(min(self.active_freq()))
