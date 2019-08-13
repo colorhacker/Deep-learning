@@ -201,12 +201,6 @@
     <ClInclude Include="snn\user_snn_model.h">
       <Filter>头文件\snn</Filter>
     </ClInclude>
-    <ClInclude Include="snn\user_snn_rw_model.h">
-      <Filter>头文件\snn</Filter>
-    </ClInclude>
-    <ClInclude Include="cifar\user_cifar.h">
-      <Filter>头文件\cifar</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_app.cpp">
@@ -337,9 +331,6 @@
     </ClCompile>
     <ClCompile Include="snn\user_snn_rw_model.cpp">
       <Filter>源文件\snn</Filter>
-    </ClCompile>
-    <ClCompile Include="cifar\user_cifar.cpp">
-      <Filter>源文件\cifar</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

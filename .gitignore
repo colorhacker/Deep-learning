@@ -6,3 +6,4 @@ main_app/main_app.vcxproj.filters
 main_app/python/venv/
 main_app/python/__pycache__/
 main_app/python/temp/
+*.pyc
