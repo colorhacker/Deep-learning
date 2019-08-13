@@ -19,7 +19,7 @@ def serial_training(net_model, train_data):
 def parallel_training(net_model, train_data):
     try:
         pool = Pool(len(train_data))
-        result = list()
+        result = list([[]]*len(train_data))
         for i, e in enumerate(train_data):
             result[i] = pool.apply_async(func=net_model.batch_tick, args=(e,))
         pool.close()
