@@ -56,11 +56,12 @@ class Networks:
         offset_index = 0
         for index in range(self.soma_num):
             for count in range(self.dendrites_table[index]):  # 按照树突进行值的设置
-                self.synapse[offset_index, self.synapse_offset[offset_index]] = self.axon[index][0]
+                _p = self.axon_dendrites_list[offset_index]
+                self.synapse[_p, self.synapse_offset[_p]] = self.axon[index][0]
                 offset_index += 1
-
         for index, count in enumerate(self.input_table):  # 再进行input值设置
-            self.synapse[index, self.synapse_offset[index]] = data[index]
+            _p = self.axon_dendrites_list[count]
+            self.synapse[_p, self.synapse_offset[_p]] = data[index]
 
     def update_output(self):
         self.axon = np.roll(self.axon, -1)  # 移动突触数据
@@ -100,7 +101,7 @@ class Networks:
         self.clean_freq()
         self.batch_tick(np.random.randint(0, 2, (number, self.input_num)))
         if graph:
-            # plt.plot(range(self.soma_num), self.active_freq())
+            # plt.plot(range(self.soma_num), self.active_freq().flatten())
             plt.bar(range(self.soma_num), self.active_freq().flatten())
             plt.show()
         return self.active_freq()
