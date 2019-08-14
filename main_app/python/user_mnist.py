@@ -35,13 +35,13 @@ def custum_sort_list(data, rule=False):
 
 # 按类别存储手写数据
 def mnist_class_save():
-    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='lists').load_training()
+    images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
     digital = [[], [], [], [], [], [], [], [], [], []]
     for c in tqdm(range(len(images))):
         digital[labels[c]].append(np.array(images[c]).astype("uint8"))
     np.save("./temp/mnist_train", digital)
 
-    images_t, labels_t = MNIST('./python-mnist/data', mode='vanilla', return_type='numpy').load_testing()
+    images_t, labels_t = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
     digital = [[], [], [], [], [], [], [], [], [], []]
     for c in tqdm(range(len(images_t))):
         digital[labels_t[c]].append(np.array(images_t[c]).astype("uint8"))
