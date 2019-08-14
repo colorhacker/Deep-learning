@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 soma_threshold_pro = 0.45  # 设置阈值和最大输入值比例
-soma_threshold_attenuate = 0.15  # 衰减系数 0.05需要衰减10次才能到最大值
-soma_blank_synapse = 0.1  # 树突无连接的数量比
+soma_threshold_attenuate = 0.10  # 衰减系数 0.05需要衰减10次才能到最大值
+soma_blank_synapse = 0.2  # 树突无连接的数量比
 
 
 # cell_num 神经元个数
@@ -96,21 +96,14 @@ class Networks:
         self.notes_tick_count = 1
         self.notes_tick_active = np.zeros(shape=(self.soma_num, 1))
 
-    def parallel_test(self):
-        _data = np.random.randint(0, 2, (5, 5000, self.input_num))
-        try:
-            pool = Pool(len(_data))
-            result = list([[]] * len(_data))
-            for index, e in enumerate(_data):
-                result[index] = pool.apply_async(func=self.batch_tick, args=(e,))
-            pool.close()
-            pool.join()
-            for res in result:
-                plt.plot(res.get())
-            plt.title("parallel test")
+    def self_test(self, number, graph=False):
+        self.clean_freq()
+        self.batch_tick(np.random.randint(0, 2, (number, self.input_num)))
+        if graph:
+            # plt.plot(range(self.soma_num), self.active_freq())
+            plt.bar(range(self.soma_num), self.active_freq().flatten())
             plt.show()
-        except ValueError as e:
-            print(e)
+        return self.active_freq()
 
     def update_threshold(self, biase):
         index = self.active_freq().tolist().index(min(self.active_freq()))

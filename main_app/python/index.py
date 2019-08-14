@@ -38,10 +38,11 @@ if __name__ == '__main__':
     # 神经元个数，输入个数，树突最小长度，树突个数，突触长度，突触抑制率
     model = N.Networks(100, 784, 5, 10, 10, 0.2)
     model.info()
-    # model.parallel_test()
+    model.self_test(1000, True)
+    model.update_threshold(0.1)
     # mnist_train = np.load("./temp/mnist_train.npy")
-    mnist_test = np.load("./temp/mnist_test.npy")
-    parallel_process(model, mnist_test)
+    # mnist_test = np.load("./temp/mnist_test.npy")
+    # parallel_process(model, mnist_test)
     # parallel_process(model, mnist_train)
     # serial_process(model, mnist_train)
 
