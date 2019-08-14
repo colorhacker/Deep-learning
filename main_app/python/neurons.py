@@ -44,9 +44,12 @@ class Networks:
         print("smon number          :%d" % self.soma_num)
         print("dendrites number     :%d" % self.dendrites_number)
         print("self join number     :%d" % (self.dendrites_number - self.input_num))
+        print("axon length          :%d" % len(self.axon[0]))
+        print("dendritelength       :%d - %d" % (min(self.synapse_offset), max(self.synapse_offset)))
         print("blank dendrites      :%d" % (int(sum(self.dendrites_table) * soma_blank_synapse)))
         print("smon threshold pro   :%0.2f" % soma_threshold_pro)
         print("smon attenuate pro   :%0.2f" % soma_threshold_attenuate)
+        print("estimated frequency  :%0.2f" % (soma_threshold_attenuate/soma_threshold_pro))
 
     def update_input(self, data):
         self.synapse = np.roll(self.synapse, -1)  # 移动髓鞘数据
@@ -75,13 +78,13 @@ class Networks:
                     self.soma_threshold[index] = self.soma_threshold_fix[index]
             count_line += count
 
-    def tick(self, d):
+    def tick(self, d):  # 调用一次
         self.notes_tick_count += 1
         self.update_input(d)
         self.update_output()
         self.notes_tick_active += self.axon[:, 0:1]  # 记录神经元的激活次数
 
-    def batch_tick(self, d):
+    def batch_tick(self, d):  # 批量调用
         for e in tqdm(d):
             self.tick(e)
         return self.active_freq()
