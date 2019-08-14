@@ -20,12 +20,12 @@ class Networks:
     def __init__(self, soma_number, input_number, branch_length, cell_dendrite, axon_length, inhibit):
         self.soma_num = soma_number  # 神经元个数
         self.input_num = input_number  # 输入数据个数
-        self.dendrites_table = [randint(cell_dendrite, int(cell_dendrite * 1.5)) for _ in range(self.soma_num)]  # 单个神经元拥有的树突表
+        self.dendrites_table = [randint(int(cell_dendrite * 0.5), int(cell_dendrite * 1.5)) for _ in range(self.soma_num)]  # 单个神经元拥有的树突表
         self.dendrites_number = int(sum(self.dendrites_table) * (1 + soma_blank_synapse))  # 计算总的树突个数
         self.input_table = sample(list(range(self.dendrites_number)), input_number)  # 生成input 对应表
         self.soma_threshold_fixed = [_*soma_threshold_pro for _ in self.dendrites_table]  # 每个神经元的阈值
         self.soma_threshold = self.soma_threshold_fixed.copy()  # 当前神经元的阈值
-        self.synapse_offset = [randint(branch_length, int(branch_length * 1.5)) for _ in range(self.dendrites_number)]  # 树突长度值 也是数组的偏移量
+        self.synapse_offset = [randint(int(branch_length * 0.5), int(branch_length * 1.5)) for _ in range(self.dendrites_number)]  # 树突长度值 也是数组的偏移量
         self.synapse = np.zeros(shape=(self.dendrites_number, max(self.synapse_offset) + 1))  # 树突
         self.axon = [[0] * axon_length for _ in range(self.soma_num)]  # 突触
         self.axon_dendrites_list = list(range(self.dendrites_number))  # 突触与与髓鞘的连接表

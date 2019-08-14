@@ -38,13 +38,13 @@ def mnist_class_save():
     images, labels = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_training()
     digital = [[], [], [], [], [], [], [], [], [], []]
     for c in tqdm(range(len(images))):
-        digital[labels[c]].append(np.array(images[c]).astype("uint8"))
+        digital[labels[c]].append(1 - np.array(images[c]).astype("uint8"))
     np.save("./temp/mnist_train", digital)
 
     images_t, labels_t = MNIST('./python-mnist/data', mode='randomly_binarized', return_type='numpy').load_testing()
     digital = [[], [], [], [], [], [], [], [], [], []]
     for c in tqdm(range(len(images_t))):
-        digital[labels_t[c]].append(np.array(images_t[c]).astype("uint8"))
+        digital[labels_t[c]].append(1 - np.array(images_t[c]).astype("uint8"))
     np.save("./temp/mnist_test", digital)
 
 def sort_bar_show(title, data):
