@@ -1,12 +1,13 @@
 
 from tqdm import tqdm
-from random import randint, shuffle, seed ,sample
+from random import randint, shuffle, seed, sample
+from multiprocessing import Pool, Queue, Process, current_process
 import matplotlib.pyplot as plt
 import numpy as np
 
-cell_threshold_max = 0.4  # 设置阈值和最大输入值比例
-cell_threshold_attenuate = 0.15  # 衰减系数 0.05需要衰减10次才能到最大值
-cell_blank_synapse = 0.0  # 树突无连接的数量比
+soma_threshold_pro = 0.45  # 设置阈值和最大输入值比例
+soma_threshold_attenuate = 0.15  # 衰减系数 0.05需要衰减10次才能到最大值
+soma_blank_synapse = 0.1  # 树突无连接的数量比
 
 
 # cell_num 神经元个数
@@ -16,17 +17,17 @@ cell_blank_synapse = 0.0  # 树突无连接的数量比
 # axon_length 轴突长度
 # inhibit 突触抑制比例
 class Networks:
-    def __init__(self, cell_number, input_number, branch_length, cell_dendrite, axon_length, inhibit):
-        self.cell_num = cell_number  # 神经元个数
+    def __init__(self, soma_number, input_number, branch_length, cell_dendrite, axon_length, inhibit):
+        self.soma_num = soma_number  # 神经元个数
         self.input_num = input_number  # 输入数据个数
-        self.dendrites_table = [randint(cell_dendrite, int(cell_dendrite * 1.5)) for _ in range(self.cell_num)]  # 单个神经元拥有的树突表
-        self.dendrites_number = int(sum(self.dendrites_table) * (1 + cell_blank_synapse))  # 计算总的树突个数
+        self.dendrites_table = [randint(cell_dendrite, int(cell_dendrite * 1.5)) for _ in range(self.soma_num)]  # 单个神经元拥有的树突表
+        self.dendrites_number = int(sum(self.dendrites_table) * (1 + soma_blank_synapse))  # 计算总的树突个数
         self.input_table = sample(list(range(self.dendrites_number)), input_number)  # 生成input 对应表
-        self.cell_threshold_fix = [_*cell_threshold_max for _ in self.dendrites_table]  # 每个神经元的阈值
-        self.cell_threshold = self.cell_threshold_fix  # 当前神经元的阈值
+        self.soma_threshold_fix = [_*soma_threshold_pro for _ in self.dendrites_table]  # 每个神经元的阈值
+        self.soma_threshold = self.soma_threshold_fix  # 当前神经元的阈值
         self.synapse_offset = [randint(branch_length, int(branch_length * 1.5)) for _ in range(self.dendrites_number)]  # 树突长度值 也是数组的偏移量
         self.synapse = np.zeros(shape=(self.dendrites_number, max(self.synapse_offset) + 1))  # 树突
-        self.axon = [[0] * axon_length for _ in range(cell_number)]  # 突触
+        self.axon = [[0] * axon_length for _ in range(self.soma_num)]  # 突触
         self.axon_dendrites_list = list(range(self.dendrites_number))  # 突触与与髓鞘的连接表
         shuffle(self.axon_dendrites_list)
         self.synapse_polarity = [1] * self.dendrites_number  # 树突的极性
@@ -35,13 +36,22 @@ class Networks:
         self.synapse_polarity = np.array(self.synapse_polarity)
         np.put(self.synapse_polarity, self.input_table, [1]*self.input_num)
         self.synapse_polarity = self.synapse_polarity.reshape(self.dendrites_number, 1)
-        self.notes_tick_active = np.zeros(shape=(self.cell_num, 1))  # 用于保存神经元的激活值
-        self.notes_tick_count = 1
+        self.notes_tick_active = np.zeros(shape=(self.soma_num, 1))  # 用于保存神经元的激活值
+        self.notes_tick_count = 0
+
+    def info(self):
+        print("input number         :%d" % self.input_num)
+        print("smon number          :%d" % self.soma_num)
+        print("dendrites number     :%d" % self.dendrites_number)
+        print("self join number     :%d" % (self.dendrites_number - self.input_num))
+        print("blank dendrites      :%d" % (int(sum(self.dendrites_table) * soma_blank_synapse)))
+        print("smon threshold pro   :%0.2f" % soma_threshold_pro)
+        print("smon attenuate pro   :%0.2f" % soma_threshold_attenuate)
 
     def update_input(self, data):
         self.synapse = np.roll(self.synapse, -1)  # 移动髓鞘数据
         offset_index = 0
-        for index in range(self.cell_num):
+        for index in range(self.soma_num):
             for count in range(self.dendrites_table[index]):  # 按照树突进行值的设置
                 self.synapse[offset_index, self.synapse_offset[offset_index]] = self.axon[index][0]
                 offset_index += 1
@@ -55,14 +65,14 @@ class Networks:
         for index, count in enumerate(self.dendrites_table):  # 通过树突更新髓鞘起始数据
             if sum(self.synapse[count_line:count_line + count, 0:1] *
                    self.synapse_polarity[count_line:count_line + count, :]) \
-                    > self.cell_threshold[index]:
-                self.cell_threshold[index] += count
+                    > self.soma_threshold[index]:
+                self.soma_threshold[index] += count
                 self.axon[index][-1] = 1
             else:
                 self.axon[index][-1] = 0
-                self.cell_threshold[index] -= self.cell_threshold[index] * cell_threshold_attenuate
-                if self.cell_threshold[index] <= self.cell_threshold_fix[index]:
-                    self.cell_threshold[index] = self.cell_threshold_fix[index]
+                self.soma_threshold[index] -= self.soma_threshold[index] * soma_threshold_attenuate
+                if self.soma_threshold[index] <= self.soma_threshold_fix[index]:
+                    self.soma_threshold[index] = self.soma_threshold_fix[index]
             count_line += count
 
     def tick(self, d):
@@ -81,17 +91,35 @@ class Networks:
 
     def clean_freq(self):
         self.notes_tick_count = 1
-        self.notes_tick_active = np.zeros(shape=(self.cell_num, 1))
+        self.notes_tick_active = np.zeros(shape=(self.soma_num, 1))
+
+    def parallel_test(self):
+        _data = np.random.randint(0, 2, (5, 5000, self.input_num))
+        try:
+            pool = Pool(len(_data))
+            result = list([[]] * len(_data))
+            for index, e in enumerate(_data):
+                result[index] = pool.apply_async(func=self.batch_tick, args=(e,))
+            pool.close()
+            pool.join()
+            for res in result:
+                plt.plot(res.get())
+            plt.title("parallel test")
+            plt.show()
+        except ValueError as e:
+            print(e)
 
     def update_threshold(self, biase):
         index = self.active_freq().tolist().index(min(self.active_freq()))
-        self.cell_threshold_fix[index] -= biase
-        
+        self.soma_threshold_fix[index] -= biase
+
 
 if __name__ == '__main__':
     seed(0)
     net = Networks(2, 2, 4, 3, 4, 0.2)
+    print(net.__dict__)
     for i in range(40):
         net.tick([2, 2])
+        print(net.__dict__)
     print(net.active_freq())
     print(net.update_threshold(0.1))
