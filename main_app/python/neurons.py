@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 soma_threshold_pro = 0.45  # 设置阈值和最大输入值比例
-soma_threshold_attenuate = 0.10  # 衰减系数 0.05需要衰减10次才能到最大值
-soma_blank_synapse = 0.2  # 树突无连接的数量比
+soma_threshold_attenuate = 0.15  # 衰减系数 0.05需要衰减10次才能到最大值
+soma_blank_synapse = 0.1  # 树突无连接的数量比
 
 
 # cell_num 神经元个数
@@ -23,8 +23,8 @@ class Networks:
         self.dendrites_table = [randint(cell_dendrite, int(cell_dendrite * 1.5)) for _ in range(self.soma_num)]  # 单个神经元拥有的树突表
         self.dendrites_number = int(sum(self.dendrites_table) * (1 + soma_blank_synapse))  # 计算总的树突个数
         self.input_table = sample(list(range(self.dendrites_number)), input_number)  # 生成input 对应表
-        self.soma_threshold_fix = [_*soma_threshold_pro for _ in self.dendrites_table]  # 每个神经元的阈值
-        self.soma_threshold = self.soma_threshold_fix  # 当前神经元的阈值
+        self.soma_threshold_fixed = [_*soma_threshold_pro for _ in self.dendrites_table]  # 每个神经元的阈值
+        self.soma_threshold = self.soma_threshold_fixed.copy()  # 当前神经元的阈值
         self.synapse_offset = [randint(branch_length, int(branch_length * 1.5)) for _ in range(self.dendrites_number)]  # 树突长度值 也是数组的偏移量
         self.synapse = np.zeros(shape=(self.dendrites_number, max(self.synapse_offset) + 1))  # 树突
         self.axon = [[0] * axon_length for _ in range(self.soma_num)]  # 突触
@@ -34,7 +34,7 @@ class Networks:
         self.synapse_polarity[0:int(self.dendrites_number*inhibit)] = [-1]*int(self.dendrites_number*inhibit)
         shuffle(self.synapse_polarity)
         self.synapse_polarity = np.array(self.synapse_polarity)
-        np.put(self.synapse_polarity, self.input_table, [1]*self.input_num)
+        np.put(self.synapse_polarity, self.input_table, [1]*self.input_num)  # 输入的数据设置不可抑制
         self.synapse_polarity = self.synapse_polarity.reshape(self.dendrites_number, 1)
         self.notes_tick_active = np.zeros(shape=(self.soma_num, 1))  # 用于保存神经元的激活值
         self.notes_tick_count = 0
@@ -76,8 +76,8 @@ class Networks:
             else:
                 self.axon[index][-1] = 0
                 self.soma_threshold[index] -= self.soma_threshold[index] * soma_threshold_attenuate
-                if self.soma_threshold[index] <= self.soma_threshold_fix[index]:
-                    self.soma_threshold[index] = self.soma_threshold_fix[index]
+                if self.soma_threshold[index] <= self.soma_threshold_fixed[index]:
+                    self.soma_threshold[index] = self.soma_threshold_fixed[index]
             count_line += count
 
     def tick(self, d):  # 调用一次
@@ -102,19 +102,20 @@ class Networks:
         self.clean_freq()
         self.batch_tick(np.random.randint(0, 2, (number, self.input_num)))
         if graph:
+            plt.title("random")
             # plt.plot(range(self.soma_num), self.active_freq().flatten())
             plt.bar(range(self.soma_num), self.active_freq().flatten())
             plt.show()
         return self.active_freq()
 
-    def update_threshold(self, biase):
+    def update_threshold(self, baise):
         index = self.active_freq().tolist().index(min(self.active_freq()))
-        self.soma_threshold_fix[index] -= biase
+        self.soma_threshold_fixed[index] -= baise
 
 
 if __name__ == '__main__':
     seed(0)
-    net = Networks(2, 2, 4, 3, 4, 0.2)
+    net = Networks(2, 2, 4, 3, 4, 0.5)
     print(net.__dict__)
     for i in range(40):
         net.tick([2, 2])

@@ -26,7 +26,8 @@ def parallel_process(net_model, train_data):
             result[i] = pool.apply_async(func=net_model.batch_tick, args=(e,))
         pool.close()
         pool.join()
-        for res in result:
+        for index, res in enumerate(result):
+            plt.title(index)
             plt.bar(range(len(res.get())), res.get().flatten())
             # plt.plot(res.get())
             plt.show()
@@ -36,8 +37,9 @@ def parallel_process(net_model, train_data):
 
 if __name__ == '__main__':
     seed(0)
+    np.random.seed(0)
     # 神经元个数，输入个数，树突最小长度，树突个数，突触长度，突触抑制率
-    model = N.Networks(100, 784, 5, 10, 10, 0.2)
+    model = N.Networks(100, 784, 5, 20, 10, 0.9)
     model.info()
     model.self_test(1000, True)
     # model.update_threshold(0.1)
