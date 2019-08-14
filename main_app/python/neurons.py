@@ -5,9 +5,9 @@ from multiprocessing import Pool, Queue, Process, current_process
 import matplotlib.pyplot as plt
 import numpy as np
 
-soma_threshold_pro = 0.5  # 设置阈值和最大输入值比例
+soma_threshold_pro = 0.45  # 设置阈值和最大输入值比例
 soma_threshold_attenuate = 0.10  # 衰减系数 0.05需要衰减10次才能到最大值
-soma_blank_synapse = 0.3  # 树突无连接的数量比
+soma_blank_synapse = 0.2  # 树突无连接的数量比
 
 
 # cell_num 神经元个数
@@ -45,7 +45,7 @@ class Networks:
         print("dendrites number     :%d" % self.dendrites_number)
         print("self join number     :%d" % (self.dendrites_number - self.input_num))
         print("axon length          :%d" % len(self.axon[0]))
-        print("dendritelength       :%d - %d" % (min(self.synapse_offset), max(self.synapse_offset)))
+        print("dendrite length      :%d - %d" % (min(self.synapse_offset), max(self.synapse_offset)))
         print("blank dendrites      :%d" % (int(sum(self.dendrites_table) * soma_blank_synapse)))
         print("smon threshold pro   :%0.2f" % soma_threshold_pro)
         print("smon attenuate pro   :%0.2f" % soma_threshold_attenuate)
@@ -53,6 +53,7 @@ class Networks:
 
     def update_input(self, data):
         self.synapse = np.roll(self.synapse, -1)  # 移动髓鞘数据
+        self.synapse[:, -1] = 0  # 清除roll移动的移位数据
         offset_index = 0
         for index in range(self.soma_num):
             for count in range(self.dendrites_table[index]):  # 按照树突进行值的设置

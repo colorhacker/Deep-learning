@@ -27,7 +27,7 @@ def parallel_process(net_model, train_data):
         pool.close()
         pool.join()
         for res in result:
-            plt.bar(range(len(res.get())),res.get().flatten())
+            plt.bar(range(len(res.get())), res.get().flatten())
             # plt.plot(res.get())
             plt.show()
     except ValueError as e:
@@ -37,15 +37,14 @@ def parallel_process(net_model, train_data):
 if __name__ == '__main__':
     seed(0)
     # 神经元个数，输入个数，树突最小长度，树突个数，突触长度，突触抑制率
-    model = N.Networks(50, 784, 5, 10, 10, 0.2)
+    model = N.Networks(100, 784, 5, 10, 10, 0.2)
     model.info()
     model.self_test(1000, True)
     # model.update_threshold(0.1)
-    # mnist_train = np.load("./temp/mnist_train.npy")
-    mnist_test = np.load("./temp/mnist_test.npy")
+    # mnist_train = np.load("./temp/mnist_train.npy", allow_pickle=True)
+    mnist_test = np.load("./temp/mnist_test.npy", allow_pickle=True)
     parallel_process(model, mnist_test)
     # parallel_process(model, mnist_train)
     # serial_process(model, mnist_train)
-
 
 
