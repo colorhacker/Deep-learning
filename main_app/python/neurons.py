@@ -5,9 +5,9 @@ from multiprocessing import Pool, Queue, Process, current_process
 import matplotlib.pyplot as plt
 import numpy as np
 
-soma_threshold_pro = 0.45  # 设置阈值和最大输入值比例
+soma_threshold_pro = 0.5  # 设置阈值和最大输入值比例
 soma_threshold_attenuate = 0.10  # 衰减系数 0.05需要衰减10次才能到最大值
-soma_blank_synapse = 0.2  # 树突无连接的数量比
+soma_blank_synapse = 0.3  # 树突无连接的数量比
 
 
 # cell_num 神经元个数

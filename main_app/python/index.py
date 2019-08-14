@@ -29,7 +29,7 @@ def parallel_process(net_model, train_data):
         for res in result:
             plt.bar(range(len(res.get())),res.get().flatten())
             # plt.plot(res.get())
-        plt.show()
+            plt.show()
     except ValueError as e:
         print(e)
 
@@ -37,7 +37,7 @@ def parallel_process(net_model, train_data):
 if __name__ == '__main__':
     seed(0)
     # 神经元个数，输入个数，树突最小长度，树突个数，突触长度，突触抑制率
-    model = N.Networks(100, 784, 5, 10, 10, 0.2)
+    model = N.Networks(200, 784, 5, 10, 10, 0.2)
     model.info()
     model.self_test(1000, True)
     # model.update_threshold(0.1)
