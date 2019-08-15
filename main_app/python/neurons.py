@@ -1,4 +1,3 @@
-
 from tqdm import tqdm
 from random import randint, shuffle, seed, sample
 from multiprocessing import Pool, Queue, Process, current_process
@@ -115,6 +114,7 @@ class Networks:
 
     # 编码0.0~1.0 频率10~1hz 单步长度为1
     def d_code(self, src_data, length):
+        src_data += 1  # 这里设置为数字转化为不为0的数据
         src_data = src_data/src_data.max()
         feq = (1.0/src_data).astype("int")
         res = np.zeros(shape=(len(feq), length))
