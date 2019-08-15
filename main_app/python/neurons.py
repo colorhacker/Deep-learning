@@ -5,7 +5,7 @@ from multiprocessing import Pool, Queue, Process, current_process
 import matplotlib.pyplot as plt
 import numpy as np
 
-soma_threshold_pro = 0.45  # 设置阈值和最大输入值比例
+soma_threshold_pro = 0.25  # 设置阈值和最大输入值比例
 soma_threshold_attenuate = 0.15  # 衰减系数 0.05需要衰减10次才能到最大值
 soma_blank_synapse = 0.1  # 树突无连接的数量比
 
@@ -87,22 +87,23 @@ class Networks:
         self.notes_tick_active += self.axon[:, 0:1]  # 记录神经元的激活次数
 
     def batch_tick(self, d):  # 批量调用
-        for e in tqdm(d):
+        for e in tqdm(d, desc="batch tick ", unit="kbyte"):
             self.tick(e)
         return self.active_freq()
 
     def active_freq(self):
-        return self.notes_tick_active / self.notes_tick_count  # 计算激活频率
+        return (self.notes_tick_active / self.notes_tick_count)*100  # 计算激活频率
 
     def clean_freq(self):
         self.notes_tick_count = 1
         self.notes_tick_active = np.zeros(shape=(self.soma_num, 1))
 
     def self_test(self, number, graph=False):
+        test_data = batch_code(np.random.randint(1, 10, (number, self.input_num)), 10)
         self.clean_freq()
-        self.batch_tick(np.random.randint(0, 2, (number, self.input_num)))
+        self.batch_tick(test_data)
         if graph:
-            plt.title("random")
+            plt.title("random test")
             # plt.plot(range(self.soma_num), self.active_freq().flatten())
             plt.bar(range(self.soma_num), self.active_freq().flatten())
             plt.show()
@@ -111,6 +112,23 @@ class Networks:
     def update_threshold(self, baise):
         index = self.active_freq().tolist().index(min(self.active_freq()))
         self.soma_threshold_fixed[index] -= baise
+
+
+# 编码0.0~1.0 频率10~1hz 单步长度为1
+def d_code(src_data, length):
+    src_data = src_data/src_data.max()
+    feq = (1.0/src_data).astype("int")
+    res = np.zeros(shape=(len(feq), length))
+    for index, e in enumerate(feq):
+        res[index, 0:-1:e+1] = 1
+    return res
+
+
+def batch_code(src_data, length):
+    res = d_code(src_data[0], length).T
+    for e in tqdm(src_data[1:], desc="coding data", unit="kbyte"):
+        res = np.vstack((res, d_code(e, length).T))
+    return res
 
 
 if __name__ == '__main__':
