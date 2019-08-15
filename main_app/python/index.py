@@ -19,7 +19,7 @@ def parallel_process(net_model, train_data):
         pool = Pool(len(train_data))
         result = list([[]]*len(train_data))
         for i, e in enumerate(train_data):
-            e = net_model.batch_code(e)
+            e = net_model.batch_code(e, 10)
             result[i] = pool.apply_async(func=net_model.batch_tick, args=(e,))
         pool.close()
         pool.join()
