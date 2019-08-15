@@ -113,22 +113,20 @@ class Networks:
         index = self.active_freq().tolist().index(min(self.active_freq()))
         self.soma_threshold_fixed[index] -= baise
 
+    # 编码0.0~1.0 频率10~1hz 单步长度为1
+    def d_code(self, src_data, length):
+        src_data = src_data/src_data.max()
+        feq = (1.0/src_data).astype("int")
+        res = np.zeros(shape=(len(feq), length))
+        for index, e in enumerate(feq):
+            res[index, 0:-1:e+1] = 1
+        return res
 
-# 编码0.0~1.0 频率10~1hz 单步长度为1
-def d_code(src_data, length):
-    src_data = src_data/src_data.max()
-    feq = (1.0/src_data).astype("int")
-    res = np.zeros(shape=(len(feq), length))
-    for index, e in enumerate(feq):
-        res[index, 0:-1:e+1] = 1
-    return res
-
-
-def batch_code(src_data, length):
-    res = d_code(src_data[0], length).T
-    for e in tqdm(src_data[1:], desc="coding data", unit="kbyte"):
-        res = np.vstack((res, d_code(e, length).T))
-    return res
+    def batch_code(self, src_data, length):
+        res = self.d_code(src_data[0], length).T
+        for e in tqdm(src_data[1:], desc="coding data", unit="kbyte"):
+            res = np.vstack((res, self.d_code(e, length).T))
+        return res
 
 
 if __name__ == '__main__':
